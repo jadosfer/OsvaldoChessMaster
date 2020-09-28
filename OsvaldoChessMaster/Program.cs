@@ -3,15 +3,13 @@
 namespace OsvaldoChessMaster
 {
     class Program
-    {
-        private bool turn;
-        private bool player1;
+    {        
         static void Main(string[] args)
         {            
             // Game game1 = new Game(true); 
-            Board board1 = new Board(true); //true para blancas abajo y negras arriba
-            bool turn = true;
-            bool player1 = true;
+            Board board1 = new Board(true);
+            bool turn = true; // true si mueven blancas
+            bool player1 = true; //true para blancas abajo y negras arriba
 
             Console.WriteLine("turno de: " + turn + " (True para blancas)");
 

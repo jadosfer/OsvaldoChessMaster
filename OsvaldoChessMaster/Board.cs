@@ -7,12 +7,12 @@ namespace OsvaldoChessMaster
     public class Board
     {
         public bool turn = true; //turn=true es el turno del player1
-        private const int size = 8;        
+        private const int size = 8;
         private Piece[,] ChessBoard;
-        
+
         public Board(bool player1)
         {
-            ChessBoard = new Piece[size,size];
+            ChessBoard = new Piece[size, size];
 
             Piece pawn1 = new Pawn(player1); //creamos todas las Pieces segun posicion
             Piece pawn2 = new Pawn(player1);
@@ -31,7 +31,7 @@ namespace OsvaldoChessMaster
             Piece pawn14 = new Pawn(!player1);
             Piece pawn15 = new Pawn(!player1);
             Piece pawn16 = new Pawn(!player1);
-            
+
             ChessBoard[0, 1] = pawn1;
             ChessBoard[1, 1] = pawn2;
             ChessBoard[2, 1] = pawn3;
@@ -87,28 +87,40 @@ namespace OsvaldoChessMaster
             ChessBoard[3, 0] = queen1;
             ChessBoard[3, 7] = queen2;
         }
-        public Piece GetPiece(int x, int y) => ChessBoard[x,y];
+        public Piece GetPiece(int x, int y) => ChessBoard[x, y];
 
-        public bool IsAlly(int x1, int y1, int x2, int y2)
+        public bool IsAlly(int x1, int y1, int x2, int y2) //solo es true si hay otra pieza del mismo color, sino false siempre
         {
             Piece piece1 = GetPiece(x1, y1);
             Piece piece2 = GetPiece(x2, y2);
 
             if (piece1.Color == piece2.Color)
             {
-                return false;
-            }            
+                return true;
+            }
             return false;
         }
 
         public bool IsInRange(int x1, int y1, int x2, int y2)
         {
-            if (!(x1 < 0) && !(x1 > 8) && !(y1 < 0) && !(y2 > 8) && !(x2 < 0) && !(x2 > 8) && !(y2 < 0) && !(y2 > 8))
+            if (!(x1 < 0) && !(x1 > 7) && !(y1 < 0) && !(y2 > 7) && !(x2 < 0) && !(x2 > 7) && !(y2 < 0) && !(y2 > 7))
             {
                 return true;
             }
+            Console.WriteLine("Out of range");
             return false;
         }
+
+        public bool IsColorTurn(Piece piece1, bool turn)
+        {
+            if (piece1.Color != turn)
+            {
+                Console.WriteLine("Is not your turn");
+                return false;
+            }
+            return true;
+        }
+
 
         public bool IsEmpty(int x2, int y2)
         {
@@ -116,12 +128,12 @@ namespace OsvaldoChessMaster
             {
                 Piece piece1 = GetPiece(x2, y2);
                 piece1.GetType();
-                return false; 
+                return false;
             }
             catch (NullReferenceException e)
             {
                 return true;
-            }            
+            }
         }
 
         public bool IsPawn(Piece piece)
@@ -134,68 +146,97 @@ namespace OsvaldoChessMaster
             return false;
         }
 
-        public bool IsPawnEating(int x1, int x2)// true si se mueve en diagonal
+        public bool IsPawnCapturing(int x1, int x2)// true si se mueve en diagonal
         {
-            if (x1 != x2)            
+            if (x1 != x2)
             {
                 return true;
             }
             return false;
         }
 
+        public void MovePawn(int x1, int y1, int x2, int y2, bool player1, bool turn)
+        {
+            Piece piece1 = GetPiece(x1, y1);
+            Console.WriteLine(piece1.GetType() + " es la pieza correctamente escogida en esta movida");
+            if (!IsInRange(x1, y1, x2, y2) || !IsColorTurn(piece1, turn))
+            {
+                return;
+            }
+
+        }
 
 
         public void MovePiece(int x1, int y1, int x2, int y2, bool player1, bool turn)
         {
             Piece piece1 = GetPiece(x1, y1);
-            Console.WriteLine("aca");
-            Console.WriteLine(piece1.GetType() + " es la pieza correctamente escogida en esta movida");
-            Console.WriteLine("aca");
-            if (!IsInRange(x1, y1, x2, y2))
+            Console.WriteLine(piece1.GetType() + " es la pieza reconocida para esta movida");
+
+            if (!IsInRange(x1, y1, x2, y2) || !IsColorTurn(piece1, turn))
             {
-                Console.WriteLine("Out of range");
-                return;
-            }            
-            if (piece1.Color != turn)
-            {                
-                Console.WriteLine("Is not your turn");
                 return;
             }
 
-            if (IsInRange(x1, y1, x2, y2) && piece1.Color == turn)
-            {                
-                if (IsPawn(piece1)) //caso especial Peon. Si player 1 es true, las blancas suben
-                {                      
-                    if (player1 == turn && y2 > y1 && piece1.IsValidMove(x1, y1, x2, y2))
-                    {
-                        if (IsPawnEating(x1, x2)) //!IsEmpty(x2, y2)
-                        {
-                            if (!IsAlly(x1, y1, x2, y2))
-                            {
-                                ChessBoard[x2, y2] = piece1;
-                                ChessBoard[x1, y1] = null;
-                            }
 
-                        }
-                    }                    
-                
-                    if (player1 != turn && y2 < y1 && piece1.IsValidMove(x1, y1, x2, y2))
+            if (IsPawn(piece1)) 
+            {
+                if (player1 == turn && y2 > y1 && piece1.IsValidMove(x1, y1, x2, y2)) // Si player 1 es true, las blancas suben
+                {
+                    if (IsPawnCapturing(x1, x2))
                     {
-                        if (IsPawnEating(x1, x2) == (!IsEmpty(x2, y2) && !IsAlly(x1, y1, x2, y2)))
+                        if (!IsAlly(x1, y1, x2, y2) && !IsEmpty(x2, y2))
                         {
                             ChessBoard[x2, y2] = piece1;
                             ChessBoard[x1, y1] = null;
                         }
-                    }                 
+                    }
+                    else
+                    {
+                        if (Math.Abs(y2 - y1) == 1 && IsEmpty(x2, y2)) //sube 1 casillero
+                        {
+                            ChessBoard[x2, y2] = piece1;
+                            ChessBoard[x1, y1] = null;
+                        }
+                        else if (IsEmpty(x2, y2 - 1) && IsEmpty(x2, y2)) //sube 2 casilleros chequea 2 vacios
+                        {
+                            ChessBoard[x2, y2] = piece1;
+                            ChessBoard[x1, y1] = null;
+                        }
+                    }
                 }
 
-                else if (piece1.IsValidMove(x1, y1, x2, y2))
-                {                    
-                    ChessBoard[x2, y2] = piece1;
-                    ChessBoard[x1, y1] = null;                    
-                } 
+                if (player1 != turn && y2 < y1 && piece1.IsValidMove(x1, y1, x2, y2))
+                {
+                    if (IsPawnCapturing(x1, x2))
+                    {
+                        if (!IsAlly(x1, y1, x2, y2) && !IsEmpty(x2, y2))
+                        {
+                            ChessBoard[x2, y2] = piece1;
+                            ChessBoard[x1, y1] = null;
+                        }
+                    }
+                    else
+                    {
+                        if (Math.Abs(y2 - y1) == 1 && IsEmpty(x2, y2)) //baja 1 casillero
+                        {
+                            ChessBoard[x2, y2] = piece1;
+                            ChessBoard[x1, y1] = null;
+                        }
+                        else if (IsEmpty(x2, y2 + 1) && IsEmpty(x2, y2)) //baja 2 casilleros chequea 2 vacios
+                        {
+                            ChessBoard[x2, y2] = piece1;
+                            ChessBoard[x1, y1] = null;
+                        }
+                    }
+                }
             }
-        }
 
+            else if (piece1.IsValidMove(x1, y1, x2, y2))
+            {
+                ChessBoard[x2, y2] = piece1;
+                ChessBoard[x1, y1] = null;
+            }
+
+        }
     }
 }
