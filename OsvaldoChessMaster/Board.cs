@@ -7,7 +7,7 @@ namespace OsvaldoChessMaster
     public class Board
     {
         public bool turn = true; //turn=true es el turno del player1
-        private const int size = 8;
+        private const int size = 8;        
         private Piece[,] ChessBoard;
         
         public Board(bool player1)
@@ -88,8 +88,19 @@ namespace OsvaldoChessMaster
             ChessBoard[3, 7] = queen2;
         }
         public Piece GetPiece(int x, int y) => ChessBoard[x,y];
-        
-        
+
+        public bool IsAlly(int x1, int y1, int x2, int y2)
+        {
+            Piece piece1 = GetPiece(x1, y1);
+            Piece piece2 = GetPiece(x2, y2);
+
+            if (piece1.Color == piece2.Color)
+            {
+                return false;
+            }            
+            return false;
+        }
+
         public bool IsInRange(int x1, int y1, int x2, int y2)
         {
             if (!(x1 < 0) && !(x1 > 8) && !(y1 < 0) && !(y2 > 8) && !(x2 < 0) && !(x2 > 8) && !(y2 < 0) && !(y2 > 8))
@@ -97,6 +108,20 @@ namespace OsvaldoChessMaster
                 return true;
             }
             return false;
+        }
+
+        public bool IsEmpty(int x2, int y2)
+        {
+            try
+            {
+                Piece piece1 = GetPiece(x2, y2);
+                piece1.GetType();
+                return false; 
+            }
+            catch (NullReferenceException e)
+            {
+                return true;
+            }            
         }
 
         public bool IsPawn(Piece piece)
@@ -107,47 +132,61 @@ namespace OsvaldoChessMaster
                 return true;
             }
             return false;
-        }            
-        
+        }
+
+        public bool IsPawnEating(int x1, int x2)// true si se mueve en diagonal
+        {
+            if (x1 != x2)            
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+
         public void MovePiece(int x1, int y1, int x2, int y2, bool player1, bool turn)
         {
             Piece piece1 = GetPiece(x1, y1);
+            Console.WriteLine("aca");
             Console.WriteLine(piece1.GetType() + " es la pieza correctamente escogida en esta movida");
+            Console.WriteLine("aca");
             if (!IsInRange(x1, y1, x2, y2))
             {
-                Console.WriteLine("Out of range");                
+                Console.WriteLine("Out of range");
+                return;
             }            
             if (piece1.Color != turn)
             {                
                 Console.WriteLine("Is not your turn");
+                return;
             }
 
             if (IsInRange(x1, y1, x2, y2) && piece1.Color == turn)
             {                
                 if (IsPawn(piece1)) //caso especial Peon. Si player 1 es true, las blancas suben
-                {   
-                    
-                    if (player1 && turn && y2 > y1 && piece1.IsValidMove(x1, y1, x2, y2))
-                    {                        
-                        ChessBoard[x2, y2] = piece1;                                                
-                        ChessBoard[x1, y1] = null;                        
-                    }                    
-                    if (!player1 && !turn && y2 > y1 && piece1.IsValidMove(x1, y1, x2, y2))
-                    {                        
-                        ChessBoard[x2, y2] = piece1;
-                        ChessBoard[x1, y1] = null;                        
-                    }
-                    if (player1 && !turn && y2 < y1 && piece1.IsValidMove(x1, y1, x2, y2))
+                {                      
+                    if (player1 == turn && y2 > y1 && piece1.IsValidMove(x1, y1, x2, y2))
                     {
-                        
-                        ChessBoard[x2, y2] = piece1;
-                        ChessBoard[x1, y1] = null;                       
-                    }
-                    if (!player1 && turn && y2 < y1 && piece1.IsValidMove(x1, y1, x2, y2))
-                    {                        
-                        ChessBoard[x2, y2] = piece1;
-                        ChessBoard[x1, y1] = null;                        
-                    }
+                        if (IsPawnEating(x1, x2)) //!IsEmpty(x2, y2)
+                        {
+                            if (!IsAlly(x1, y1, x2, y2))
+                            {
+                                ChessBoard[x2, y2] = piece1;
+                                ChessBoard[x1, y1] = null;
+                            }
+
+                        }
+                    }                    
+                
+                    if (player1 != turn && y2 < y1 && piece1.IsValidMove(x1, y1, x2, y2))
+                    {
+                        if (IsPawnEating(x1, x2) == (!IsEmpty(x2, y2) && !IsAlly(x1, y1, x2, y2)))
+                        {
+                            ChessBoard[x2, y2] = piece1;
+                            ChessBoard[x1, y1] = null;
+                        }
+                    }                 
                 }
 
                 else if (piece1.IsValidMove(x1, y1, x2, y2))
