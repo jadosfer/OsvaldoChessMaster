@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{82EA7A23-E314-463D-8D78-7D037878FC3E}"
+	ProjectSection(SolutionItems) = preProject
+		Bishop.cs = Bishop.cs
+		OsvaldoChessMaster\Board.cs = OsvaldoChessMaster\Board.cs
+		OsvaldoChessMaster\Game.cs = OsvaldoChessMaster\Game.cs
+		Horse.cs = Horse.cs
+		King.cs = King.cs
+		OsvaldoChessMaster\Menu.cs = OsvaldoChessMaster\Menu.cs
+		OsvaldoChessMaster\Pawn.cs = OsvaldoChessMaster\Pawn.cs
+		Piece.cs = Piece.cs
+		OsvaldoChessMaster\Program.cs = OsvaldoChessMaster\Program.cs
+		Queen.cs = Queen.cs
+		Rook.cs = Rook.cs
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DADB84AF-5380-42A4-B8E1-2E921A436CED}
+	EndGlobalSection
+EndGlobal

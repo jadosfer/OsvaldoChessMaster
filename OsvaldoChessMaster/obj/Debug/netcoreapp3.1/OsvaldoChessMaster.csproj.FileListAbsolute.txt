@@ -1,0 +1,17 @@
+C:\Users\usuario\source\repos\OsvaldoChezzMaster\OsvaldoChezzMaster\obj\Debug\netcoreapp3.1\OsvaldoChezzMaster.csprojAssemblyReference.cache
+C:\Users\usuario\source\repos\OsvaldoChezzMaster\OsvaldoChezzMaster\obj\Debug\netcoreapp3.1\OsvaldoChezzMaster.AssemblyInfoInputs.cache
+C:\Users\usuario\source\repos\OsvaldoChezzMaster\OsvaldoChezzMaster\obj\Debug\netcoreapp3.1\OsvaldoChezzMaster.AssemblyInfo.cs
+C:\Users\usuario\source\repos\OsvaldoChezzMaster\OsvaldoChezzMaster\obj\Debug\netcoreapp3.1\OsvaldoChezzMaster.csproj.CoreCompileInputs.cache
+C:\Users\usuario\source\repos\OsvaldoChessMaster\OsvaldoChessMaster\obj\Debug\netcoreapp3.1\OsvaldoChessMaster.csprojAssemblyReference.cache
+C:\Users\usuario\source\repos\OsvaldoChessMaster\OsvaldoChessMaster\obj\Debug\netcoreapp3.1\OsvaldoChessMaster.AssemblyInfoInputs.cache
+C:\Users\usuario\source\repos\OsvaldoChessMaster\OsvaldoChessMaster\obj\Debug\netcoreapp3.1\OsvaldoChessMaster.AssemblyInfo.cs
+C:\Users\usuario\source\repos\OsvaldoChessMaster\OsvaldoChessMaster\obj\Debug\netcoreapp3.1\OsvaldoChessMaster.csproj.CoreCompileInputs.cache
+C:\Users\usuario\source\repos\OsvaldoChessMaster\OsvaldoChessMaster\bin\Debug\netcoreapp3.1\OsvaldoChessMaster.exe
+C:\Users\usuario\source\repos\OsvaldoChessMaster\OsvaldoChessMaster\bin\Debug\netcoreapp3.1\OsvaldoChessMaster.deps.json
+C:\Users\usuario\source\repos\OsvaldoChessMaster\OsvaldoChessMaster\bin\Debug\netcoreapp3.1\OsvaldoChessMaster.runtimeconfig.json
+C:\Users\usuario\source\repos\OsvaldoChessMaster\OsvaldoChessMaster\bin\Debug\netcoreapp3.1\OsvaldoChessMaster.runtimeconfig.dev.json
+C:\Users\usuario\source\repos\OsvaldoChessMaster\OsvaldoChessMaster\bin\Debug\netcoreapp3.1\OsvaldoChessMaster.dll
+C:\Users\usuario\source\repos\OsvaldoChessMaster\OsvaldoChessMaster\bin\Debug\netcoreapp3.1\OsvaldoChessMaster.pdb
+C:\Users\usuario\source\repos\OsvaldoChessMaster\OsvaldoChessMaster\obj\Debug\netcoreapp3.1\OsvaldoChessMaster.dll
+C:\Users\usuario\source\repos\OsvaldoChessMaster\OsvaldoChessMaster\obj\Debug\netcoreapp3.1\OsvaldoChessMaster.pdb
+C:\Users\usuario\source\repos\OsvaldoChessMaster\OsvaldoChessMaster\obj\Debug\netcoreapp3.1\OsvaldoChessMaster.genruntimeconfig.cache

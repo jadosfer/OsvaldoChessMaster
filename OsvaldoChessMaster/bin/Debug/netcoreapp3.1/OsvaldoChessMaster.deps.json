@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "OsvaldoChessMaster/1.0.0": {
+        "runtime": {
+          "OsvaldoChessMaster.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "OsvaldoChessMaster/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
