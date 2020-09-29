@@ -2,7 +2,7 @@
 
 public class Horse : Piece
 {
-    public override bool CanJump => false;
+    public override bool CanJump => true;
     public Horse(bool color) : base(color) { }
     public override bool IsValidMove(int x1, int y1, int x2, int y2)
     {        

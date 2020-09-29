@@ -348,41 +348,52 @@ namespace OsvaldoChessMaster
 
         public void MovePiece(int x1, int y1, int x2, int y2, bool player1, bool turn)
         {
-            Piece piece1 = GetPiece(x1, y1);
-            Console.WriteLine(piece1.GetType() + " es la pieza reconocida para esta movida");
-
-            if (!IsInRange(x1, y1, x2, y2) || !IsColorTurn(piece1, turn))
+            try
             {
-                return;
-            }
+                Piece piece1 = GetPiece(x1, y1);
+                Console.WriteLine(piece1.GetType() + " es la pieza reconocida para esta movida");
 
-            MovePawn(x1, y1, x2, y2, player1, turn);
-
-            //tengo que trabajar el tema de los saltos y creo hay que crear un metodo para el caballo
-            if (IsHorse(piece1) && piece1.IsValidMove(x1, y1, x2, y2))
-            {
-                ChessBoard[x2, y2] = piece1;
-                ChessBoard[x1, y1] = null;
-                Console.WriteLine("aca7");
-                Program.TurnChange();
-            }
-            if (!IsHorse(piece1) && !IsPawn(piece1) && piece1.IsValidMove(x1, y1, x2, y2))
-            {
-                if (IsDiagonalEmpty(x1, y1, x2, y2))
+                if (!IsInRange(x1, y1, x2, y2) || !IsColorTurn(piece1, turn))
                 {
-                    ChessBoard[x2, y2] = piece1;
-                    ChessBoard[x1, y1] = null;
-                    Console.WriteLine("aca8");
-                    Program.TurnChange();
-                }
-                if (IsLineEmpty(x1, y1, x2, y2))
-                {
-                    ChessBoard[x2, y2] = piece1;
-                    ChessBoard[x1, y1] = null;
-                    Console.WriteLine("aca9");
-                    Program.TurnChange();
+                    return;
                 }
 
+                if (IsPawn(piece1))
+                {
+                    MovePawn(x1, y1, x2, y2, player1, turn);
+                }
+                else
+                {
+
+                    if (piece1.CanJump)
+                    {
+                        ChessBoard[x2, y2] = piece1;
+                        ChessBoard[x1, y1] = null;
+                        Console.WriteLine("aca7");
+                        Program.TurnChange();
+                    }
+
+                    if (!piece1.CanJump && (x1 == x2 || y1 == y2) && piece1.IsValidMove(x1, y1, x2, y2) && IsLineEmpty(x1, y1, x2, y2))
+                    {
+                        ChessBoard[x2, y2] = piece1;
+                        ChessBoard[x1, y1] = null;
+                        Console.WriteLine("aca8");
+                        Program.TurnChange();
+                    }
+
+                    if (!piece1.CanJump && x1 != x2 && y1 != y2 && piece1.IsValidMove(x1, y1, x2, y2) && IsDiagonalEmpty(x1, y1, x2, y2))
+                    {
+                        ChessBoard[x2, y2] = piece1;
+                        ChessBoard[x1, y1] = null;
+                        Console.WriteLine("aca9");
+                        Program.TurnChange();
+
+                    }
+                }
+            }
+            catch (NullReferenceException e)
+            {
+                Console.WriteLine("No se pudo escoger la pieza");
             }
         }
     }
