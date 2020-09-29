@@ -1,7 +1,8 @@
 ﻿using System;
 
 public class Bishop : Piece
-{ 
+{
+    public override bool CanJump => false;
     public Bishop(bool color) : base(color) { }
     public override bool IsValidMove(int x1, int y1, int x2, int y2)
     {

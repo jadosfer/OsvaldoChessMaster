@@ -2,6 +2,7 @@
 
 abstract public class Piece
 {
+    public abstract bool CanJump { get; }
     public bool Color;
     public Piece(bool color)
     {        

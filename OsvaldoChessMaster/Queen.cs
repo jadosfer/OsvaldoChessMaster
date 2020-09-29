@@ -2,6 +2,7 @@
 
 public class Queen : Piece
 {
+    public override bool CanJump => false;
     public Queen(bool color) : base(color) { }
     public override bool IsValidMove(int x1, int y1, int x2, int y2)
     {

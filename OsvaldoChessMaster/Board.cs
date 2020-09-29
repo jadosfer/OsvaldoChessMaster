@@ -8,7 +8,7 @@ namespace OsvaldoChessMaster
     {
         public bool turn = true; //turn=true es el turno del player1
         private const int size = 8;
-        private Piece[,] ChessBoard;
+        public Piece[,] ChessBoard;
 
         public Board(bool player1)
         {
@@ -139,7 +139,15 @@ namespace OsvaldoChessMaster
         public bool IsPawn(Piece piece)
         {
             if (piece.GetType() == typeof(Pawn))
-            //if (piece.GetType().Equals(typeof(Pawn)))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool IsHorse(Piece piece)
+        {
+            if (piece.GetType() == typeof(Horse))
             {
                 return true;
             }
@@ -157,13 +165,184 @@ namespace OsvaldoChessMaster
 
         public void MovePawn(int x1, int y1, int x2, int y2, bool player1, bool turn)
         {
-            Piece piece1 = GetPiece(x1, y1);
-            Console.WriteLine(piece1.GetType() + " es la pieza correctamente escogida en esta movida");
-            if (!IsInRange(x1, y1, x2, y2) || !IsColorTurn(piece1, turn))
+            try
             {
+                Piece piece1 = GetPiece(x1, y1);
+                if (!IsInRange(x1, y1, x2, y2) || !IsPawn(piece1))
+                {
+                    return;
+                }
+                Console.WriteLine(piece1.GetType() + " es la pieza reconocida para esta movida");
+
+                if (player1 == turn && y2 > y1 && piece1.IsValidMove(x1, y1, x2, y2)) // El peon sube
+                {
+
+                    if (IsPawnCapturing(x1, x2))
+                    {
+                        if (!IsAlly(x1, y1, x2, y2) && !IsEmpty(x2, y2))
+                        {
+                            Console.WriteLine("aca1");
+                            ChessBoard[x2, y2] = piece1;
+                            ChessBoard[x1, y1] = null;
+                            Program.TurnChange();
+
+                        }
+                    }
+                    else
+                    {
+                        if (Math.Abs(y2 - y1) == 1 && IsEmpty(x2, y2)) //sube 1 casillero
+                        {
+                            ChessBoard[x2, y2] = piece1;
+                            ChessBoard[x1, y1] = null;
+                            Console.WriteLine("aca2");
+                            Program.TurnChange();
+                        }
+                        if (IsEmpty(x2, y2 - 1) && IsEmpty(x2, y2)) //sube 2 casilleros chequea 2 vacios
+                        {
+                            ChessBoard[x2, y2] = piece1;
+                            ChessBoard[x1, y1] = null;
+                            Program.TurnChange();
+                            Console.WriteLine("aca3");
+                        }
+                    }
+                }
+
+                if (player1 != turn && y2 < y1 && piece1.IsValidMove(x1, y1, x2, y2)) //el peon baja
+                {
+
+                    if (IsPawnCapturing(x1, x2))
+                    {
+
+                        if (!IsAlly(x1, y1, x2, y2) && !IsEmpty(x2, y2))
+                        {
+                            ChessBoard[x2, y2] = piece1;
+                            ChessBoard[x1, y1] = null;
+                            Program.TurnChange();
+                            Console.WriteLine("aca4");
+                        }
+                    }
+                    else
+                    {
+                        if (Math.Abs(y2 - y1) == 1 && IsEmpty(x2, y2)) //baja 1 casillero
+                        {
+                            ChessBoard[x2, y2] = piece1;
+                            ChessBoard[x1, y1] = null;
+                            Program.TurnChange();
+                            Console.WriteLine("aca5");
+                        }
+                        if (IsEmpty(x2, y2 + 1) && IsEmpty(x2, y2)) //baja 2 casilleros chequea 2 vacios
+                        {
+                            ChessBoard[x2, y2] = piece1;
+                            ChessBoard[x1, y1] = null;
+                            Console.WriteLine("aca6");
+                            Program.TurnChange();
+                        }
+                    }
+                }
+            }
+            catch (NullReferenceException e)
+            {
+                Console.WriteLine("No se pudo escoger la pieza");
                 return;
             }
+        }
 
+        public bool IsLineEmpty(int x1, int y1, int x2, int y2)
+        {
+            bool abort = false;
+            if (x1 == x2)
+            {
+                if (Math.Abs(y1 - y2) > 1)
+                {
+                    for (int i = 1; i < Math.Abs(y1 - y2); i++)
+                    {
+                        if (y1 < y2)
+                        {
+                            if (!IsEmpty(x1, y1 + i))
+                            {
+                                abort = true;
+                            }
+                        }
+                        else
+                        {
+                            if (!IsEmpty(x1, y1 - i))
+                            {
+                                abort = true;
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            if (y1 == y2)
+            {
+                for (int i = 1; i < Math.Abs(x1 - x2); i++)
+                {
+                    if (x1 < x2)
+                    {
+                        if (!IsEmpty(x1 + i, y1))
+                        {
+                            abort = true;
+                        }
+                    }
+                    else
+                    {
+                        if (!IsEmpty(x1, y1 - i))
+                        {
+                            abort = true;
+                        }
+                    }
+
+                }
+            }
+
+            return !abort;
+        }
+
+        public bool IsDiagonalEmpty(int x1, int y1, int x2, int y2)
+        {
+            bool abort = false;
+            if (Math.Abs(y1 - y2) == Math.Abs(x1 - x2)) //quizás sea redundante esta línea
+            {
+                if (Math.Abs(y1 - y2) > 1)
+                {
+                    for (int i = 1; i < Math.Abs(y1 - y2); i++)
+                    {
+                        if (y1 < y2 && x1 < x2)
+                        {
+                            if (!IsEmpty(x1 + i, y1 + i))
+                            {
+                                abort = true;
+                            }
+                        }
+                        if (y1 > y2 && x1 < x2)
+                        {
+                            if (!IsEmpty(x1 + i, y1 - i))
+                            {
+                                abort = true;
+                            }
+                        }
+                        if (y1 < y2 && x1 > x2)
+                        {
+                            if (!IsEmpty(x1 - i, y1 + i))
+                            {
+                                abort = true;
+                            }
+                        }
+                        if (y1 > y2 && x1 > x2)
+                        {
+                            if (!IsEmpty(x1 - i, y1 - i))
+                            {
+                                abort = true;
+                            }
+                        }
+
+                    }
+                }
+
+            }
+            return !abort;
         }
 
 
@@ -177,66 +356,34 @@ namespace OsvaldoChessMaster
                 return;
             }
 
+            MovePawn(x1, y1, x2, y2, player1, turn);
 
-            if (IsPawn(piece1)) 
-            {
-                if (player1 == turn && y2 > y1 && piece1.IsValidMove(x1, y1, x2, y2)) // Si player 1 es true, las blancas suben
-                {
-                    if (IsPawnCapturing(x1, x2))
-                    {
-                        if (!IsAlly(x1, y1, x2, y2) && !IsEmpty(x2, y2))
-                        {
-                            ChessBoard[x2, y2] = piece1;
-                            ChessBoard[x1, y1] = null;
-                        }
-                    }
-                    else
-                    {
-                        if (Math.Abs(y2 - y1) == 1 && IsEmpty(x2, y2)) //sube 1 casillero
-                        {
-                            ChessBoard[x2, y2] = piece1;
-                            ChessBoard[x1, y1] = null;
-                        }
-                        else if (IsEmpty(x2, y2 - 1) && IsEmpty(x2, y2)) //sube 2 casilleros chequea 2 vacios
-                        {
-                            ChessBoard[x2, y2] = piece1;
-                            ChessBoard[x1, y1] = null;
-                        }
-                    }
-                }
-
-                if (player1 != turn && y2 < y1 && piece1.IsValidMove(x1, y1, x2, y2))
-                {
-                    if (IsPawnCapturing(x1, x2))
-                    {
-                        if (!IsAlly(x1, y1, x2, y2) && !IsEmpty(x2, y2))
-                        {
-                            ChessBoard[x2, y2] = piece1;
-                            ChessBoard[x1, y1] = null;
-                        }
-                    }
-                    else
-                    {
-                        if (Math.Abs(y2 - y1) == 1 && IsEmpty(x2, y2)) //baja 1 casillero
-                        {
-                            ChessBoard[x2, y2] = piece1;
-                            ChessBoard[x1, y1] = null;
-                        }
-                        else if (IsEmpty(x2, y2 + 1) && IsEmpty(x2, y2)) //baja 2 casilleros chequea 2 vacios
-                        {
-                            ChessBoard[x2, y2] = piece1;
-                            ChessBoard[x1, y1] = null;
-                        }
-                    }
-                }
-            }
-
-            else if (piece1.IsValidMove(x1, y1, x2, y2))
+            //tengo que trabajar el tema de los saltos y creo hay que crear un metodo para el caballo
+            if (IsHorse(piece1) && piece1.IsValidMove(x1, y1, x2, y2))
             {
                 ChessBoard[x2, y2] = piece1;
                 ChessBoard[x1, y1] = null;
+                Console.WriteLine("aca7");
+                Program.TurnChange();
             }
+            if (!IsHorse(piece1) && !IsPawn(piece1) && piece1.IsValidMove(x1, y1, x2, y2))
+            {
+                if (IsDiagonalEmpty(x1, y1, x2, y2))
+                {
+                    ChessBoard[x2, y2] = piece1;
+                    ChessBoard[x1, y1] = null;
+                    Console.WriteLine("aca8");
+                    Program.TurnChange();
+                }
+                if (IsLineEmpty(x1, y1, x2, y2))
+                {
+                    ChessBoard[x2, y2] = piece1;
+                    ChessBoard[x1, y1] = null;
+                    Console.WriteLine("aca9");
+                    Program.TurnChange();
+                }
 
+            }
         }
     }
 }
