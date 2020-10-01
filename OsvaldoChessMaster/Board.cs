@@ -6,6 +6,7 @@ namespace OsvaldoChessMaster
 {
     public class Board
     {
+        public int turnNumber;
         public bool turn = true; //turn=true es el turno del player1
         private const int size = 8;
         public Piece[,] ChessBoard;
@@ -176,7 +177,6 @@ namespace OsvaldoChessMaster
 
                 if (player1 == turn && y2 > y1 && piece1.IsValidMove(x1, y1, x2, y2)) // El peon sube
                 {
-
                     if (IsPawnCapturing(x1, x2))
                     {
                         if (!IsAlly(x1, y1, x2, y2) && !IsEmpty(x2, y2))
@@ -185,17 +185,28 @@ namespace OsvaldoChessMaster
                             ChessBoard[x2, y2] = piece1;
                             ChessBoard[x1, y1] = null;
                             Program.TurnChange();
+                            if (y2 == 7)
+                            {
+                                Piece piece2 = new Queen(turn);
+                                ChessBoard[x2, y2] = piece2;
+                            }
 
                         }
                     }
                     else
                     {
                         if (Math.Abs(y2 - y1) == 1 && IsEmpty(x2, y2)) //sube 1 casillero
-                        {
+                        {                            
+                            Notation.WriteMove(x1, y1, x2, y2, piece1);
                             ChessBoard[x2, y2] = piece1;
                             ChessBoard[x1, y1] = null;
-                            Console.WriteLine("aca2");
+                            Console.WriteLine("aca2");                            
                             Program.TurnChange();
+                            if (y2 == 7)
+                            {
+                                Piece piece2 = new Queen(turn);
+                                ChessBoard[x2, y2] = piece2;
+                            }
                         }
                         if (IsEmpty(x2, y2 - 1) && IsEmpty(x2, y2)) //sube 2 casilleros chequea 2 vacios
                         {
@@ -203,6 +214,11 @@ namespace OsvaldoChessMaster
                             ChessBoard[x1, y1] = null;
                             Program.TurnChange();
                             Console.WriteLine("aca3");
+                            if (y2 == 7)
+                            {
+                                Piece piece2 = new Queen(turn);
+                                ChessBoard[x2, y2] = piece2;
+                            }
                         }
                     }
                 }
@@ -219,6 +235,11 @@ namespace OsvaldoChessMaster
                             ChessBoard[x1, y1] = null;
                             Program.TurnChange();
                             Console.WriteLine("aca4");
+                            if (y2 == 0)
+                            {
+                                Piece piece2 = new Queen(turn);
+                                ChessBoard[x2, y2] = piece2;
+                            }
                         }
                     }
                     else
@@ -229,6 +250,11 @@ namespace OsvaldoChessMaster
                             ChessBoard[x1, y1] = null;
                             Program.TurnChange();
                             Console.WriteLine("aca5");
+                            if (y2 == 0)
+                            {
+                                Piece piece2 = new Queen(turn);
+                                ChessBoard[x2, y2] = piece2;
+                            }
                         }
                         if (IsEmpty(x2, y2 + 1) && IsEmpty(x2, y2)) //baja 2 casilleros chequea 2 vacios
                         {
@@ -236,6 +262,11 @@ namespace OsvaldoChessMaster
                             ChessBoard[x1, y1] = null;
                             Console.WriteLine("aca6");
                             Program.TurnChange();
+                            if (y2 == 0)
+                            {
+                                Piece piece2 = new Queen(turn);
+                                ChessBoard[x2, y2] = piece2;
+                            }
                         }
                     }
                 }
@@ -247,7 +278,7 @@ namespace OsvaldoChessMaster
             }
         }
 
-        public bool IsLineEmpty(int x1, int y1, int x2, int y2)
+        public bool IsLineEmpty(int x1, int y1, int x2, int y2) // chequea 
         {
             bool abort = false;
             if (x1 == x2)
