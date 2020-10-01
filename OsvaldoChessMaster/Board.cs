@@ -87,6 +87,8 @@ namespace OsvaldoChessMaster
             Piece queen2 = new Queen(!player1);
             ChessBoard[3, 0] = queen1;
             ChessBoard[3, 7] = queen2;
+
+            // otra opcion es poner ChessBoard[3, 7] = new Queen(!player1);
         }
         public Piece GetPiece(int x, int y) => ChessBoard[x, y];
 
@@ -137,7 +139,7 @@ namespace OsvaldoChessMaster
             }
         }
 
-        public bool IsPawn(Piece piece)
+        public static bool IsPawn(Piece piece)
         {
             if (piece.GetType() == typeof(Pawn))
             {
@@ -146,7 +148,7 @@ namespace OsvaldoChessMaster
             return false;
         }
 
-        public bool IsHorse(Piece piece)
+        public static bool IsHorse(Piece piece)
         {
             if (piece.GetType() == typeof(Horse))
             {
@@ -155,7 +157,7 @@ namespace OsvaldoChessMaster
             return false;
         }
 
-        public bool IsPawnCapturing(int x1, int x2)// true si se mueve en diagonal
+        public static bool IsPawnCapturing(int x1, int x2)// true si se mueve en diagonal
         {
             if (x1 != x2)
             {
@@ -195,9 +197,10 @@ namespace OsvaldoChessMaster
                     }
                     else
                     {
+                        
                         if (Math.Abs(y2 - y1) == 1 && IsEmpty(x2, y2)) //sube 1 casillero
-                        {                            
-                            Notation.WriteMove(x1, y1, x2, y2, piece1);
+                        {
+                            Notation.WriteMovePawnMoving(x1, y1, x2, y2, piece1); //esta notation y la de abajo quizas puedar juntarse antes del if
                             ChessBoard[x2, y2] = piece1;
                             ChessBoard[x1, y1] = null;
                             Console.WriteLine("aca2");                            
@@ -210,6 +213,7 @@ namespace OsvaldoChessMaster
                         }
                         if (IsEmpty(x2, y2 - 1) && IsEmpty(x2, y2)) //sube 2 casilleros chequea 2 vacios
                         {
+                            Notation.WriteMovePawnMoving(x1, y1, x2, y2, piece1);
                             ChessBoard[x2, y2] = piece1;
                             ChessBoard[x1, y1] = null;
                             Program.TurnChange();
