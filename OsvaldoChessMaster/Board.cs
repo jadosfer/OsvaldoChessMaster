@@ -5,90 +5,58 @@ using System.Text;
 namespace OsvaldoChessMaster
 {
     public class Board
-    {
+    {        
         public int turnNumber;
         public bool turn = true; //turn=true es el turno del player1
-        private const int size = 8;
+        private const int Size = 8;
         public Piece[,] ChessBoard;
+        private bool player1;
 
         public Board(bool player1)
-        {
-            ChessBoard = new Piece[size, size];
+        {               
+            turnNumber = 1;
+            this.player1 = player1;
+            ChessBoard = new Piece[Size, Size];
+                       
+            ChessBoard[0, 1] = new Pawn(player1); 
+            ChessBoard[1, 1] = new Pawn(player1);
+            ChessBoard[2, 1] = new Pawn(player1);
+            ChessBoard[3, 1] = new Pawn(player1);
+            ChessBoard[4, 1] = new Pawn(player1);
+            ChessBoard[5, 1] = new Pawn(player1);
+            ChessBoard[6, 1] = new Pawn(player1);
+            ChessBoard[7, 1] = new Pawn(player1);
 
-            Piece pawn1 = new Pawn(player1); //creamos todas las Pieces segun posicion
-            Piece pawn2 = new Pawn(player1);
-            Piece pawn8 = new Pawn(player1);
-            Piece pawn3 = new Pawn(player1);
-            Piece pawn4 = new Pawn(player1);
-            Piece pawn5 = new Pawn(player1);
-            Piece pawn6 = new Pawn(player1);
-            Piece pawn7 = new Pawn(player1);
+            ChessBoard[0, 6] = new Pawn(!player1);
+            ChessBoard[1, 6] = new Pawn(!player1);
+            ChessBoard[2, 6] = new Pawn(!player1);
+            ChessBoard[3, 6] = new Pawn(!player1);
+            ChessBoard[4, 6] = new Pawn(!player1);
+            ChessBoard[5, 6] = new Pawn(!player1);
+            ChessBoard[6, 6] = new Pawn(!player1);
+            ChessBoard[7, 6] = new Pawn(!player1);
 
-            Piece pawn9 = new Pawn(!player1);
-            Piece pawn10 = new Pawn(!player1);
-            Piece pawn11 = new Pawn(!player1);
-            Piece pawn12 = new Pawn(!player1);
-            Piece pawn13 = new Pawn(!player1);
-            Piece pawn14 = new Pawn(!player1);
-            Piece pawn15 = new Pawn(!player1);
-            Piece pawn16 = new Pawn(!player1);
+            ChessBoard[0, 0] = new Rook(player1);
+            ChessBoard[7, 0] = new Rook(player1);
+            ChessBoard[0, 7] = new Rook(!player1);
+            ChessBoard[7, 7] = new Rook(!player1);
 
-            ChessBoard[0, 1] = pawn1;
-            ChessBoard[1, 1] = pawn2;
-            ChessBoard[2, 1] = pawn3;
-            ChessBoard[3, 1] = pawn4;
-            ChessBoard[4, 1] = pawn5;
-            ChessBoard[5, 1] = pawn6;
-            ChessBoard[6, 1] = pawn7;
-            ChessBoard[7, 1] = pawn8;
+            ChessBoard[1, 0] = new Horse(player1);
+            ChessBoard[6, 0] = new Horse(player1);
+            ChessBoard[1, 7] = new Horse(!player1);
+            ChessBoard[6, 7] = new Horse(!player1);
+ 
+            ChessBoard[2, 0] = new Bishop(player1);
+            ChessBoard[5, 0] = new Bishop(player1);
+            ChessBoard[2, 7] = new Bishop(!player1);
+            ChessBoard[5, 7] = new Bishop(!player1);
 
-            ChessBoard[0, 6] = pawn9;
-            ChessBoard[1, 6] = pawn10;
-            ChessBoard[2, 6] = pawn11;
-            ChessBoard[3, 6] = pawn12;
-            ChessBoard[4, 6] = pawn13;
-            ChessBoard[5, 6] = pawn14;
-            ChessBoard[6, 6] = pawn15;
-            ChessBoard[7, 6] = pawn16;
+            ChessBoard[4, 0] = new King(player1);
+            ChessBoard[4, 7] = new King(!player1);
 
-            Piece rook1 = new Rook(player1);
-            Piece rook2 = new Rook(player1);
-            Piece rook3 = new Rook(!player1);
-            Piece rook4 = new Rook(!player1);
-            ChessBoard[0, 0] = rook1;
-            ChessBoard[7, 0] = rook2;
-            ChessBoard[0, 7] = rook3;
-            ChessBoard[7, 7] = rook4;
+            ChessBoard[3, 0] = new Queen(player1);
+            ChessBoard[3, 7] = new Queen(!player1);
 
-            Piece horse1 = new Horse(player1);
-            Piece horse2 = new Horse(player1);
-            Piece horse3 = new Horse(!player1);
-            Piece horse4 = new Horse(!player1);
-            ChessBoard[1, 0] = horse1;
-            ChessBoard[6, 0] = horse2;
-            ChessBoard[1, 7] = horse3;
-            ChessBoard[6, 7] = horse4;
-
-            Piece bishop1 = new Bishop(player1);
-            Piece bishop2 = new Bishop(player1);
-            Piece bishop3 = new Bishop(!player1);
-            Piece bishop4 = new Bishop(!player1);
-            ChessBoard[2, 0] = bishop1;
-            ChessBoard[5, 0] = bishop2;
-            ChessBoard[2, 7] = bishop3;
-            ChessBoard[5, 7] = bishop4;
-
-            Piece king1 = new King(player1);
-            Piece king2 = new King(!player1);
-            ChessBoard[4, 0] = king1;
-            ChessBoard[4, 7] = king2;
-
-            Piece queen1 = new Queen(player1);
-            Piece queen2 = new Queen(!player1);
-            ChessBoard[3, 0] = queen1;
-            ChessBoard[3, 7] = queen2;
-
-            // otra opcion es poner ChessBoard[3, 7] = new Queen(!player1);
         }
         public Piece GetPiece(int x, int y) => ChessBoard[x, y];
 
@@ -124,7 +92,6 @@ namespace OsvaldoChessMaster
             return true;
         }
 
-
         public bool IsEmpty(int x2, int y2)
         {
             try
@@ -139,7 +106,7 @@ namespace OsvaldoChessMaster
             }
         }
 
-        public static bool IsPawn(Piece piece)
+        public bool IsPawn(Piece piece)
         {
             if (piece.GetType() == typeof(Pawn))
             {
@@ -148,7 +115,7 @@ namespace OsvaldoChessMaster
             return false;
         }
 
-        public static bool IsHorse(Piece piece)
+        public bool IsHorse(Piece piece)
         {
             if (piece.GetType() == typeof(Horse))
             {
@@ -157,7 +124,7 @@ namespace OsvaldoChessMaster
             return false;
         }
 
-        public static bool IsPawnCapturing(int x1, int x2)// true si se mueve en diagonal
+        public bool IsPawnCapturing(int x1, int x2)// true si se mueve en diagonal
         {
             if (x1 != x2)
             {
@@ -183,46 +150,19 @@ namespace OsvaldoChessMaster
                     {
                         if (!IsAlly(x1, y1, x2, y2) && !IsEmpty(x2, y2))
                         {
-                            Console.WriteLine("aca1");
-                            ChessBoard[x2, y2] = piece1;
-                            ChessBoard[x1, y1] = null;
-                            Program.TurnChange();
-                            if (y2 == 7)
-                            {
-                                Piece piece2 = new Queen(turn);
-                                ChessBoard[x2, y2] = piece2;
-                            }
-
+                            MovePromotion(x1, y1, x2, y2, turn, piece1);
                         }
                     }
-                    else
+                    else //no come
                     {
                         
                         if (Math.Abs(y2 - y1) == 1 && IsEmpty(x2, y2)) //sube 1 casillero
-                        {
-                            Notation.WriteMovePawnMoving(x1, y1, x2, y2, piece1); //esta notation y la de abajo quizas puedar juntarse antes del if
-                            ChessBoard[x2, y2] = piece1;
-                            ChessBoard[x1, y1] = null;
-                            Console.WriteLine("aca2");                            
-                            Program.TurnChange();
-                            if (y2 == 7)
-                            {
-                                Piece piece2 = new Queen(turn);
-                                ChessBoard[x2, y2] = piece2;
-                            }
+                        {                            
+                            MovePromotion(x1, y1, x2, y2, turn, piece1);
                         }
                         if (IsEmpty(x2, y2 - 1) && IsEmpty(x2, y2)) //sube 2 casilleros chequea 2 vacios
-                        {
-                            Notation.WriteMovePawnMoving(x1, y1, x2, y2, piece1);
-                            ChessBoard[x2, y2] = piece1;
-                            ChessBoard[x1, y1] = null;
-                            Program.TurnChange();
-                            Console.WriteLine("aca3");
-                            if (y2 == 7)
-                            {
-                                Piece piece2 = new Queen(turn);
-                                ChessBoard[x2, y2] = piece2;
-                            }
+                        {                         
+                            MovePromotion(x1, y1, x2, y2, turn, piece1);
                         }
                     }
                 }
@@ -235,42 +175,18 @@ namespace OsvaldoChessMaster
 
                         if (!IsAlly(x1, y1, x2, y2) && !IsEmpty(x2, y2))
                         {
-                            ChessBoard[x2, y2] = piece1;
-                            ChessBoard[x1, y1] = null;
-                            Program.TurnChange();
-                            Console.WriteLine("aca4");
-                            if (y2 == 0)
-                            {
-                                Piece piece2 = new Queen(turn);
-                                ChessBoard[x2, y2] = piece2;
-                            }
+                            MovePromotion(x1, y1, x2, y2, turn, piece1, false);
                         }
                     }
                     else
                     {
                         if (Math.Abs(y2 - y1) == 1 && IsEmpty(x2, y2)) //baja 1 casillero
                         {
-                            ChessBoard[x2, y2] = piece1;
-                            ChessBoard[x1, y1] = null;
-                            Program.TurnChange();
-                            Console.WriteLine("aca5");
-                            if (y2 == 0)
-                            {
-                                Piece piece2 = new Queen(turn);
-                                ChessBoard[x2, y2] = piece2;
-                            }
+                            MovePromotion(x1, y1, x2, y2, turn, piece1, false);
                         }
                         if (IsEmpty(x2, y2 + 1) && IsEmpty(x2, y2)) //baja 2 casilleros chequea 2 vacios
                         {
-                            ChessBoard[x2, y2] = piece1;
-                            ChessBoard[x1, y1] = null;
-                            Console.WriteLine("aca6");
-                            Program.TurnChange();
-                            if (y2 == 0)
-                            {
-                                Piece piece2 = new Queen(turn);
-                                ChessBoard[x2, y2] = piece2;
-                            }
+                            MovePromotion(x1, y1, x2, y2, turn, piece1, false);
                         }
                     }
                 }
@@ -279,6 +195,40 @@ namespace OsvaldoChessMaster
             {
                 Console.WriteLine("No se pudo escoger la pieza");
                 return;
+            }
+        }
+
+        /// <summary>
+        /// resume el metodo move de peones donde se promueve!!
+        /// </summary>
+        /// <param name="x1"></param>
+        /// <param name="y1"></param>
+        /// <param name="x2"></param>
+        /// <param name="y2"></param>
+        /// <param name="turn"></param>
+        /// <param name="piece1"></param>
+        /// <param name="moveUp"></param>
+        private void MovePromotion(int x1, int y1, int x2, int y2, bool turn, Piece piece1, bool moveUp = true)
+        {
+            FinallyMove(x1, y1, x2, y2, piece1);
+            var limit = moveUp ? 7 : 0;
+            if (y2 == limit)
+            {
+                Piece piece2 = new Queen(turn);
+                ChessBoard[x2, y2] = piece2;
+            }
+        }
+
+        private void FinallyMove(int x1, int y1, int x2, int y2, Piece piece1)
+        {
+            ChessBoard[x2, y2] = piece1;
+            ChessBoard[x1, y1] = null;
+            Notation.WriteMove(x1, y1, x2, y2, piece1, player1, turn, turnNumber);
+            Program.TurnChange();
+            if (turn==player1)
+            {
+                Console.WriteLine("turnNumber: " + turnNumber);
+                turnNumber++;
             }
         }
 
@@ -305,7 +255,6 @@ namespace OsvaldoChessMaster
                                 abort = true;
                             }
                         }
-
                     }
                 }
             }
@@ -328,7 +277,6 @@ namespace OsvaldoChessMaster
                             abort = true;
                         }
                     }
-
                 }
             }
 
@@ -372,10 +320,8 @@ namespace OsvaldoChessMaster
                                 abort = true;
                             }
                         }
-
                     }
                 }
-
             }
             return !abort;
         }
@@ -402,26 +348,17 @@ namespace OsvaldoChessMaster
 
                     if (piece1.CanJump)
                     {
-                        ChessBoard[x2, y2] = piece1;
-                        ChessBoard[x1, y1] = null;
-                        Console.WriteLine("aca7");
-                        Program.TurnChange();
+                        FinallyMove(x1, y1, x2, y2, piece1);
                     }
 
                     if (!piece1.CanJump && (x1 == x2 || y1 == y2) && piece1.IsValidMove(x1, y1, x2, y2) && IsLineEmpty(x1, y1, x2, y2))
                     {
-                        ChessBoard[x2, y2] = piece1;
-                        ChessBoard[x1, y1] = null;
-                        Console.WriteLine("aca8");
-                        Program.TurnChange();
+                        FinallyMove(x1, y1, x2, y2, piece1);
                     }
 
                     if (!piece1.CanJump && x1 != x2 && y1 != y2 && piece1.IsValidMove(x1, y1, x2, y2) && IsDiagonalEmpty(x1, y1, x2, y2))
                     {
-                        ChessBoard[x2, y2] = piece1;
-                        ChessBoard[x1, y1] = null;
-                        Console.WriteLine("aca9");
-                        Program.TurnChange();
+                        FinallyMove(x1, y1, x2, y2, piece1);
 
                     }
                 }

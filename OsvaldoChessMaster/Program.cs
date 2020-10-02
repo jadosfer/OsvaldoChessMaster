@@ -6,9 +6,10 @@ namespace OsvaldoChessMaster
     {
         static private bool turn = true; // true si mueven blancas
         static void Main(string[] args)
-        {            
-            // Game game1 = new Game(true); 
+        {
+            // Game game1 = new Game(true);             
             Board board1 = new Board(true);
+            Notation notation1 = new Notation(board1);
             //bool turn = true; // true si mueven blancas
             bool player1 = true; //true para blancas abajo y negras arriba
 
