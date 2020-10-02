@@ -5,12 +5,19 @@ using System.Text;
 namespace OsvaldoChessMaster
 {
     public class Board
-    {        
+    {
+        int pointer = 0;
         public int turnNumber;
         public bool turn = true; //turn=true es el turno del player1
         private const int Size = 8;
         public Piece[,] ChessBoard;
         private bool player1;
+        Stack<string> StackFullPlay = new Stack<string>();
+        private string movement = ""; // se llena con las dos movidas y luego se reinicia
+        private static Dictionary<int, string> columnLetters = new Dictionary<int, string>
+        {
+            { 0, "a" }, { 1, "b" }, { 2, "c" }, { 3, "d" }, { 4, "e" }, { 5, "f" }, { 6, "g" }, { 7, "h" }
+        };
 
         public Board(bool player1)
         {               
@@ -82,7 +89,7 @@ namespace OsvaldoChessMaster
             return false;
         }
 
-        public bool IsColorTurn(Piece piece1, bool turn)
+        public bool IsColorTurn(Piece piece1)
         {
             if (piece1.Color != turn)
             {
@@ -133,7 +140,7 @@ namespace OsvaldoChessMaster
             return false;
         }
 
-        public void MovePawn(int x1, int y1, int x2, int y2, bool player1, bool turn)
+        public void MovePawn(int x1, int y1, int x2, int y2, bool player1)
         {
             try
             {
@@ -150,7 +157,7 @@ namespace OsvaldoChessMaster
                     {
                         if (!IsAlly(x1, y1, x2, y2) && !IsEmpty(x2, y2))
                         {
-                            MovePromotion(x1, y1, x2, y2, turn, piece1);
+                            MovePromotion(x1, y1, x2, y2, piece1);
                         }
                     }
                     else //no come
@@ -158,11 +165,11 @@ namespace OsvaldoChessMaster
                         
                         if (Math.Abs(y2 - y1) == 1 && IsEmpty(x2, y2)) //sube 1 casillero
                         {                            
-                            MovePromotion(x1, y1, x2, y2, turn, piece1);
+                            MovePromotion(x1, y1, x2, y2, piece1);
                         }
                         if (IsEmpty(x2, y2 - 1) && IsEmpty(x2, y2)) //sube 2 casilleros chequea 2 vacios
                         {                         
-                            MovePromotion(x1, y1, x2, y2, turn, piece1);
+                            MovePromotion(x1, y1, x2, y2, piece1);
                         }
                     }
                 }
@@ -175,18 +182,18 @@ namespace OsvaldoChessMaster
 
                         if (!IsAlly(x1, y1, x2, y2) && !IsEmpty(x2, y2))
                         {
-                            MovePromotion(x1, y1, x2, y2, turn, piece1, false);
+                            MovePromotion(x1, y1, x2, y2, piece1, false);
                         }
                     }
                     else
                     {
                         if (Math.Abs(y2 - y1) == 1 && IsEmpty(x2, y2)) //baja 1 casillero
                         {
-                            MovePromotion(x1, y1, x2, y2, turn, piece1, false);
+                            MovePromotion(x1, y1, x2, y2, piece1, false);
                         }
                         if (IsEmpty(x2, y2 + 1) && IsEmpty(x2, y2)) //baja 2 casilleros chequea 2 vacios
                         {
-                            MovePromotion(x1, y1, x2, y2, turn, piece1, false);
+                            MovePromotion(x1, y1, x2, y2, piece1, false);
                         }
                     }
                 }
@@ -208,9 +215,9 @@ namespace OsvaldoChessMaster
         /// <param name="turn"></param>
         /// <param name="piece1"></param>
         /// <param name="moveUp"></param>
-        private void MovePromotion(int x1, int y1, int x2, int y2, bool turn, Piece piece1, bool moveUp = true)
+        private void MovePromotion(int x1, int y1, int x2, int y2, Piece piece1, bool moveUp = true)
         {
-            FinallyMove(x1, y1, x2, y2, piece1);
+            FinallyMove(x1, y1, x2, y2, piece1, player1);
             var limit = moveUp ? 7 : 0;
             if (y2 == limit)
             {
@@ -219,17 +226,19 @@ namespace OsvaldoChessMaster
             }
         }
 
-        private void FinallyMove(int x1, int y1, int x2, int y2, Piece piece1)
+        private void FinallyMove(int x1, int y1, int x2, int y2, Piece piece1, bool player1)
         {
             ChessBoard[x2, y2] = piece1;
             ChessBoard[x1, y1] = null;
-            Notation.WriteMove(x1, y1, x2, y2, piece1, player1, turn, turnNumber);
-            Program.TurnChange();
+            WriteMove(x1, y1, x2, y2, piece1, player1);
+            Console.WriteLine("turn y player: " + turn + player1 + "....................");
             if (turn==player1)
-            {
+            {                   
                 Console.WriteLine("turnNumber: " + turnNumber);
                 turnNumber++;
-            }
+                Console.WriteLine("turnNumber: " + turnNumber);
+            }            
+            TurnChange();
         }
 
         public bool IsLineEmpty(int x1, int y1, int x2, int y2) // chequea 
@@ -327,38 +336,38 @@ namespace OsvaldoChessMaster
         }
 
 
-        public void MovePiece(int x1, int y1, int x2, int y2, bool player1, bool turn)
+        public void MovePiece(int x1, int y1, int x2, int y2, bool player1)
         {
             try
             {
                 Piece piece1 = GetPiece(x1, y1);
                 Console.WriteLine(piece1.GetType() + " es la pieza reconocida para esta movida");
 
-                if (!IsInRange(x1, y1, x2, y2) || !IsColorTurn(piece1, turn))
+                if (!IsInRange(x1, y1, x2, y2) || !IsColorTurn(piece1))
                 {
                     return;
                 }
 
                 if (IsPawn(piece1))
                 {
-                    MovePawn(x1, y1, x2, y2, player1, turn);
+                    MovePawn(x1, y1, x2, y2, player1);
                 }
                 else
                 {
 
                     if (piece1.CanJump)
                     {
-                        FinallyMove(x1, y1, x2, y2, piece1);
+                        FinallyMove(x1, y1, x2, y2, piece1, player1);
                     }
 
                     if (!piece1.CanJump && (x1 == x2 || y1 == y2) && piece1.IsValidMove(x1, y1, x2, y2) && IsLineEmpty(x1, y1, x2, y2))
                     {
-                        FinallyMove(x1, y1, x2, y2, piece1);
+                        FinallyMove(x1, y1, x2, y2, piece1, player1);
                     }
 
                     if (!piece1.CanJump && x1 != x2 && y1 != y2 && piece1.IsValidMove(x1, y1, x2, y2) && IsDiagonalEmpty(x1, y1, x2, y2))
                     {
-                        FinallyMove(x1, y1, x2, y2, piece1);
+                        FinallyMove(x1, y1, x2, y2, piece1, player1);
 
                     }
                 }
@@ -368,5 +377,58 @@ namespace OsvaldoChessMaster
                 Console.WriteLine("No se pudo escoger la pieza");
             }
         }
-    }
+
+        public void WriteMove(int x1, int y1, int x2, int y2, Piece piece1, bool player1)
+        {            
+            if (player1 == turn) // para escribir el numero de la jugada
+            {
+                movement = movement.Insert(pointer, ".");
+                movement = movement.Insert(pointer, turnNumber.ToString());                
+                pointer += turnNumber.ToString().Length + 1;
+            }
+            movement = movement.Insert(pointer++, " ");
+            if (piece1.GetType() == typeof(Pawn) && IsPawnCapturing(x1, x2)) //peon comiendo             
+            {
+                movement = movement.Insert(pointer++, columnLetters[x1]);
+            }
+            movement = movement.Insert(pointer++, " ");
+            if (piece1.GetType() == typeof(Bishop))
+            {
+                movement = movement.Insert(pointer++, "B");
+            }
+            if (piece1.GetType() == typeof(Horse))
+            {
+                movement = movement.Insert(pointer++, "N");
+            }
+            if (piece1.GetType() == typeof(Queen))
+            {
+                movement = movement.Insert(pointer++, "Q");
+            }
+            if (piece1.GetType() == typeof(King))
+            {
+                movement = movement.Insert(pointer++, "K");
+            }
+            if (piece1.GetType() == typeof(Bishop))
+            {
+                movement = movement.Insert(pointer++, "R");
+            }
+
+            movement = movement.Insert(pointer++, columnLetters[x2]);
+            movement = movement.Insert(pointer++, (y2+1).ToString());            
+
+            if (player1 != turn) // guarda la jugada completa
+            {
+                StackFullPlay.Push(movement);
+                pointer = 0;
+                Console.WriteLine("este es script: " + movement);
+                Console.WriteLine("este es el StackFullPlay:" + StackFullPlay);
+                movement = "";
+            }   
+        }
+        public void TurnChange()
+        {
+            turn = !turn;
+            Console.WriteLine("turn: " + turn + "       cambio de turno -----------------------");
+        }
+    }    
 }
