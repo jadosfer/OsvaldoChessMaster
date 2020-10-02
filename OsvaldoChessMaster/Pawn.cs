@@ -8,7 +8,7 @@ public class Pawn : Piece
     {
         if (x1 == x2) //si quiere moverse en la misma columna
         {
-            if ((Math.Abs(y2 - y1) == 1) || (Math.Abs(y2 - y1) == 2 && (y1 == 1 || y1 == 6)))
+            if ((Math.Abs(y2 - y1) == 1) || (Math.Abs(y2 - y1) == 2 && (y1 == 2 || y1 == 7)))
             {
                 return true;
             }

@@ -9,60 +9,68 @@ namespace OsvaldoChessMaster
         int pointer = 0;
         public int turnNumber;
         public bool turn = true; //turn=true es el turno del player1
-        private const int Size = 8;
+        private const int Size = 9;
         public Piece[,] ChessBoard;
         private bool player1;
         Stack<string> StackFullPlay = new Stack<string>();
         private string movement = ""; // se llena con las dos movidas y luego se reinicia
         private static Dictionary<int, string> columnLetters = new Dictionary<int, string>
         {
-            { 0, "a" }, { 1, "b" }, { 2, "c" }, { 3, "d" }, { 4, "e" }, { 5, "f" }, { 6, "g" }, { 7, "h" }
+            { 1, "a" }, { 2, "b" }, { 3, "c" }, { 4, "d" }, { 5, "e" }, { 6, "f" }, { 7, "g" }, { 8, "h" }
         };
 
         public Board(bool player1)
         {               
             turnNumber = 1;
             this.player1 = player1;
-            ChessBoard = new Piece[Size, Size];
-                       
-            ChessBoard[0, 1] = new Pawn(player1); 
-            ChessBoard[1, 1] = new Pawn(player1);
-            ChessBoard[2, 1] = new Pawn(player1);
-            ChessBoard[3, 1] = new Pawn(player1);
-            ChessBoard[4, 1] = new Pawn(player1);
-            ChessBoard[5, 1] = new Pawn(player1);
-            ChessBoard[6, 1] = new Pawn(player1);
-            ChessBoard[7, 1] = new Pawn(player1);
+            ChessBoard = new Piece[Size, Size];                      
+            
+            ChessBoard[1, 2] = new Pawn(player1);
+            ChessBoard[2, 2] = new Pawn(player1);
+            ChessBoard[3, 2] = new Pawn(player1);
+            ChessBoard[4, 2] = new Pawn(player1);
+            ChessBoard[5, 2] = new Pawn(player1);
+            ChessBoard[6, 2] = new Pawn(player1);
+            ChessBoard[7, 2] = new Pawn(player1);
+            ChessBoard[8, 2] = new Pawn(player1);
+            
+            ChessBoard[1, 7] = new Pawn(!player1);
+            ChessBoard[2, 7] = new Pawn(!player1);
+            ChessBoard[3, 7] = new Pawn(!player1);
+            ChessBoard[4, 7] = new Pawn(!player1);
+            ChessBoard[5, 7] = new Pawn(!player1);
+            ChessBoard[6, 7] = new Pawn(!player1);
+            ChessBoard[7, 7] = new Pawn(!player1);
+            ChessBoard[8, 7] = new Pawn(!player1);
 
-            ChessBoard[0, 6] = new Pawn(!player1);
-            ChessBoard[1, 6] = new Pawn(!player1);
-            ChessBoard[2, 6] = new Pawn(!player1);
-            ChessBoard[3, 6] = new Pawn(!player1);
-            ChessBoard[4, 6] = new Pawn(!player1);
-            ChessBoard[5, 6] = new Pawn(!player1);
-            ChessBoard[6, 6] = new Pawn(!player1);
-            ChessBoard[7, 6] = new Pawn(!player1);
+            ChessBoard[1, 1] = new Rook(player1);
+            ChessBoard[8, 1] = new Rook(player1);
+            ChessBoard[1, 8] = new Rook(!player1);
+            ChessBoard[8, 8] = new Rook(!player1);
 
-            ChessBoard[0, 0] = new Rook(player1);
-            ChessBoard[7, 0] = new Rook(player1);
-            ChessBoard[0, 7] = new Rook(!player1);
-            ChessBoard[7, 7] = new Rook(!player1);
-
-            ChessBoard[1, 0] = new Horse(player1);
-            ChessBoard[6, 0] = new Horse(player1);
-            ChessBoard[1, 7] = new Horse(!player1);
-            ChessBoard[6, 7] = new Horse(!player1);
+            ChessBoard[2, 1] = new Nigh(player1);
+            ChessBoard[7, 1] = new Nigh(player1);
+            ChessBoard[2, 8] = new Nigh(!player1);
+            ChessBoard[7, 8] = new Nigh(!player1);
  
-            ChessBoard[2, 0] = new Bishop(player1);
-            ChessBoard[5, 0] = new Bishop(player1);
-            ChessBoard[2, 7] = new Bishop(!player1);
-            ChessBoard[5, 7] = new Bishop(!player1);
+            ChessBoard[3, 1] = new Bish(player1);
+            ChessBoard[6, 1] = new Bish(player1);
+            ChessBoard[3, 8] = new Bish(!player1);
+            ChessBoard[6, 8] = new Bish(!player1);
 
-            ChessBoard[4, 0] = new King(player1);
-            ChessBoard[4, 7] = new King(!player1);
+            ChessBoard[5, 1] = new King(player1);
+            ChessBoard[5, 8] = new King(!player1);
 
-            ChessBoard[3, 0] = new Queen(player1);
-            ChessBoard[3, 7] = new Queen(!player1);
+            ChessBoard[4, 1] = new Quee(player1);
+            ChessBoard[4, 8] = new Quee(!player1);
+
+            for (int i = 1; i < 9; i++)
+            {
+                for (int j = 3; j < 7; j++)
+                {
+                    ChessBoard[i, j] = new ___e(player1);
+                }
+            }
 
         }
         public Piece GetPiece(int x, int y) => ChessBoard[x, y];
@@ -81,7 +89,7 @@ namespace OsvaldoChessMaster
 
         public bool IsInRange(int x1, int y1, int x2, int y2)
         {
-            if (!(x1 < 0) && !(x1 > 7) && !(y1 < 0) && !(y2 > 7) && !(x2 < 0) && !(x2 > 7) && !(y2 < 0) && !(y2 > 7))
+            if (!(x1 < 1) && !(x1 > 8) && !(y1 < 1) && !(y2 > 8) && !(x2 < 1) && !(x2 > 8) && !(y2 < 1) && !(y2 > 8))
             {
                 return true;
             }
@@ -104,8 +112,14 @@ namespace OsvaldoChessMaster
             try
             {
                 Piece piece1 = GetPiece(x2, y2);
-                piece1.GetType();
-                return false;
+                if (piece1.GetType() == typeof(___e))
+                    {
+                        return true;
+                    }
+                else
+                {
+                    return false;
+                }
             }
             catch (NullReferenceException e)
             {
@@ -124,7 +138,7 @@ namespace OsvaldoChessMaster
 
         public bool IsHorse(Piece piece)
         {
-            if (piece.GetType() == typeof(Horse))
+            if (piece.GetType() == typeof(Nigh))
             {
                 return true;
             }
@@ -148,11 +162,10 @@ namespace OsvaldoChessMaster
                 if (!IsInRange(x1, y1, x2, y2) || !IsPawn(piece1))
                 {
                     return;
-                }
-                Console.WriteLine(piece1.GetType() + " es la pieza reconocida para esta movida");
+                }                
 
                 if (player1 == turn && y2 > y1 && piece1.IsValidMove(x1, y1, x2, y2)) // El peon sube
-                {
+                {                    
                     if (IsPawnCapturing(x1, x2))
                     {
                         if (!IsAlly(x1, y1, x2, y2) && !IsEmpty(x2, y2))
@@ -161,14 +174,13 @@ namespace OsvaldoChessMaster
                         }
                     }
                     else //no come
-                    {
-                        
+                    {                        
                         if (Math.Abs(y2 - y1) == 1 && IsEmpty(x2, y2)) //sube 1 casillero
                         {                            
                             MovePromotion(x1, y1, x2, y2, piece1);
                         }
                         if (IsEmpty(x2, y2 - 1) && IsEmpty(x2, y2)) //sube 2 casilleros chequea 2 vacios
-                        {                         
+                        {                            
                             MovePromotion(x1, y1, x2, y2, piece1);
                         }
                     }
@@ -196,6 +208,11 @@ namespace OsvaldoChessMaster
                             MovePromotion(x1, y1, x2, y2, piece1, false);
                         }
                     }
+
+                }
+                if (!piece1.IsValidMove(x1, y1, x2, y2))
+                {
+                    Console.WriteLine("Not valid move");
                 }
             }
             catch (NullReferenceException e)
@@ -218,10 +235,10 @@ namespace OsvaldoChessMaster
         private void MovePromotion(int x1, int y1, int x2, int y2, Piece piece1, bool moveUp = true)
         {
             FinallyMove(x1, y1, x2, y2, piece1, player1);
-            var limit = moveUp ? 7 : 0;
+            var limit = moveUp ? 8 : 1;
             if (y2 == limit)
             {
-                Piece piece2 = new Queen(turn);
+                Piece piece2 = new Quee(turn);
                 ChessBoard[x2, y2] = piece2;
             }
         }
@@ -229,9 +246,8 @@ namespace OsvaldoChessMaster
         private void FinallyMove(int x1, int y1, int x2, int y2, Piece piece1, bool player1)
         {
             ChessBoard[x2, y2] = piece1;
-            ChessBoard[x1, y1] = null;
-            WriteMove(x1, y1, x2, y2, piece1, player1);
-            Console.WriteLine("turn y player: " + turn + player1 + "....................");
+            ChessBoard[x1, y1] = new ___e(true);
+            WriteMove(x1, y1, x2, y2, piece1, player1);            
             if (turn==player1)
             {                   
                 Console.WriteLine("turnNumber: " + turnNumber);
@@ -392,15 +408,15 @@ namespace OsvaldoChessMaster
                 movement = movement.Insert(pointer++, columnLetters[x1]);
             }
             movement = movement.Insert(pointer++, " ");
-            if (piece1.GetType() == typeof(Bishop))
+            if (piece1.GetType() == typeof(Bish))
             {
                 movement = movement.Insert(pointer++, "B");
             }
-            if (piece1.GetType() == typeof(Horse))
+            if (piece1.GetType() == typeof(Nigh))
             {
                 movement = movement.Insert(pointer++, "N");
             }
-            if (piece1.GetType() == typeof(Queen))
+            if (piece1.GetType() == typeof(Quee))
             {
                 movement = movement.Insert(pointer++, "Q");
             }
@@ -408,27 +424,26 @@ namespace OsvaldoChessMaster
             {
                 movement = movement.Insert(pointer++, "K");
             }
-            if (piece1.GetType() == typeof(Bishop))
+            if (piece1.GetType() == typeof(Bish))
             {
                 movement = movement.Insert(pointer++, "R");
             }
 
             movement = movement.Insert(pointer++, columnLetters[x2]);
-            movement = movement.Insert(pointer++, (y2+1).ToString());            
+            movement = movement.Insert(pointer++, (y2).ToString());            
 
             if (player1 != turn) // guarda la jugada completa
             {
                 StackFullPlay.Push(movement);
                 pointer = 0;
-                Console.WriteLine("este es script: " + movement);
-                Console.WriteLine("este es el StackFullPlay:" + StackFullPlay);
+                Console.WriteLine("--------- Esta fue la jugada: " + movement);                
                 movement = "";
             }   
         }
         public void TurnChange()
         {
             turn = !turn;
-            Console.WriteLine("turn: " + turn + "       cambio de turno -----------------------");
+            //Console.WriteLine("turn: " + turn + "       cambio de turno -----------------------");
         }
     }    
 }
