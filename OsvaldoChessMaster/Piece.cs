@@ -10,4 +10,11 @@ abstract public class Piece
     }
 
     abstract public bool IsValidMove(int x1, int y1, int x2, int y2);
+
+    virtual public bool GetCapturableByTheWay() { return true; }
+
+    virtual public void SetCapturableByTheWay(bool CapturableByTheWay, int turnNumber) {}
+
+    virtual public int GetturnNumberCapturableByTheWay() { return 0;}
+
 }

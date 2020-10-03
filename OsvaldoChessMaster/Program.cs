@@ -32,7 +32,7 @@ namespace OsvaldoChessMaster
             PrintBoard(board1);
             board1.MovePiece(5, 4, 5, 5, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(1, 7, 1, 6, player1);
+            board1.MovePiece(1, 7, 1, 5, player1);
             PrintBoard(board1);
             board1.MovePiece(5, 5, 5, 6, player1); //blancas
             PrintBoard(board1);
@@ -42,7 +42,21 @@ namespace OsvaldoChessMaster
             PrintBoard(board1);
             board1.MovePiece(5, 8, 4, 8, player1);
             PrintBoard(board1);
-            board1.MovePiece(5, 7, 5, 8, player1); //blancas
+            board1.MovePiece(8, 2, 8, 3, player1); //blancas
+            PrintBoard(board1);
+            board1.MovePiece(1, 5, 1, 4, player1);
+            PrintBoard(board1);
+            board1.MovePiece(2, 2, 2, 4, player1); //blancas
+            PrintBoard(board1);
+            board1.MovePiece(8, 7, 8, 6, player1);
+            PrintBoard(board1);
+            board1.MovePiece(7, 2, 7, 3, player1); //blancas
+            PrintBoard(board1);
+            board1.MovePiece(8, 6, 8, 5, player1);
+            PrintBoard(board1);
+            board1.MovePiece(7, 3, 7, 4, player1); //blancas
+            PrintBoard(board1);
+            board1.MovePiece(1, 4, 2, 3, player1);
             PrintBoard(board1);
 
 

@@ -172,6 +172,14 @@ namespace OsvaldoChessMaster
                         {
                             MovePromotion(x1, y1, x2, y2, piece1);
                         }
+                        if (!IsEmpty(x2, y2 - 1) && !IsAlly(x1, y1, x2, y2 - 1))
+                        {                            
+                            if (GetPiece(x2, y2 - 1).GetCapturableByTheWay() && turnNumber - GetPiece(x2, y2 - 1).GetturnNumberCapturableByTheWay() < 2)
+                            {
+                                FinallyMove(x1, y1, x2, y2, piece1, player1);
+                                ChessBoard[x2, y2 - 1] = new ___e(true);
+                            }
+                        }     
                     }
                     else //no come
                     {                        
@@ -180,8 +188,9 @@ namespace OsvaldoChessMaster
                             MovePromotion(x1, y1, x2, y2, piece1);
                         }
                         if (IsEmpty(x2, y2 - 1) && IsEmpty(x2, y2)) //sube 2 casilleros chequea 2 vacios
-                        {                            
-                            MovePromotion(x1, y1, x2, y2, piece1);
+                        {
+                            FinallyMove(x1, y1, x2, y2, piece1, player1);
+                            piece1.SetCapturableByTheWay(true, turnNumber);
                         }
                     }
                 }
@@ -196,6 +205,15 @@ namespace OsvaldoChessMaster
                         {
                             MovePromotion(x1, y1, x2, y2, piece1, false);
                         }
+
+                        if (!IsEmpty(x2, y2 + 1) && !IsAlly(x1, y1, x2, y2 + 1))
+                        {                            
+                            if (GetPiece(x2, y2 + 1).GetCapturableByTheWay() && turnNumber - GetPiece(x2, y2 + 1).GetturnNumberCapturableByTheWay() < 2)
+                            {
+                                FinallyMove(x1, y1, x2, y2, piece1, player1);
+                                ChessBoard[x2, y2 + 1] = new ___e(true);
+                            }
+                        }
                     }
                     else
                     {
@@ -205,7 +223,8 @@ namespace OsvaldoChessMaster
                         }
                         if (IsEmpty(x2, y2 + 1) && IsEmpty(x2, y2)) //baja 2 casilleros chequea 2 vacios
                         {
-                            MovePromotion(x1, y1, x2, y2, piece1, false);
+                            FinallyMove(x1, y1, x2, y2, piece1, player1);
+                            piece1.SetCapturableByTheWay(true, turnNumber);
                         }
                     }
 
@@ -251,8 +270,7 @@ namespace OsvaldoChessMaster
             if (turn==player1)
             {                   
                 Console.WriteLine("turnNumber: " + turnNumber);
-                turnNumber++;
-                Console.WriteLine("turnNumber: " + turnNumber);
+                turnNumber++;                
             }            
             TurnChange();
         }
