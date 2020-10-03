@@ -12,9 +12,10 @@ namespace OsvaldoChessMaster
         private const int Size = 9;
         public Piece[,] ChessBoard;
         private bool player1;
+        private bool check = false;
         Stack<string> StackFullPlay = new Stack<string>();
         private string movement = ""; // se llena con las dos movidas y luego se reinicia
-        private static Dictionary<int, string> columnLetters = new Dictionary<int, string>
+        private static Dictionary<int, string> columnLetters = new Dictionary<int, string>        
         {
             { 1, "a" }, { 2, "b" }, { 3, "c" }, { 4, "d" }, { 5, "e" }, { 6, "f" }, { 7, "g" }, { 8, "h" }
         };
@@ -266,7 +267,11 @@ namespace OsvaldoChessMaster
         {
             ChessBoard[x2, y2] = piece1;
             ChessBoard[x1, y1] = new ___e(true);
-            WriteMove(x1, y1, x2, y2, piece1, player1);            
+            WriteMove(x1, y1, x2, y2, piece1, player1);
+            if (IsCheck(!piece1.Color) || IsCheck(piece1.Color)) 
+            {
+                Console.WriteLine("JAQUE AL REY!!!!!!!!!!!!");
+            }
             if (turn==player1)
             {                   
                 Console.WriteLine("turnNumber: " + turnNumber);
@@ -393,6 +398,32 @@ namespace OsvaldoChessMaster
                     {
                         FinallyMove(x1, y1, x2, y2, piece1, player1);
                     }
+                    // enroque largo
+                    if (x1 == 5 && x2 == 3 && y1 == y2 && (y1 == 1 || y1 == 8) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && IsEmpty(x2 + 1, y2))
+                    {
+                        piece1.LCastling = true;
+                        ChessBoard[x2 + 1, y2] = new Rook(true);
+                        ChessBoard[1, y1] = new ___e(true);
+                        //FinallyMove(x1, y1, x2, y2, piece1, player1);
+                        ChessBoard[x2, y2] = piece1;
+                        ChessBoard[x1, y1] = new ___e(true);
+                        WriteMove(x1, y1, x2, y2, piece1, player1);
+                        if (turn == player1)
+                        {
+                            Console.WriteLine("turnNumber: " + turnNumber);
+                            turnNumber++;
+                        }
+                        TurnChange();
+
+                    }
+                    // enroque corto
+                    if (x1 == 5 && x2 == 7 && y1 == y2 && (y1 == 1 || y1 == 8) && IsEmpty(x1 + 1, y2) && IsEmpty(x1 + 2, y2))
+                    {
+                        piece1.SCastling = true;
+                        ChessBoard[x1 + 1, y2] = new Rook(true);
+                        ChessBoard[8, y1] = new ___e(true);
+                        FinallyMove(x1, y1, x2, y2, piece1, player1);
+                    }
 
                     if (!piece1.CanJump && (x1 == x2 || y1 == y2) && piece1.IsValidMove(x1, y1, x2, y2) && IsLineEmpty(x1, y1, x2, y2))
                     {
@@ -438,17 +469,28 @@ namespace OsvaldoChessMaster
             {
                 movement = movement.Insert(pointer++, "Q");
             }
-            if (piece1.GetType() == typeof(King))
-            {
-                movement = movement.Insert(pointer++, "K");
-            }
-            if (piece1.GetType() == typeof(Bish))
+            if (piece1.GetType() == typeof(Rook))
             {
                 movement = movement.Insert(pointer++, "R");
             }
-
+            if (piece1.GetType() == typeof(King))
+            {
+                if (piece1.SCastling)
+                {
+                    movement = movement.Insert(pointer, "0-0");
+                    pointer += 3;
+                    return;
+                }
+                if (piece1.SCastling)
+                {
+                    movement = movement.Insert(pointer, "0-0-0");
+                    pointer += 5;
+                    return;
+                }
+                movement = movement.Insert(pointer++, "K");
+            }
             movement = movement.Insert(pointer++, columnLetters[x2]);
-            movement = movement.Insert(pointer++, (y2).ToString());            
+            movement = movement.Insert(pointer++, (y2).ToString());
 
             if (player1 != turn) // guarda la jugada completa
             {
@@ -462,6 +504,91 @@ namespace OsvaldoChessMaster
         {
             turn = !turn;
             //Console.WriteLine("turn: " + turn + "       cambio de turno -----------------------");
+        }
+
+        public bool IsCheck(bool Color) //Color es el color del rey (el opuesto del atacante)
+        {
+            int XKING = XKing(Color);
+            int YKING = YKing(Color);
+            for (int i = 1; i < 9; i++)
+            {
+                for (int j = 1; j < 9; j++)
+                {
+                    if (IsPieceChecking(i, j, XKING, YKING))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false; 
+        }
+
+        public bool IsPieceChecking(int x, int y, int XKing, int YKing)
+        {
+            Piece piece1 = GetPiece(x, y);
+            Piece king1 = GetPiece(XKing, YKing);
+            if (piece1.Color != king1.Color && piece1.IsValidMove(x, y, XKing, YKing)) 
+            {
+                if (IsPawn(piece1))
+                {
+                    if (IsPawnCapturing(x, XKing)) 
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+                if (Math.Abs(XKing - x) == Math.Abs(YKing - y) && IsDiagonalEmpty(x, y, XKing, YKing))
+                {
+                    return true;
+                }
+                if ((XKing == x || YKing == y) && IsLineEmpty(x, y, XKing, YKing))
+                {
+                    return true;
+                }
+                if (piece1.CanJump)
+                {
+                    return true;
+                }
+                return false;                
+            }
+
+            else
+            {
+                return false;
+            }
+        }
+
+        public int XKing(bool Color) //Color es el color del Rey
+        {
+            int XKing = 0;
+            for (int i = 1; i < 9; i++)
+            {
+                for (int j = 1; j < 9; j++)
+                {
+                    Piece piece1 = GetPiece(i ,j);
+                    if (piece1.GetType() == typeof(King) && piece1.Color == Color)
+                    {
+                        XKing = i;
+                    }                    
+                }
+            }
+            return XKing; 
+        }
+        public int YKing(bool Color)
+        {
+            int YKing = 0;
+            for (int i = 1; i < 9; i++)
+            {
+                for (int j = 1; j < 9; j++)
+                {
+                    Piece piece1 = GetPiece(i, j);
+                    if (piece1.GetType() == typeof(King) && piece1.Color == Color)
+                    {
+                        YKing = j;
+                    }
+                }
+            }
+            return YKing;
         }
     }    
 }

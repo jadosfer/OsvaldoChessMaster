@@ -51,14 +51,21 @@ namespace OsvaldoChessMaster
             board1.MovePiece(8, 7, 8, 6, player1);
             PrintBoard(board1);
             board1.MovePiece(7, 2, 7, 3, player1); //blancas
-            PrintBoard(board1);
-            board1.MovePiece(8, 6, 8, 5, player1);
-            PrintBoard(board1);
-            board1.MovePiece(7, 3, 7, 4, player1); //blancas
-            PrintBoard(board1);
+            PrintBoard(board1);            
             board1.MovePiece(1, 4, 2, 3, player1);
             PrintBoard(board1);
-
+            board1.MovePiece(7, 1, 6, 3, player1); //blancas
+            PrintBoard(board1);
+            board1.MovePiece(2, 7, 2, 6, player1);
+            PrintBoard(board1);
+            board1.MovePiece(6, 1, 5, 2, player1); //blancas
+            PrintBoard(board1);
+            board1.MovePiece(3, 7, 3, 6, player1);
+            PrintBoard(board1);
+            board1.MovePiece(5, 1, 7, 1, player1); //blancas
+            PrintBoard(board1);
+            board1.MovePiece(3, 6, 3, 5, player1);
+            PrintBoard(board1);
 
         }
         public static void PrintBoard(Board board1)
