@@ -12,12 +12,16 @@ namespace OsvaldoChessMaster
             //bool turn = true; // true si mueven blancas
             bool player1 = true; //true para blancas abajo y negras arriba
             
-            Program.PrintBoard(board1);            
-            
+            Program.PrintBoard(board1);
+
             board1.MovePiece(5, 2, 5, 4, player1); //blancas
             PrintBoard(board1);
             board1.MovePiece(5, 7, 5, 5, player1);
             PrintBoard(board1);
+
+            board1.MovePiece(9, 2, 9, 3, player1); //blancas juega fuera de rango
+            PrintBoard(board1);
+            
             board1.MovePiece(6, 1, 3, 4, player1); //blancas
             PrintBoard(board1);
             board1.MovePiece(6, 7, 6, 6, player1);
@@ -28,7 +32,7 @@ namespace OsvaldoChessMaster
             PrintBoard(board1);
             board1.MovePiece(7, 1, 8, 3, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(6, 8, 1, 3, player1);   //------------------- falla aca
+            board1.MovePiece(6, 8, 1, 3, player1);   
             PrintBoard(board1);
 
             board1.MovePiece(2, 2, 1, 3, player1); //blancas
@@ -47,7 +51,16 @@ namespace OsvaldoChessMaster
             PrintBoard(board1);
             board1.MovePiece(1, 4, 1, 5, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(5, 8, 7, 8, player1); // intento enroque y falla
+            board1.MovePiece(8, 8, 7, 8, player1); // muevo torre
+            PrintBoard(board1);
+
+            board1.MovePiece(7, 2, 7, 3, player1); //blancas
+            PrintBoard(board1);
+            board1.MovePiece(7, 8, 8, 8, player1); // muevo torre
+            PrintBoard(board1);
+            board1.MovePiece(7, 3, 7, 4, player1); //blancas
+            PrintBoard(board1);
+            board1.MovePiece(5, 8, 7, 8, player1); // enroque no permitido
             PrintBoard(board1);
 
         }

@@ -2,7 +2,7 @@
 
 public class King : Piece
 {
-    private bool CanCastling;
+    //private bool CanCastling;
     public override bool CanJump => false;
     public King(bool color) : base(color) 
     {
