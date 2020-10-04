@@ -39,17 +39,16 @@ namespace OsvaldoChessMaster
             PrintBoard(board1);
             board1.MovePiece(1, 3, 1, 4, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(5, 8, 6, 8, player1); // muevo rey
+            board1.MovePiece(1, 7, 1, 6, player1);
+            PrintBoard(board1);
+            board1.MovePiece(3, 1, 1, 3, player1); //blancas
+            PrintBoard(board1);
+            board1.MovePiece(4, 8, 4, 6, player1);
             PrintBoard(board1);
             board1.MovePiece(1, 4, 1, 5, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(6, 8, 5, 8, player1); // vuelve rey
+            board1.MovePiece(5, 8, 7, 8, player1); // intento enroque y falla
             PrintBoard(board1);
-            board1.MovePiece(1, 5, 1, 6, player1); //blancas
-            PrintBoard(board1);
-            board1.MovePiece(5, 8, 7, 8, player1); // intento enroque y no debo poder
-            PrintBoard(board1);
-
 
         }
         public static void PrintBoard(Board board1)

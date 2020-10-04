@@ -272,7 +272,9 @@ namespace OsvaldoChessMaster
             Piece auxPiece1 = ChessBoard[x2, y2];
             ChessBoard[x2, y2] = piece1;
             ChessBoard[x1, y1] = new ___e(true);
-            if (IsCheck(piece1.Color))
+            int XKING = XKing(piece1.Color); //coordenadas del rey del player que mueve
+            int YKING = YKing(piece1.Color);
+            if (IsSquareCheck(XKING, YKING, piece1.Color))
             {
                 Console.WriteLine("Movimiento Invalido, SU REY QUEDA EN JAQUE!!!!!!!!!!!!");
                 ChessBoard[x1, y1] = piece1;
@@ -287,7 +289,9 @@ namespace OsvaldoChessMaster
                     Console.WriteLine("puede enrocar?: " + piece1.GetCanCastling());
                 }
                 WriteMove(x1, y1, x2, y2, piece1, player1);
-                if (IsCheck(!piece1.Color))
+                XKING = XKing(!piece1.Color); //coordenadas del rey del player que no mueve
+                YKING = YKing(!piece1.Color);
+                if (IsSquareCheck(XKING, YKING, !piece1.Color))
                 {
                     Console.WriteLine("JAQUE AL REY!!!!!!!!!!!!");
                 }
@@ -418,16 +422,16 @@ namespace OsvaldoChessMaster
                         FinallyMove(x1, y1, x2, y2, piece1, player1);
                     }
                     
-                    // enroque largo
-                    if (x1 == 5 && x2 == 3 && y1 == y2 && (y1 == 1 || y1 == 8) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && IsEmpty(x2 + 1, y2) && piece1.GetCanCastling())
+                    // enroque largo          mov horiz   ---arriba o abajo---    -----------casilleros vacios entre rey y torre?-------------    fue movido el rey antes?    -------------estan jaqueadas las casillas entre torre y rey???-----------------------------------------------                            
+                    if (x1 == 5 && x2 == 3 && y1 == y2 && (y1 == 1 || y1 == 8) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && IsEmpty(x2 + 1, y2) && piece1.GetCanCastling() && !IsSquareCheck(2, y1, piece1.Color) && !IsSquareCheck(3, y1, piece1.Color) && !IsSquareCheck(4, y1, piece1.Color))
                     {                        
                         piece1.SetCanCastling(false); // ya no va a poder enrocar mas
                         piece1.LCastling = true; // esto es para escribir la jugada                        
                         bool auxTurn = turn;
                         FinallyMove(x1, y1, x2, y2, piece1, player1); //muevo primero solo el rey, si cambia turn sabré que el rey no queda en jaque
-                        if (turn != auxTurn) // verifico que el rey no quede en Jaque y termino de mover la torre
+                        if (turn != auxTurn) // si FinallyMove cambió el turno es que el rey no quedó en Jaque
                         {
-                            ChessBoard[x2 + 1, y2] = new Rook(true);
+                            ChessBoard[x2 + 1, y2] = new Rook(true); //termino de mover la torre
                             ChessBoard[1, y1] = new ___e(true);
                         }
                         else
@@ -435,17 +439,19 @@ namespace OsvaldoChessMaster
                             Console.WriteLine("El rey queda en Jaque con el enroque, no es válido");
                         }
                     }
-                    
+
                     // enroque corto
-                    if (x1 == 5 && x2 == 7 && y1 == y2 && (y1 == 1 || y1 == 8) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && piece1.GetCanCastling())
-                    {                        
+                    Console.WriteLine(IsSquareCheck(6, y1, piece1.Color) + " aca----------------");
+                    if (x1 == 5 && x2 == 7 && y1 == y2 && (y1 == 1 || y1 == 8) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && piece1.GetCanCastling() && !IsSquareCheck(6, y1, piece1.Color) && !IsSquareCheck(7, y1, piece1.Color))
+                    {
+                        
                         piece1.SetCanCastling(false); // ya no va a poder enrocar mas
                         piece1.SCastling = true; // esto es para escribir la jugada
                         bool auxTurn = turn;
                         FinallyMove(x1, y1, x2, y2, piece1, player1); //muevo primero solo el rey, si cambia turn sabré que el rey no queda en jaque
-                        if (turn != auxTurn) // verifico que el rey no quede en Jaque y termino de mover la torre
+                        if (turn != auxTurn) // si FinallyMove cambió el turno es que el rey no quedó en Jaque
                         {
-                            ChessBoard[x1 + 1, y2] = new Rook(true);
+                            ChessBoard[x1 + 1, y2] = new Rook(true); //termino de mover la torre
                             ChessBoard[8, y1] = new ___e(true);
                         }
                         else
@@ -537,15 +543,13 @@ namespace OsvaldoChessMaster
             //Console.WriteLine("turn: " + turn + "       cambio de turno -----------------------");
         }
 
-        public bool IsCheck(bool Color) //Color es el color del rey (el opuesto del atacante)
-        {
-            int XKING = XKing(Color);
-            int YKING = YKing(Color);
+        public bool IsSquareCheck(int x, int y, bool targetColor) //Color es el color del rey (el opuesto del atacante)
+        {            
             for (int i = 1; i < 9; i++)
             {
                 for (int j = 1; j < 9; j++)
                 {
-                    if (IsPieceChecking(i, j, XKING, YKING))
+                    if (IsPieceChecking(i, j, x, y, targetColor))
                     {
                         return true;
                     }
@@ -554,25 +558,24 @@ namespace OsvaldoChessMaster
             return false; 
         }
 
-        public bool IsPieceChecking(int x, int y, int XKing, int YKing)
+        public bool IsPieceChecking(int xPiece, int yPiece, int xTarget, int yTarget, bool targetColor)
         {
-            Piece piece1 = GetPiece(x, y);
-            Piece king1 = GetPiece(XKing, YKing);
-            if (piece1.Color != king1.Color && piece1.IsValidMove(x, y, XKing, YKing)) 
+            Piece piece1 = GetPiece(xPiece, yPiece);            
+            if (piece1.Color != targetColor && piece1.IsValidMove(xPiece, yPiece, xTarget, yTarget)) 
             {
                 if (IsPawn(piece1))
                 {
-                    if (IsPawnCapturing(x, XKing)) 
+                    if (IsPawnCapturing(xPiece, xTarget)) 
                     {
                         return true;
                     }
                     return false;
                 }
-                if (Math.Abs(XKing - x) == Math.Abs(YKing - y) && IsDiagonalEmpty(x, y, XKing, YKing))
+                if (Math.Abs(xTarget - xPiece) == Math.Abs(yTarget - yPiece) && IsDiagonalEmpty(xPiece, yPiece, xTarget, yTarget))
                 {
                     return true;
                 }
-                if ((XKing == x || YKing == y) && IsLineEmpty(x, y, XKing, YKing))
+                if ((xTarget == xPiece || yTarget == yPiece) && IsLineEmpty(xPiece, yPiece, xTarget, yTarget))
                 {
                     return true;
                 }
@@ -589,7 +592,7 @@ namespace OsvaldoChessMaster
             }
         }
 
-        public int XKing(bool Color) //Color es el color del Rey
+        public int XKing(bool Color) //Color es el color del Rey que busca casilla por casilla
         {
             int XKing = 0;
             for (int i = 1; i < 9; i++)
@@ -605,7 +608,7 @@ namespace OsvaldoChessMaster
             }
             return XKing; 
         }
-        public int YKing(bool Color)
+        public int YKing(bool Color) //Color es el color del Rey que busca casilla por casilla
         {
             int YKing = 0;
             for (int i = 1; i < 9; i++)
