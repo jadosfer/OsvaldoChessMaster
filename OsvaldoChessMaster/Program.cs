@@ -18,54 +18,38 @@ namespace OsvaldoChessMaster
             PrintBoard(board1);
             board1.MovePiece(5, 7, 5, 5, player1);
             PrintBoard(board1);
-            board1.MovePiece(4, 1, 8, 5, player1); //blancas
+            board1.MovePiece(6, 1, 3, 4, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(7, 7, 7, 6, player1);
+            board1.MovePiece(6, 7, 6, 6, player1);
             PrintBoard(board1);
-            board1.MovePiece(8, 5, 5, 5, player1); //blancas
+            board1.MovePiece(1, 2, 1, 3, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(4, 8, 5, 7, player1);
+            board1.MovePiece(7, 8, 8, 6, player1);  
             PrintBoard(board1);
-            board1.MovePiece(5, 5, 5, 7, player1); //blancas
+            board1.MovePiece(7, 1, 8, 3, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(6, 8, 5, 7, player1);
+            board1.MovePiece(6, 8, 1, 3, player1);   //------------------- falla aca
             PrintBoard(board1);
-            board1.MovePiece(5, 4, 5, 5, player1); //blancas
+
+            board1.MovePiece(2, 2, 1, 3, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(1, 7, 1, 5, player1);
+            board1.MovePiece(5, 8, 7, 8, player1); // enroque no permitido
+            PrintBoard(board1); 
+            board1.MovePiece(4, 7, 4, 5, player1);
             PrintBoard(board1);
-            board1.MovePiece(5, 5, 5, 6, player1); //blancas
+            board1.MovePiece(1, 3, 1, 4, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(5, 7, 4, 6, player1);
+            board1.MovePiece(5, 8, 6, 8, player1); // muevo rey
             PrintBoard(board1);
-            board1.MovePiece(5, 6, 5, 7, player1); //blancas
+            board1.MovePiece(1, 4, 1, 5, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(5, 8, 4, 8, player1);
+            board1.MovePiece(6, 8, 5, 8, player1); // vuelve rey
             PrintBoard(board1);
-            board1.MovePiece(8, 2, 8, 3, player1); //blancas
+            board1.MovePiece(1, 5, 1, 6, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(1, 5, 1, 4, player1);
+            board1.MovePiece(5, 8, 7, 8, player1); // intento enroque y no debo poder
             PrintBoard(board1);
-            board1.MovePiece(2, 2, 2, 4, player1); //blancas
-            PrintBoard(board1);
-            board1.MovePiece(8, 7, 8, 6, player1);
-            PrintBoard(board1);
-            board1.MovePiece(7, 2, 7, 3, player1); //blancas
-            PrintBoard(board1);            
-            board1.MovePiece(1, 4, 2, 3, player1);
-            PrintBoard(board1);
-            board1.MovePiece(7, 1, 6, 3, player1); //blancas
-            PrintBoard(board1);
-            board1.MovePiece(2, 7, 2, 6, player1);
-            PrintBoard(board1);
-            board1.MovePiece(6, 1, 5, 2, player1); //blancas
-            PrintBoard(board1);
-            board1.MovePiece(3, 7, 3, 6, player1);
-            PrintBoard(board1);
-            board1.MovePiece(5, 1, 7, 1, player1); //blancas
-            PrintBoard(board1);
-            board1.MovePiece(3, 6, 3, 5, player1);
-            PrintBoard(board1);
+
 
         }
         public static void PrintBoard(Board board1)

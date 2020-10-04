@@ -122,9 +122,13 @@ namespace OsvaldoChessMaster
                     return false;
                 }
             }
+            catch (IndexOutOfRangeException e)
+            {
+                return false;
+            }
             catch (NullReferenceException e)
             {
-                return true;
+                return false;
             }
         }
 
@@ -265,19 +269,35 @@ namespace OsvaldoChessMaster
 
         private void FinallyMove(int x1, int y1, int x2, int y2, Piece piece1, bool player1)
         {
+            Piece auxPiece1 = ChessBoard[x2, y2];
             ChessBoard[x2, y2] = piece1;
             ChessBoard[x1, y1] = new ___e(true);
-            WriteMove(x1, y1, x2, y2, piece1, player1);
-            if (IsCheck(!piece1.Color) || IsCheck(piece1.Color)) 
+            if (IsCheck(piece1.Color))
             {
-                Console.WriteLine("JAQUE AL REY!!!!!!!!!!!!");
+                Console.WriteLine("Movimiento Invalido, SU REY QUEDA EN JAQUE!!!!!!!!!!!!");
+                ChessBoard[x1, y1] = piece1;
+                ChessBoard[x2, y2] = auxPiece1;
             }
-            if (turn==player1)
-            {                   
-                Console.WriteLine("turnNumber: " + turnNumber);
-                turnNumber++;                
-            }            
-            TurnChange();
+            else
+            {   
+                if (piece1.GetType() == typeof(King)) 
+                {
+                    piece1.SetCanCastling(false); // si movió rey no podrá enrocar jamás!
+                    Console.WriteLine("Ya no puede enrocar");
+                    Console.WriteLine("puede enrocar?: " + piece1.GetCanCastling());
+                }
+                WriteMove(x1, y1, x2, y2, piece1, player1);
+                if (IsCheck(!piece1.Color))
+                {
+                    Console.WriteLine("JAQUE AL REY!!!!!!!!!!!!");
+                }
+                if (turn == player1)
+                {
+                    Console.WriteLine("turnNumber: " + turnNumber);
+                    turnNumber++;
+                }
+                TurnChange();
+            }
         }
 
         public bool IsLineEmpty(int x1, int y1, int x2, int y2) // chequea 
@@ -378,12 +398,12 @@ namespace OsvaldoChessMaster
         public void MovePiece(int x1, int y1, int x2, int y2, bool player1)
         {
             try
-            {
-                Piece piece1 = GetPiece(x1, y1);
-                Console.WriteLine(piece1.GetType() + " es la pieza reconocida para esta movida");
+            {                
+                Piece piece1 = GetPiece(x1, y1);                
+                Console.WriteLine(piece1.GetType() + " es la pieza reconocida para esta movida" );
 
                 if (!IsInRange(x1, y1, x2, y2) || !IsColorTurn(piece1))
-                {
+                {                    
                     return;
                 }
 
@@ -392,46 +412,57 @@ namespace OsvaldoChessMaster
                     MovePawn(x1, y1, x2, y2, player1);
                 }
                 else
-                {
-
+                {                    
                     if (piece1.CanJump)
-                    {
+                    {                        
                         FinallyMove(x1, y1, x2, y2, piece1, player1);
                     }
+                    
                     // enroque largo
-                    if (x1 == 5 && x2 == 3 && y1 == y2 && (y1 == 1 || y1 == 8) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && IsEmpty(x2 + 1, y2))
-                    {
-                        piece1.LCastling = true;
-                        ChessBoard[x2 + 1, y2] = new Rook(true);
-                        ChessBoard[1, y1] = new ___e(true);
-                        //FinallyMove(x1, y1, x2, y2, piece1, player1);
-                        ChessBoard[x2, y2] = piece1;
-                        ChessBoard[x1, y1] = new ___e(true);
-                        WriteMove(x1, y1, x2, y2, piece1, player1);
-                        if (turn == player1)
+                    if (x1 == 5 && x2 == 3 && y1 == y2 && (y1 == 1 || y1 == 8) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && IsEmpty(x2 + 1, y2) && piece1.GetCanCastling())
+                    {                        
+                        piece1.SetCanCastling(false); // ya no va a poder enrocar mas
+                        piece1.LCastling = true; // esto es para escribir la jugada                        
+                        bool auxTurn = turn;
+                        FinallyMove(x1, y1, x2, y2, piece1, player1); //muevo primero solo el rey, si cambia turn sabré que el rey no queda en jaque
+                        if (turn != auxTurn) // verifico que el rey no quede en Jaque y termino de mover la torre
                         {
-                            Console.WriteLine("turnNumber: " + turnNumber);
-                            turnNumber++;
+                            ChessBoard[x2 + 1, y2] = new Rook(true);
+                            ChessBoard[1, y1] = new ___e(true);
                         }
-                        TurnChange();
-
+                        else
+                        {
+                            Console.WriteLine("El rey queda en Jaque con el enroque, no es válido");
+                        }
                     }
+                    
                     // enroque corto
-                    if (x1 == 5 && x2 == 7 && y1 == y2 && (y1 == 1 || y1 == 8) && IsEmpty(x1 + 1, y2) && IsEmpty(x1 + 2, y2))
-                    {
-                        piece1.SCastling = true;
-                        ChessBoard[x1 + 1, y2] = new Rook(true);
-                        ChessBoard[8, y1] = new ___e(true);
-                        FinallyMove(x1, y1, x2, y2, piece1, player1);
+                    if (x1 == 5 && x2 == 7 && y1 == y2 && (y1 == 1 || y1 == 8) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && piece1.GetCanCastling())
+                    {                        
+                        piece1.SetCanCastling(false); // ya no va a poder enrocar mas
+                        piece1.SCastling = true; // esto es para escribir la jugada
+                        bool auxTurn = turn;
+                        FinallyMove(x1, y1, x2, y2, piece1, player1); //muevo primero solo el rey, si cambia turn sabré que el rey no queda en jaque
+                        if (turn != auxTurn) // verifico que el rey no quede en Jaque y termino de mover la torre
+                        {
+                            ChessBoard[x1 + 1, y2] = new Rook(true);
+                            ChessBoard[8, y1] = new ___e(true);
+                        }
+                        else
+                        {
+                            Console.WriteLine("El rey queda en Jaque con el enroque, no es válido");
+                        }
                     }
+                    
 
                     if (!piece1.CanJump && (x1 == x2 || y1 == y2) && piece1.IsValidMove(x1, y1, x2, y2) && IsLineEmpty(x1, y1, x2, y2))
-                    {
+                    {                        
                         FinallyMove(x1, y1, x2, y2, piece1, player1);
                     }
-
+                    
                     if (!piece1.CanJump && x1 != x2 && y1 != y2 && piece1.IsValidMove(x1, y1, x2, y2) && IsDiagonalEmpty(x1, y1, x2, y2))
                     {
+                        
                         FinallyMove(x1, y1, x2, y2, piece1, player1);
 
                     }
