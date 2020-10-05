@@ -14,54 +14,53 @@ namespace OsvaldoChessMaster
             
             Program.PrintBoard(board1);
 
-            board1.MovePiece(5, 2, 5, 4, player1); //blancas
+            board1.FinallyMove(5, 2, 5, 4, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(5, 7, 5, 5, player1);
+            board1.FinallyMove(5, 7, 5, 5, player1);
+            PrintBoard(board1);            
+            board1.FinallyMove(6, 1, 3, 4, player1); //blancas
             PrintBoard(board1);
-
-            board1.MovePiece(9, 2, 9, 3, player1); //blancas juega fuera de rango
+            board1.FinallyMove(6, 7, 6, 6, player1);
             PrintBoard(board1);
-            
-            board1.MovePiece(6, 1, 3, 4, player1); //blancas
+            board1.FinallyMove(1, 2, 1, 3, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(6, 7, 6, 6, player1);
+            board1.FinallyMove(7, 8, 8, 6, player1);
             PrintBoard(board1);
-            board1.MovePiece(1, 2, 1, 3, player1); //blancas
+            board1.FinallyMove(7, 1, 8, 3, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(7, 8, 8, 6, player1);  
+            board1.FinallyMove(6, 8, 1, 3, player1);
             PrintBoard(board1);
-            board1.MovePiece(7, 1, 8, 3, player1); //blancas
+            board1.FinallyMove(2, 2, 1, 3, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(6, 8, 1, 3, player1);   
+            board1.FinallyMove(5, 8, 7, 8, player1); // enroque no permitido
             PrintBoard(board1);
-
-            board1.MovePiece(2, 2, 1, 3, player1); //blancas
+            board1.FinallyMove(4, 7, 4, 5, player1);
             PrintBoard(board1);
-            board1.MovePiece(5, 8, 7, 8, player1); // enroque no permitido
-            PrintBoard(board1); 
-            board1.MovePiece(4, 7, 4, 5, player1);
+            board1.FinallyMove(1, 3, 1, 4, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(1, 3, 1, 4, player1); //blancas
+            board1.FinallyMove(1, 7, 1, 6, player1);
             PrintBoard(board1);
-            board1.MovePiece(1, 7, 1, 6, player1);
+            board1.FinallyMove(3, 1, 1, 3, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(3, 1, 1, 3, player1); //blancas
+            board1.FinallyMove(4, 8, 4, 6, player1);
             PrintBoard(board1);
-            board1.MovePiece(4, 8, 4, 6, player1);
+            board1.FinallyMove(1, 4, 1, 5, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(1, 4, 1, 5, player1); //blancas
-            PrintBoard(board1);
-            board1.MovePiece(8, 8, 7, 8, player1); // muevo torre
+            board1.FinallyMove(8, 8, 7, 8, player1); // muevo torre
             PrintBoard(board1);
 
-            board1.MovePiece(7, 2, 7, 3, player1); //blancas
+            board1.FinallyMove(7, 2, 7, 3, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(7, 8, 8, 8, player1); // muevo torre
+            board1.FinallyMove(7, 8, 8, 8, player1); // muevo torre
             PrintBoard(board1);
-            board1.MovePiece(7, 3, 7, 4, player1); //blancas
+            board1.FinallyMove(7, 3, 7, 4, player1); //blancas
             PrintBoard(board1);
-            board1.MovePiece(5, 8, 7, 8, player1); // enroque no permitido
+            board1.FinallyMove(5, 8, 7, 8, player1); // enroque no permitido
             PrintBoard(board1);
+
+
+
+
 
         }
         public static void PrintBoard(Board board1)
