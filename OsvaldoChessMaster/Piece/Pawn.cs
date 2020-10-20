@@ -15,7 +15,12 @@
 
         public override bool IsValidMove(int x1, int y1, int x2, int y2)
         {
-            if (x1 == x2) //si quiere moverse en la misma columna
+            // movimiento en el mismo lugar
+            if (x1 == x2 && y1 == y2)
+                return false;
+
+            // si quiere moverse en la misma columna
+            if (x1 == x2)
             {
                 if ((Math.Abs(y2 - y1) == 1) || (Math.Abs(y2 - y1) == 2 && (y1 == 2 || y1 == 7)))
                 {
@@ -23,7 +28,7 @@
                 }
             }
 
-            //si quiere moverse a las columnas de al lado            
+            // si quiere moverse a las columnas de al lado            
             if ((Math.Abs(x2 - x1) == 1) && Math.Abs(y2 - y1) == 1)
             {
                 return true;
