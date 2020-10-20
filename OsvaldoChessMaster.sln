@@ -5,20 +5,14 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{82EA7A23-E314-463D-8D78-7D037878FC3E}"
 	ProjectSection(SolutionItems) = preProject
-		Bishop.cs = Bishop.cs
-		OsvaldoChessMaster\Board.cs = OsvaldoChessMaster\Board.cs
-		OsvaldoChessMaster\Game.cs = OsvaldoChessMaster\Game.cs
-		Horse.cs = Horse.cs
-		King.cs = King.cs
-		OsvaldoChessMaster\Menu.cs = OsvaldoChessMaster\Menu.cs
-		OsvaldoChessMaster\Pawn.cs = OsvaldoChessMaster\Pawn.cs
-		Piece.cs = Piece.cs
-		OsvaldoChessMaster\Program.cs = OsvaldoChessMaster\Program.cs
-		Queen.cs = Queen.cs
-		Rook.cs = Rook.cs
+		.gitignore = .gitignore
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OsvaldoChessMaster", "OsvaldoChessMaster\OsvaldoChessMaster.csproj", "{0AC910FA-C85D-4D45-BA2A-9165820A4FA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OsvaldoChessMaster.Test", "OsvaldoChessMaster.Test\OsvaldoChessMaster.Test.csproj", "{B2916F9E-7C9B-4658-9864-CEACBB1BF3EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ocm", "ocm\ocm.csproj", "{21B39F8B-ED3D-473B-BF31-357F55C9878F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +24,14 @@ Global
 		{0AC910FA-C85D-4D45-BA2A-9165820A4FA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AC910FA-C85D-4D45-BA2A-9165820A4FA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AC910FA-C85D-4D45-BA2A-9165820A4FA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2916F9E-7C9B-4658-9864-CEACBB1BF3EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2916F9E-7C9B-4658-9864-CEACBB1BF3EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2916F9E-7C9B-4658-9864-CEACBB1BF3EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2916F9E-7C9B-4658-9864-CEACBB1BF3EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21B39F8B-ED3D-473B-BF31-357F55C9878F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21B39F8B-ED3D-473B-BF31-357F55C9878F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21B39F8B-ED3D-473B-BF31-357F55C9878F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21B39F8B-ED3D-473B-BF31-357F55C9878F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

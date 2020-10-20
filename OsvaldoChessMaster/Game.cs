@@ -16,14 +16,10 @@ namespace OsvaldoChessMaster
 
         public void NewGame(bool player1) 
         {
-            Board board1 = new Board(player1);
+            var board1 = new Board(player1);
         }
+
         public void ReiniciarPartida() { }
-        public void GuardarPartida() { }
-
-    
-
-
-
+        public void GuardarPartida() { }   
     }
 }
