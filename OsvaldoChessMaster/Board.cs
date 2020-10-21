@@ -82,15 +82,7 @@
         }
         public PieceBase GetPiece(int x, int y)
         {
-            if (ChessBoard[x, y] == null)
-            {
-                PieceBase piece1 = new EmptyPiece(player1);
-                return piece1;
-            }
-            else 
-            { 
-                return ChessBoard[x, y]; 
-            }
+            return ChessBoard[x, y] ?? new EmptyPiece(player1);
         }
 
         public bool IsAlly(int x1, int y1, int x2, int y2) //solo es true si hay otra pieza del mismo color, sino false siempre
@@ -151,19 +143,12 @@
             }
         }
 
-        public bool IsPawn(PieceBase piece)
-        {
-            if (piece.GetType() == typeof(Pawn))
-            {
-                return true;
-            }
-
-            return false;
-        }
+        public bool IsPawn(PieceBase piece) => piece.GetType() == typeof(Pawn);
 
         public bool IsHorse(PieceBase piece) => piece.GetType() == typeof(Knight);
 
-        public bool IsPawnCapturing(int x1, int x2) => x1 != x2;// true si se mueve en diagonal
+        // true si se mueve en diagonal
+        public bool IsPawnCapturing(int x1, int x2) => x1 != x2;
 
         public bool CanMovePawn(int x1, int y1, int x2, int y2, bool player1, bool testing)
         {
@@ -176,7 +161,8 @@
                     return false;
                 }
 
-                if (player1 == Turn && y2 > y1 && piece1.IsValidMove(x1, y1, x2, y2)) // El peon sube
+                // El peon sube
+                if (player1 == Turn && y2 > y1 && piece1.IsValidMove(x1, y1, x2, y2))
                 {
                     if (IsPawnCapturing(x1, x2))
                     {
@@ -192,10 +178,11 @@
                         {
                             if (GetPiece(x2, y2 - 1).GetCapturableByTheWay() && TurnNumber - GetPiece(x2, y2 - 1).GetturnNumberCapturableByTheWay() < 2)
                             {
-                                //FinallyMove(x1, y1, x2, y2, piece1, player1);
+                                // FinallyMove(x1, y1, x2, y2, piece1, player1);
                                 if (!testing)
                                 {
-                                    ChessBoard[x2, y2 - 1] = new EmptyPiece(player1);  //come al paso
+                                    //come al paso
+                                    ChessBoard[x2, y2 - 1] = new EmptyPiece(player1);
                                 }
                                 return true;
                             }
@@ -313,7 +300,6 @@
         {
             if (CanMovePiece(x1, y1, x2, y2, player1, false))
             {
-
                 var piece1 = GetPiece(x1, y1);
                 ChessBoard[x2, y2] = piece1;
                 ChessBoard[x1, y1] = new EmptyPiece(true);
@@ -360,7 +346,6 @@
                 TurnChange();
             }
         }
-
 
         public bool IsLineEmpty(int x1, int y1, int x2, int y2) // chequea 
         {
@@ -453,6 +438,7 @@
                     }
                 }
             }
+
             return !abort;
         }
 
@@ -643,6 +629,7 @@
                 movement = "";
             }
         }
+
         public void TurnChange()
         {
             Turn = !Turn;
