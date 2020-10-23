@@ -48,7 +48,6 @@ namespace OsvaldoChessMaster
             PrintBoard(board1);
             board1.FinallyMove(8, 8, 7, 8, player1); // muevo torre
             PrintBoard(board1);
-
             board1.FinallyMove(7, 2, 7, 3, player1); //blancas
             PrintBoard(board1);
             board1.FinallyMove(7, 8, 8, 8, player1); // muevo torre
@@ -56,6 +55,14 @@ namespace OsvaldoChessMaster
             board1.FinallyMove(7, 3, 7, 4, player1); //blancas
             PrintBoard(board1);
             board1.FinallyMove(5, 8, 7, 8, player1); // enroque no permitido
+            PrintBoard(board1);
+            board1.FinallyMove(5, 8, 6, 8, player1); 
+            PrintBoard(board1);
+            board1.FinallyMove(1, 3, 4, 6, player1); //blancas
+            PrintBoard(board1);
+            board1.FinallyMove(6, 8, 7, 8, player1);
+            PrintBoard(board1);
+            board1.FinallyMove(3, 4, 4, 5, player1); //blancas
             PrintBoard(board1);
 
 
