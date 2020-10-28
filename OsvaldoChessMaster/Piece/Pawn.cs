@@ -56,7 +56,7 @@
         {
             var color = this.Color ? "w" : "b";
 
-            return $"{color}_(P)_";
+            return $"{color}_(_PAWN_)_";
         }
     }
 }

@@ -28,7 +28,7 @@
         {
             var color = this.Color ? "w" : "b";
 
-            return $"{color}_(R)_";
+            return $"{color}_(_ROOK_)_";
         }
     }
 }

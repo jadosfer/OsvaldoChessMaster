@@ -31,7 +31,7 @@
         {
             var color = this.Color ? "w" : "b";
 
-            return $"{color}_(K)_";
+            return $"{color}_(_KING_)_";
         }
     }
 }

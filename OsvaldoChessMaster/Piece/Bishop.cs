@@ -25,7 +25,7 @@
         {
             var color = this.Color ? "w" : "b";
 
-            return $"{color}_(B)_";
+            return $"{color}_(BISHOP)_";
         }
     }
 }

@@ -32,7 +32,7 @@
         {
             var color = this.Color ? "w" : "b";
 
-            return $"{color}_(Q)_";
+            return $"{color}_(QUEEN_)_";
         }
     }
 }

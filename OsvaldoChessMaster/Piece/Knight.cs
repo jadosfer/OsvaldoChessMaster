@@ -25,7 +25,7 @@
         {
             var color = this.Color ? "w" : "b";
 
-            return $"{color}_(N)_";
+            return $"{color}_(KNIGHT)_";
         }
     }
 }
