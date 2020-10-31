@@ -7,18 +7,7 @@ namespace OsvaldoChessMaster
 {
     public class ArtificialIntelligence
     {
-        public int x1;
-        public int y1;
-        public int x2;
-        public int y2;
-        public int x3;
-        public int y3;
-        public int x4;
-        public int y4;
-        public int x5;
-        public int y5;
-        public int x6;
-        public int y6;
+       
         public int[] move;
         public double[,] moves;
         public double[,] pawnPositionValues = new double[9, 9];
@@ -49,7 +38,7 @@ namespace OsvaldoChessMaster
             double actualValue = EvaluateBoard(board);
             List<Move> AllMoves = new List<Move>();
             //int count = 0;
-            PieceBase[,] ChessBoardAux = (PieceBase[,])board.ChessBoard.Clone();
+            PieceBase[,] ChessBoardAux = (PieceBase[,]) board.ChessBoard.Clone();
             for (int i = 1; i < 9; i++)
             {
                 for (int j = 1; j < 9; j++)
@@ -63,7 +52,7 @@ namespace OsvaldoChessMaster
                             {
                                 
                                 if (board.FinallyMove(i, j, k, l, board.player1))
-                                {
+                                {                                    
                                     // solo lo guardo si no empeora la situacion (cuanto ams negativo mejor para la pc
                                     if (EvaluateBoard(board) <= actualValue)
                                     {
@@ -73,7 +62,7 @@ namespace OsvaldoChessMaster
                                     // back to previous board
                                     board.ChessBoard = ChessBoardAux;
                                     // back to previous turn
-                                    board.TurnChange();
+                                    board.TurnChange();                                    
                                 }
                             }
                         }
@@ -85,8 +74,7 @@ namespace OsvaldoChessMaster
 
         public List<Move> BestResponses(Board board, List<Move> previousMoves)
         {
-            List<Move> responses = new List<Move>();
-            //var ChessBoardAux = CloneBoard(board);
+            List<Move> responses = new List<Move>();            
             PieceBase[,] ChessBoardAux = (PieceBase[,])board.ChessBoard.Clone();
             foreach (Move previousMove in previousMoves)
             {
@@ -101,8 +89,11 @@ namespace OsvaldoChessMaster
         }
 
         public Move BestResponse(Board board)
-        {            
-            PieceBase[,] ChessBoardAux = (PieceBase[,]) board.ChessBoard.Clone();
+        {
+            var ChessBoardAux = CloneBoard(board);
+            //PrintBoard(board);
+            //Console.WriteLine("Print arriba despeus de clonar");
+            //PieceBase[,] ChessBoardAux = (PieceBase[,]) board.ChessBoard.Clone();
             double actualValue = EvaluateBoard(board);
             Move response = new Move();            
 
@@ -120,6 +111,8 @@ namespace OsvaldoChessMaster
                             {
                                 if (board.FinallyMove(i, j, k, l, board.player1))
                                 {
+                                    //PrintBoard(board);
+                                    //Console.WriteLine("primer print arriba. despues del finally");
                                     // si mueve el de abajo
                                     if (board.player1)
                                     {   // guardo la mejor movida
@@ -145,10 +138,13 @@ namespace OsvaldoChessMaster
                                     }
                                     // back to previous board
                                     board.ChessBoard = ChessBoardAux;
-                                    // back to previous turn
-                                    PrintBoard(board);
+                                    PrintChessBoard(ChessBoardAux);
+                                    Console.WriteLine("arriba imprimo el Aux");
+                                    // back to previous turn                                    
                                     board.TurnChange();
-                                    Console.WriteLine("" + response.x1 + response.y1 + response.x2 + response.y2);
+                                    PrintBoard(board);
+                                    Console.WriteLine("arriba El board undo");
+                                    //Console.WriteLine("" + response.x1 + response.y1 + response.x2 + response.y2);
                                 }
                             }
                         }
@@ -160,15 +156,37 @@ namespace OsvaldoChessMaster
 
         public PieceBase[,] CloneBoard(Board board)
         {
-            PieceBase[,] clonedBoard = new PieceBase[8, 8];
+            PieceBase[,] clonedBoard = new PieceBase[9, 9];
             for (int i = 1; i < 9; i++)
             {
                 for (int j = 1; j < 9; j++)
-                {
-                    clonedBoard[i, j] = board.GetPiece(i, j);
-                } 
+                {                    
+                    switch (board.GetPiece(i, j).GetType().Name)
+                    {
+                        case nameof(Pawn):
+                            clonedBoard[i, j] = new Pawn(board.player1);
+                            break;
+                        case nameof(Knight):
+                            clonedBoard[i, j] = new Knight(board.player1);
+                            break;
+                        case nameof(Bishop):
+                            clonedBoard[i, j] = new Bishop(board.player1);
+                            break;
+                        case nameof(Rook):
+                            clonedBoard[i, j] = new Rook(board.player1);
+                            break;
+                        case nameof(Queen):
+                            clonedBoard[i, j] = new Queen(board.player1);
+                            break;
+                        case nameof(King):
+                            clonedBoard[i, j] = new King(board.player1);
+                            break;
+                        case nameof(EmptyPiece):
+                            clonedBoard[i, j] = new EmptyPiece(board.player1);
+                            break;
+                    }
+                }
             }
-
             return clonedBoard;
         }
 
@@ -463,6 +481,20 @@ namespace OsvaldoChessMaster
             Console.Write(board.ChessBoard[1, 3] + " "); Console.Write(board.ChessBoard[2, 3] + " "); Console.Write(board.ChessBoard[3, 3] + " "); Console.Write(board.ChessBoard[4, 3] + " "); Console.Write(board.ChessBoard[5, 3] + " "); Console.Write(board.ChessBoard[6, 3] + " "); Console.Write(board.ChessBoard[7, 3] + " "); Console.WriteLine(board.ChessBoard[8, 3] + " ");
             Console.Write(board.ChessBoard[1, 2] + " "); Console.Write(board.ChessBoard[2, 2] + " "); Console.Write(board.ChessBoard[3, 2] + " "); Console.Write(board.ChessBoard[4, 2] + " "); Console.Write(board.ChessBoard[5, 2] + " "); Console.Write(board.ChessBoard[6, 2] + " "); Console.Write(board.ChessBoard[7, 2] + " "); Console.WriteLine(board.ChessBoard[8, 2] + " ");
             Console.Write(board.ChessBoard[1, 1] + " "); Console.Write(board.ChessBoard[2, 1] + " "); Console.Write(board.ChessBoard[3, 1] + " "); Console.Write(board.ChessBoard[4, 1] + " "); Console.Write(board.ChessBoard[5, 1] + " "); Console.Write(board.ChessBoard[6, 1] + " "); Console.Write(board.ChessBoard[7, 1] + " "); Console.WriteLine(board.ChessBoard[8, 1] + " ");
+            Console.WriteLine();
+        }
+
+        public static void PrintChessBoard(PieceBase[,] ChessBoard)
+        {
+            Console.WriteLine();
+            Console.Write(ChessBoard[1, 8] + " "); Console.Write(ChessBoard[2, 8] + " "); Console.Write(ChessBoard[3, 8] + " "); Console.Write(ChessBoard[4, 8] + " "); Console.Write(ChessBoard[5, 8] + " "); Console.Write(ChessBoard[6, 8] + " "); Console.Write(ChessBoard[7, 8] + " "); Console.WriteLine(ChessBoard[8, 8] + " ");
+            Console.Write(ChessBoard[1, 7] + " "); Console.Write(ChessBoard[2, 7] + " "); Console.Write(ChessBoard[3, 7] + " "); Console.Write(ChessBoard[4, 7] + " "); Console.Write(ChessBoard[5, 7] + " "); Console.Write(ChessBoard[6, 7] + " "); Console.Write(ChessBoard[7, 7] + " "); Console.WriteLine(ChessBoard[8, 7] + " ");
+            Console.Write(ChessBoard[1, 6] + " "); Console.Write(ChessBoard[2, 6] + " "); Console.Write(ChessBoard[3, 6] + " "); Console.Write(ChessBoard[4, 6] + " "); Console.Write(ChessBoard[5, 6] + " "); Console.Write(ChessBoard[6, 6] + " "); Console.Write(ChessBoard[7, 6] + " "); Console.WriteLine(ChessBoard[8, 6] + " ");
+            Console.Write(ChessBoard[1, 5] + " "); Console.Write(ChessBoard[2, 5] + " "); Console.Write(ChessBoard[3, 5] + " "); Console.Write(ChessBoard[4, 5] + " "); Console.Write(ChessBoard[5, 5] + " "); Console.Write(ChessBoard[6, 5] + " "); Console.Write(ChessBoard[7, 5] + " "); Console.WriteLine(ChessBoard[8, 5] + " ");
+            Console.Write(ChessBoard[1, 4] + " "); Console.Write(ChessBoard[2, 4] + " "); Console.Write(ChessBoard[3, 4] + " "); Console.Write(ChessBoard[4, 4] + " "); Console.Write(ChessBoard[5, 4] + " "); Console.Write(ChessBoard[6, 4] + " "); Console.Write(ChessBoard[7, 4] + " "); Console.WriteLine(ChessBoard[8, 4] + " ");
+            Console.Write(ChessBoard[1, 3] + " "); Console.Write(ChessBoard[2, 3] + " "); Console.Write(ChessBoard[3, 3] + " "); Console.Write(ChessBoard[4, 3] + " "); Console.Write(ChessBoard[5, 3] + " "); Console.Write(ChessBoard[6, 3] + " "); Console.Write(ChessBoard[7, 3] + " "); Console.WriteLine(ChessBoard[8, 3] + " ");
+            Console.Write(ChessBoard[1, 2] + " "); Console.Write(ChessBoard[2, 2] + " "); Console.Write(ChessBoard[3, 2] + " "); Console.Write(ChessBoard[4, 2] + " "); Console.Write(ChessBoard[5, 2] + " "); Console.Write(ChessBoard[6, 2] + " "); Console.Write(ChessBoard[7, 2] + " "); Console.WriteLine(ChessBoard[8, 2] + " ");
+            Console.Write(ChessBoard[1, 1] + " "); Console.Write(ChessBoard[2, 1] + " "); Console.Write(ChessBoard[3, 1] + " "); Console.Write(ChessBoard[4, 1] + " "); Console.Write(ChessBoard[5, 1] + " "); Console.Write(ChessBoard[6, 1] + " "); Console.Write(ChessBoard[7, 1] + " "); Console.WriteLine(ChessBoard[8, 1] + " ");
             Console.WriteLine();
         }
 
