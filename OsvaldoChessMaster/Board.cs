@@ -20,7 +20,8 @@
         public bool isCheckmate { get; private set; }
         public bool isCheck;
         public bool isCantMoveCheck;
-      
+        public bool isCastling;
+
         private static Dictionary<int, string> columnLetters = new Dictionary<int, string>
         {
             { 1, "a" }, { 2, "b" }, { 3, "c" }, { 4, "d" }, { 5, "e" }, { 6, "f" }, { 7, "g" }, { 8, "h" }
@@ -96,11 +97,8 @@
             var piece1 = GetPiece(x1, y1);
             var piece2 = GetPiece(x2, y2);
 
-            if (piece1.Color == piece2.Color)
-            {
-                return true;
-            }
-            return false;
+            return piece1.Color == piece2.Color;
+
         }
 
         public bool IsInRange(int x1, int y1, int x2, int y2)
@@ -115,12 +113,7 @@
 
         public bool IsColorTurn(PieceBase piece1)
         {
-            if (piece1.Color != Turn)
-            {
-                Console.WriteLine("Is not your turn");
-                return false;
-            }
-            return true;
+            return piece1.Color == Turn;
         }
 
         public bool IsEmpty(int x1, int y1)
@@ -128,14 +121,7 @@
             try
             {
                 var piece1 = GetPiece(x1, y1);
-                if (piece1.GetType() == typeof(EmptyPiece))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return piece1.GetType() == typeof(EmptyPiece);                
             }
             catch (IndexOutOfRangeException e)
             {
@@ -171,7 +157,7 @@
                     {
                         if (!IsAlly(x1, y1, x2, y2) && !IsEmpty(x2, y2))
                         {
-                            if (!testing && y2 == 8)
+                            if (!testing)
                             {
                                 MovePromotion(x2, y2);
                             }
@@ -184,13 +170,15 @@
                                 if (!testing)
                                 {
                                     //come al paso
-                                    ChessBoard[x2, y2 - 1] = new EmptyPiece(player1);  //come al paso
+                                    ChessBoard[x2, y2 - 1] = new EmptyPiece(player1);
                                 }
                                 return true;
                             }
                         }
                     }
-                    else //no come
+
+                    //no come
+                    else
                     {
                         //sube 1 casillero
                         if (Math.Abs(y2 - y1) == 1 && IsEmpty(x2, y2))
@@ -269,7 +257,7 @@
                 }
                 if (!piece1.IsValidMove(x1, y1, x2, y2))
                 {
-                    Console.WriteLine("Not valid move");
+                    //Console.WriteLine("Not valid move");
                     return false;
                 }
             }
@@ -295,15 +283,15 @@
         private void MovePromotion(int x2, int y2)
         {
             if (y2 == 1 || y2 == 8)
-            {
-                var piece2 = new Queen(Turn);
-                ChessBoard[x2, y2] = piece2;
+            {                
+                ChessBoard[x2, y2] = new Queen(Turn);
             }
         }
         public bool FinallyMove(int x1, int y1, int x2, int y2, bool player1)
-        {
+        {            
             if (CanMovePiece(x1, y1, x2, y2, player1, false)) //false porque no está testeando, sino que hay orden de mover
             {
+                
                 //baja 3 flags
                 isCheck = false; 
                 isCantMoveCheck = false; 
@@ -315,7 +303,7 @@
 
                 if (piece1.GetType() == typeof(King) && piece1.CanCastling)
                 {
-                    piece1.CanCastling = false; // si movió king no podrá enrocar jamás!
+                    piece1.CanCastling = false; 
                     Console.WriteLine("Ya no puede enrocar porque movio rey");
                     TurnChange();
                     return true;
@@ -323,7 +311,7 @@
 
                 if (piece1.GetType() == typeof(Rook) && piece1.CanCastling)
                 {
-                    piece1.CanCastling = false; // si movió torre no podrá enrocar jamás!
+                    piece1.CanCastling = false; 
                     Console.WriteLine("Ya no puede enrocar porque movió la torre");
                     TurnChange();
                     return true;
@@ -351,7 +339,7 @@
                 if (IsSquareCheck(XKING, YKING, !piece1.Color))
                 {
                     isCheck = true;
-                    //Debug.Log("x,y " + XKING + YKING + " JAQUE AL REY!!!!!!!!!!!! turn = " + turn);
+                    Console.WriteLine("x,y " + XKING + YKING + " JAQUE AL REY!!!!!!!!!!!!");
                 }
 
                 if (Turn == player1)
@@ -471,15 +459,12 @@
                 var piece1 = GetPiece(x1, y1);
                 var piece2 = GetPiece(x2, y2);
                 if (piece1.Color == piece2.Color && piece2.GetType() != typeof(EmptyPiece))
-                {
-                    //Debug.Log("false1");
+                {                    
                     return false;
                 }
-
-                
+                                
                 if (!IsInRange(x1, y1, x2, y2) || !IsColorTurn(piece1))
-                {
-                    //Debug.Log("false2");
+                {                    
                     return false;
                 }
 
@@ -491,8 +476,9 @@
                     ChessBoard[x2, y2] = auxPiece;
                     ChessBoard[x1, y1] = piece1;
                     isCantMoveCheck = true;
-                    //Debug.Log("quedas en jaque, movimiento inválido");
-                    return false; //quedas en jaque entonces es invalido el movimiento
+
+                    //quedas en jaque entonces es invalido el movimiento
+                    return false; 
                 }
                 else
                 {
@@ -548,6 +534,7 @@
                                 {
                                     ChessBoard[x2 + 1, y2] = new Rook(piece1.Color); //termino de mover la torre
                                     ChessBoard[1, y1] = new EmptyPiece(true);
+                                    isCastling = true;
                                 }
                                 return true;
                             }
@@ -595,12 +582,7 @@
                         return true;
                     }
 
-                    if (!piece1.CanJump && x1 != x2 && y1 != y2 && piece1.IsValidMove(x1, y1, x2, y2) && IsDiagonalEmpty(x1, y1, x2, y2))
-                    {
-                        return true;
-                    }
-                    Console.WriteLine("false7");
-                    return false;
+                    return (!piece1.CanJump && x1 != x2 && y1 != y2 && piece1.IsValidMove(x1, y1, x2, y2) && IsDiagonalEmpty(x1, y1, x2, y2));                    
                 }
             }
             catch (NullReferenceException e)
