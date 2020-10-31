@@ -5,7 +5,7 @@ using OsvaldoChessMaster.Piece;
 
 namespace OsvaldoChessMaster
 {
-    class ArtificialIntelligence
+    public class ArtificialIntelligence
     {
         public int x1;
         public int y1;
@@ -21,139 +21,186 @@ namespace OsvaldoChessMaster
         public int y6;
         public int[] move;
         public double[,] moves;
+        public double[,] pawnPositionValues = new double[9, 9];
+        public double[,] knightPositionValues = new double[9, 9];
+        public double[,] bishopPositionValues = new double[9, 9];
+        public double[,] rookPositionValues = new double[9, 9];
+        public double[,] queenPositionValues = new double[9, 9];
+        public double[,] kingPositionValues = new double[9, 9];
 
-        public ArtificialIntelligence(Board board, bool computerColor)
+        public double[,] PawnPositionValues(int x, int y) => pawnPositionValues;
+        public double[,] KnightPositionValues(int x, int y) => knightPositionValues;
+        public double[,] BishopPositionValues(int x, int y) => bishopPositionValues;
+        public double[,] RookPositionValues(int x, int y) => rookPositionValues;
+        public double[,] QueenPositionValues(int x, int y) => queenPositionValues;
+        public double[,] KingPositionValues(int x, int y) => kingPositionValues;
+        public ArtificialIntelligence(Board board)
         {
+            pawnPositionValues = PawnPositionValues();
+            knightPositionValues = KnightPositionValues();
+            bishopPositionValues = BishopPositionValues();
+            rookPositionValues = RookPositionValues();
+            queenPositionValues = QueenPositionValues();
+            kingPositionValues = KingPositionValues();
         }
 
-        public int[] ValuesMovesAllowed(Board board, bool computerColor, double actualValue)
+        public List<Move> AllPosiblePlays(Board board)
         {
-            double actualValue2;
-            double actualValue3 = 9999;
-            //double maxPositionValue = -9999;
-            move = new int[4];
-            int count = 0;
-            var ChessBoardAux = board.ChessBoard;
-            var ChessBoardAux3 = board.ChessBoard; 
+            double actualValue = EvaluateBoard(board);
+            List<Move> AllMoves = new List<Move>();
+            //int count = 0;
+            PieceBase[,] ChessBoardAux = (PieceBase[,])board.ChessBoard.Clone();
             for (int i = 1; i < 9; i++)
             {
                 for (int j = 1; j < 9; j++)
                 {
-                    board.ChessBoard = ChessBoardAux;
                     var piece1 = board.GetPiece(i, j);
-                    if (piece1.Color == board.Turn)
+                    if (piece1.Color == board.Turn) // o sino si es == computerColor
                     {
                         for (int k = 1; k < 9; k++)
                         {
                             for (int l = 1; l < 9; l++)
                             {
-                                board.ChessBoard = ChessBoardAux;
-                                var auxPiece = board.GetPiece(k, l);
-                                if (board.FinallyMove(i, j, k, l, !computerColor))
+                                
+                                if (board.FinallyMove(i, j, k, l, board.player1))
                                 {
                                     // solo lo guardo si no empeora la situacion (cuanto ams negativo mejor para la pc
-                                    if (EvaluateBoard(board, computerColor) <= actualValue)
+                                    if (EvaluateBoard(board) <= actualValue)
                                     {
-                                        actualValue2 = EvaluateBoard(board, computerColor);
-                                        var ChessBoardAux2 = board.ChessBoard;
-                                        for (int m = 1; m < 9; m++)
-                                        {
-                                            for (int n = 1; n < 9; n++)
-                                            {
-                                                board.ChessBoard = ChessBoardAux2;
-                                                var piece2 = board.GetPiece(m, n);
-                                                if (piece2.Color = board.Turn)
-                                                {
-                                                    for (int o = 1; o < 9; o++)
-                                                    {
-                                                        for (int p = 1; p < 9; p++)
-                                                        {
-                                                            board.ChessBoard = ChessBoardAux2;
-                                                            var auxPiece2 = board.GetPiece(o, p);
-                                                            if (board.FinallyMove(m, n, o, p, !computerColor))
-                                                            {
-                                                                // solo lo guardo si no empeora la situacion
-                                                                if (EvaluateBoard(board, computerColor) >= actualValue2)                                                                    
-                                                                {
-                                                                    actualValue2 = EvaluateBoard(board, computerColor);                                                                 
-                                                                    ChessBoardAux3 = board.ChessBoard;
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        for (int q = 1; q < 9; q++)
-                                        {
-                                            for (int r = 1; r < 9; r++)
-                                            {
-                                                board.ChessBoard = ChessBoardAux3;
-                                                var piece3 = board.GetPiece(q, r);
-                                                if (piece3.Color = board.Turn)
-                                                {
-                                                    for (int s = 1; s < 9; s++)
-                                                    {
-                                                        for (int t = 1; t < 9; t++)
-                                                        {
-                                                            board.ChessBoard = ChessBoardAux3;
-                                                            var auxPiece3 = board.GetPiece(s, t);
-                                                            if (board.FinallyMove(q, r, s, t, !computerColor))
-                                                            {
-                                                                // solo lo guardo si no empeora la situacion
-                                                                if (EvaluateBoard(board, computerColor) <= actualValue2)
-                                                                {
-                                                                    actualValue2 = EvaluateBoard(board, computerColor);
-                                                                    if (actualValue2 < actualValue3)
-                                                                    {
-                                                                        actualValue3 = actualValue2;
-                                                                        x1 = i;
-                                                                        y1 = j;
-                                                                        x2 = k;
-                                                                        y2 = l;
-                                                                        //x3 = m;
-                                                                        //y3 = n;
-                                                                        //x4 = o;
-                                                                        //y4 = p;
-                                                                        x5 = q;
-                                                                        y5 = r;
-                                                                        x6 = s;
-                                                                        y6 = t;
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }                                                   
-
-                                                }
-                                            }
-                                        }
-                                    }                              
-                                    //UndoRookCastling(board, computerColor, auxPiece, i, j, k, l);
-                                    ////revierto cambio de turno de finallymove
-                                    //board.TurnChange();
-
-                                    //if (EvaluateBoard(board, computerColor) > maxPositionValue)
-                                    //{
-                                    //    maxPositionValue = EvaluateBoard(board, computerColor);
-                                    //    x1 = i;
-                                    //    y1 = j;
-                                    //    x2 = k;
-                                    //    y2 = l;
-                                    //}
+                                        actualValue = EvaluateBoard(board);
+                                        AllMoves.Add(new Move { x1 = i, y1 = j, x2 = k, y2 = l });
+                                    }
+                                    // back to previous board
+                                    board.ChessBoard = ChessBoardAux;
+                                    // back to previous turn
+                                    board.TurnChange();
                                 }
                             }
                         }
                     }
                 }
             }
+            return AllMoves;
+        }
 
-            move[0] = x1;
-            move[1] = y1;
-            move[2] = x2;
-            move[3] = y2;
-            return move;
+        public List<Move> BestResponses(Board board, List<Move> previousMoves)
+        {
+            List<Move> responses = new List<Move>();
+            //var ChessBoardAux = CloneBoard(board);
+            PieceBase[,] ChessBoardAux = (PieceBase[,])board.ChessBoard.Clone();
+            foreach (Move previousMove in previousMoves)
+            {
+                board.FinallyMove(previousMove.x1, previousMove.y1, previousMove.x2, previousMove.y2, board.player1);
+                responses.Add(BestResponse(board));
+                // back to previous board
+                board.ChessBoard = ChessBoardAux;
+                // back to previous turn
+                board.TurnChange();
+            }
+            return responses;
+        }
+
+        public Move BestResponse(Board board)
+        {            
+            PieceBase[,] ChessBoardAux = (PieceBase[,]) board.ChessBoard.Clone();
+            double actualValue = EvaluateBoard(board);
+            Move response = new Move();            
+
+            for (int i = 1; i < 9; i++)
+            {
+                for (int j = 1; j < 9; j++)
+                {
+                    
+                    var piece1 = board.GetPiece(i, j);
+                    if (piece1.Color == board.Turn && piece1.GetType() != typeof(EmptyPiece))
+                    {
+                        for (int k = 1; k < 9; k++)
+                        {
+                            for (int l = 1; l < 9; l++)
+                            {
+                                if (board.FinallyMove(i, j, k, l, board.player1))
+                                {
+                                    // si mueve el de abajo
+                                    if (board.player1)
+                                    {   // guardo la mejor movida
+                                        if (EvaluateBoard(board) >= actualValue)
+                                        {
+                                            actualValue = EvaluateBoard(board);
+                                            response.x1 = i;
+                                            response.y1 = j;
+                                            response.x2 = k;
+                                            response.y2 = l;
+                                        }
+                                    }
+                                    else
+                                    {   // mueve el de arriba
+                                        if (EvaluateBoard(board) <= actualValue)
+                                        {
+                                            actualValue = EvaluateBoard(board);
+                                            response.x1 = i;
+                                            response.y1 = j;
+                                            response.x2 = k;
+                                            response.y2 = l;
+                                        }
+                                    }
+                                    // back to previous board
+                                    board.ChessBoard = ChessBoardAux;
+                                    // back to previous turn
+                                    PrintBoard(board);
+                                    board.TurnChange();
+                                    Console.WriteLine("" + response.x1 + response.y1 + response.x2 + response.y2);
+                                }
+                            }
+                        }
+                    }
+                }
+            }                       
+            return response;
+        }
+
+        public PieceBase[,] CloneBoard(Board board)
+        {
+            PieceBase[,] clonedBoard = new PieceBase[8, 8];
+            for (int i = 1; i < 9; i++)
+            {
+                for (int j = 1; j < 9; j++)
+                {
+                    clonedBoard[i, j] = board.GetPiece(i, j);
+                } 
+            }
+
+            return clonedBoard;
+        }
+
+    
+        public Move BestComputerMoveDepth4(Board board)
+        {
+            PieceBase[,] ChessBoardAux = (PieceBase[,])board.ChessBoard.Clone();
+            double value = EvaluateBoard(board);
+            Move bestMove = null;
+            List<Move> allMove1 = AllPosiblePlays(board);
+            foreach (Move move1 in allMove1)
+            {
+                board.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board.player1);
+                board.FinallyMove(BestResponse(board).x1, BestResponse(board).y1, BestResponse(board).x2, BestResponse(board).y2, board.player1);
+                List<Move> allMove3 = AllPosiblePlays(board);
+                PieceBase[,] ChessBoardAux2 = (PieceBase[,])board.ChessBoard.Clone();                
+                foreach (Move move3 in allMove3)
+                {
+                    board.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board.player1);
+                    board.FinallyMove(BestResponse(board).x1, BestResponse(board).y1, BestResponse(board).x2, BestResponse(board).y2, board.player1);
+                    if (EvaluateBoard(board) < value)
+                    {
+                        value = EvaluateBoard(board);
+                        bestMove = move1; //me quedo con la move1 que produce la menor bestresponse
+                    }
+                    // back to previous board
+                    board.ChessBoard = ChessBoardAux2;
+                }
+                // back to previous board
+                board.ChessBoard = ChessBoardAux;
+            }
+            return bestMove;
         }
 
         public void UndoRookCastling(Board board, bool computerColor, PieceBase auxPiece, int i, int j, int k, int l)
@@ -192,7 +239,7 @@ namespace OsvaldoChessMaster
             }
         }
 
-        public double EvaluateBoard(Board board, bool computerColor)
+        public double EvaluateBoard(Board board)
         {
             double sum = 0;
 
@@ -201,27 +248,27 @@ namespace OsvaldoChessMaster
                 for (int j = 1; j < 9; j++)
                 {
                     var piece1 = board.GetPiece(i, j);
-                    if (piece1.Color == computerColor)
+                    if (piece1.Color == board.player1) //piezas del jugador suman y de pc restan
                     {
                         switch (piece1.GetType().Name)
                         {
                             case nameof(Pawn):
-                                sum += 10 + PawnPositionValues(i, j);
+                                sum += 10 + pawnPositionValues[i, j];
                                 break;
                             case nameof(Knight):
-                                sum += 30 + KnightPositionValues(i, j);
+                                sum += 30 + knightPositionValues[i, j];
                                 break;
                             case nameof(Bishop):
-                                sum += 30 + BishopPositionValues(i, j);
+                                sum += 30 + bishopPositionValues[i, j];
                                 break;
                             case nameof(Rook):
-                                sum += 50 + RookPositionValues(i, j);
+                                sum += 50 + rookPositionValues[i, j];
                                 break;
                             case nameof(Queen):
-                                sum += 90 + QueenPositionValues(i, j);
+                                sum += 90 + queenPositionValues[i, j];
                                 break;
                             case nameof(King):
-                                sum += 900 + KingPositionValues(i, j);
+                                sum += 900 + kingPositionValues[i, j];
                                 break;
 
                         }
@@ -231,22 +278,22 @@ namespace OsvaldoChessMaster
                         switch (piece1.GetType().Name)
                         {
                             case nameof(Pawn):
-                                sum -= 10 - PawnPositionValues(8-i, j);
+                                sum -= 10 + pawnPositionValues[i, 9 - j];
                                 break;
                             case nameof(Knight):
-                                sum -= 30 - KnightPositionValues(8-i, j);
+                                sum -= 30 + knightPositionValues[i, 9 - j];
                                 break;
                             case nameof(Bishop):
-                                sum -= 30 - BishopPositionValues(8 - i, j);
+                                sum -= 30 + bishopPositionValues[i, 9 - j];
                                 break;
                             case nameof(Rook):
-                                sum -= 50 - RookPositionValues(8 - i, j);
+                                sum -= 50 + rookPositionValues[i, 9 - j];
                                 break;
                             case nameof(Queen):
-                                sum -= 90 - QueenPositionValues(8 - i, j);
+                                sum -= 90 + queenPositionValues[i, 9 - j];
                                 break;
                             case nameof(King):
-                                sum -= 900 - KingPositionValues(8 - i, j);
+                                sum -= 900 + kingPositionValues[i, 9 - j];
                                 break;
                         }
 
@@ -256,156 +303,192 @@ namespace OsvaldoChessMaster
             return sum;
         }
 
-        public double PawnPositionValues(int x, int y)
+        public double[,] PawnPositionValues()
         {
-            double[] pawnValuesFile1 = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-            double[] pawnValuesFile2 = { 0.5, 1.0, 1.0, -2.0, -2.0, 1.0, 1.0, 0.5 };
-            double[] pawnValuesFile3 = { 0.5, -0.5, -1.0, 0.0, 0.0, -1.0, -0.5, 0.5 };
-            double[] pawnValuesFile4 = { 0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0 };
-            double[] pawnValuesFile5 = { 0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5 };
-            double[] pawnValuesFile6 = { 1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0 };
-            double[] pawnValuesFile7 = { 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0 };
-            double[] pawnValuesFile8 = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-            double[,] PawnPositionValues = new double[8, 8];
+            double[] ValuesFile1 = { 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+            double[] ValuesFile2 = { 0, 0.5, 1.0, 1.0, -2.0, -2.0, 1.0, 1.0, 0.5 };
+            double[] ValuesFile3 = { 0, 0.5, -0.5, -1.0, 0.0, 0.0, -1.0, -0.5, 0.5 };
+            double[] ValuesFile4 = { 0, 0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0 };
+            double[] ValuesFile5 = { 0, 0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5 };
+            double[] ValuesFile6 = { 0, 1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0 };
+            double[] ValuesFile7 = { 0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0 };
+            double[] ValuesFile8 = { 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+
             for (int i = 1; i < 9; i++)
             {
-                PawnPositionValues[1, i] = pawnValuesFile1[i];
-                PawnPositionValues[2, i] = pawnValuesFile2[i];
-                PawnPositionValues[3, i] = pawnValuesFile3[i];
-                PawnPositionValues[4, i] = pawnValuesFile4[i];
-                PawnPositionValues[5, i] = pawnValuesFile5[i];
-                PawnPositionValues[6, i] = pawnValuesFile6[i];
-                PawnPositionValues[7, i] = pawnValuesFile7[i];
-                PawnPositionValues[8, i] = pawnValuesFile8[i];
+                pawnPositionValues[i, 1] = ValuesFile1[i];
+                pawnPositionValues[i, 2] = ValuesFile2[i];
+                pawnPositionValues[i, 3] = ValuesFile3[i];
+                pawnPositionValues[i, 4] = ValuesFile4[i];
+                pawnPositionValues[i, 5] = ValuesFile5[i];
+                pawnPositionValues[i, 6] = ValuesFile6[i];
+                pawnPositionValues[i, 7] = ValuesFile7[i];
+                pawnPositionValues[i, 8] = ValuesFile8[i];
             }
-            return PawnPositionValues[x, y];
+            return pawnPositionValues;
         }
 
-        public double KnightPositionValues(int x, int y)
+        public double[,] KnightPositionValues()
         {
-            double[] ValuesFile1 = { -5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0 };
-            double[] ValuesFile2 = { -4.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -4.0 };
-            double[] ValuesFile3 = { -3.0, 0.0, 1.0, 1.5, 1.5, 1.0, 0.0, -3.0 };
-            double[] ValuesFile4 = { -3.0, 0.5, 1.5, 2.0, 2.0, 1.5, 0.5, -3.0 };
-            double[] ValuesFile5 = { -3.0, 0.5, 1.5, 2.0, 2.0, 1.5, 0.5, -3.0 };
-            double[] ValuesFile6 = { -3.0, 0.0, 1.0, 1.5, 1.5, 1.0, 0.0, -3.0 };
-            double[] ValuesFile7 = { -4.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -4.0 };
-            double[] ValuesFile8 = { -5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0 };
-            double[,] KnightPositionValues = new double[8, 8];
+            double[] ValuesFile1 = { 0, -5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0 };
+            double[] ValuesFile2 = { 0, -4.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -4.0 };
+            double[] ValuesFile3 = { 0, -3.0, 0.0, 1.0, 1.5, 1.5, 1.0, 0.0, -3.0 };
+            double[] ValuesFile4 = { 0, -3.0, 0.5, 1.5, 2.0, 2.0, 1.5, 0.5, -3.0 };
+            double[] ValuesFile5 = { 0, -3.0, 0.5, 1.5, 2.0, 2.0, 1.5, 0.5, -3.0 };
+            double[] ValuesFile6 = { 0, -3.0, 0.0, 1.0, 1.5, 1.5, 1.0, 0.0, -3.0 };
+            double[] ValuesFile7 = { 0, -4.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -4.0 };
+            double[] ValuesFile8 = { 0, -5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0 };
+            double[,] knightPositionValues = new double[9, 9];
             for (int i = 1; i < 9; i++)
             {
-                KnightPositionValues[1, i] = ValuesFile1[i];
-                KnightPositionValues[2, i] = ValuesFile2[i];
-                KnightPositionValues[3, i] = ValuesFile3[i];
-                KnightPositionValues[4, i] = ValuesFile4[i];
-                KnightPositionValues[5, i] = ValuesFile5[i];
-                KnightPositionValues[6, i] = ValuesFile6[i];
-                KnightPositionValues[7, i] = ValuesFile7[i];
-                KnightPositionValues[8, i] = ValuesFile8[i];
+                knightPositionValues[i, 1] = ValuesFile1[i];
+                knightPositionValues[i, 2] = ValuesFile2[i];
+                knightPositionValues[i, 3] = ValuesFile3[i];
+                knightPositionValues[i, 4] = ValuesFile4[i];
+                knightPositionValues[i, 5] = ValuesFile5[i];
+                knightPositionValues[i, 6] = ValuesFile6[i];
+                knightPositionValues[i, 7] = ValuesFile7[i];
+                knightPositionValues[i, 8] = ValuesFile8[i];
             }
-            return KnightPositionValues[x, y];
+            return knightPositionValues;
         }
 
-        public double BishopPositionValues(int x, int y)
+        public double[,] BishopPositionValues()
         {
-            double[] ValuesFile1 = { -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0 };
-            double[] ValuesFile2 = { -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0 };
-            double[] ValuesFile3 = { -1.0, 0.0, 0.5, 1.0, 1.0, 0.5, 0.0, -1.0 };
-            double[] ValuesFile4 = { -1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, -1.0 };
-            double[] ValuesFile5 = { -1.0, 0.5, 0.5, 1.0, 1.0, 0.5, 0.5, -1.0 };
-            double[] ValuesFile6 = { -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0 };
-            double[] ValuesFile7 = { -1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, -1.0 };
-            double[] ValuesFile8 = { -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0 };
-            double[,] BishopPositionValues = new double[8, 8];
+            double[] ValuesFile1 = { 0, -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0 };
+            double[] ValuesFile2 = { 0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0 };
+            double[] ValuesFile3 = { 0, -1.0, 0.0, 0.5, 1.0, 1.0, 0.5, 0.0, -1.0 };
+            double[] ValuesFile4 = { 0, -1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, -1.0 };
+            double[] ValuesFile5 = { 0, -1.0, 0.5, 0.5, 1.0, 1.0, 0.5, 0.5, -1.0 };
+            double[] ValuesFile6 = { 0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0 };
+            double[] ValuesFile7 = { 0, -1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, -1.0 };
+            double[] ValuesFile8 = { 0, -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0 };
+            
             for (int i = 1; i < 9; i++)
             {
-                BishopPositionValues[1, i] = ValuesFile1[i];
-                BishopPositionValues[2, i] = ValuesFile2[i];
-                BishopPositionValues[3, i] = ValuesFile3[i];
-                BishopPositionValues[4, i] = ValuesFile4[i];
-                BishopPositionValues[5, i] = ValuesFile5[i];
-                BishopPositionValues[6, i] = ValuesFile6[i];
-                BishopPositionValues[7, i] = ValuesFile7[i];
-                BishopPositionValues[8, i] = ValuesFile8[i];
+                bishopPositionValues[i, 1] = ValuesFile1[i];
+                bishopPositionValues[i, 2] = ValuesFile2[i];
+                bishopPositionValues[i, 3] = ValuesFile3[i];
+                bishopPositionValues[i, 4] = ValuesFile4[i];
+                bishopPositionValues[i, 5] = ValuesFile5[i];
+                bishopPositionValues[i, 6] = ValuesFile6[i];
+                bishopPositionValues[i, 7] = ValuesFile7[i];
+                bishopPositionValues[i, 8] = ValuesFile8[i];
             }
-            return BishopPositionValues[x, y];
+            return bishopPositionValues;
         }
 
-        public double RookPositionValues(int x, int y)
+        public double[,] RookPositionValues()
         {
-            double[] ValuesFile1 = { 0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0 };
-            double[] ValuesFile2 = { -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5 };
-            double[] ValuesFile3 = { -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5 };
-            double[] ValuesFile4 = { -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5 };
-            double[] ValuesFile5 = { -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5 };
-            double[] ValuesFile6 = { -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5 };
-            double[] ValuesFile7 = { 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5 };
-            double[] ValuesFile8 = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-            double[,] RookPositionValues = new double[8, 8];
+            double[] ValuesFile1 = { 0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0 };
+            double[] ValuesFile2 = { 0, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5 };
+            double[] ValuesFile3 = { 0, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5 };
+            double[] ValuesFile4 = { 0, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5 };
+            double[] ValuesFile5 = { 0, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5 };
+            double[] ValuesFile6 = { 0, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5 };
+            double[] ValuesFile7 = { 0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5 };
+            double[] ValuesFile8 = { 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };            
             for (int i = 1; i < 9; i++)
             {
-                RookPositionValues[1, i] = ValuesFile1[i];
-                RookPositionValues[2, i] = ValuesFile2[i];
-                RookPositionValues[3, i] = ValuesFile3[i];
-                RookPositionValues[4, i] = ValuesFile4[i];
-                RookPositionValues[5, i] = ValuesFile5[i];
-                RookPositionValues[6, i] = ValuesFile6[i];
-                RookPositionValues[7, i] = ValuesFile7[i];
-                RookPositionValues[8, i] = ValuesFile8[i];
+                rookPositionValues[i, 1] = ValuesFile1[i];
+                rookPositionValues[i, 2] = ValuesFile2[i];
+                rookPositionValues[i, 3] = ValuesFile3[i];
+                rookPositionValues[i, 4] = ValuesFile4[i];
+                rookPositionValues[i, 5] = ValuesFile5[i];
+                rookPositionValues[i, 6] = ValuesFile6[i];
+                rookPositionValues[i, 7] = ValuesFile7[i];
+                rookPositionValues[i, 8] = ValuesFile8[i];
             }
-            return RookPositionValues[x, y];
+            return rookPositionValues;
         }
 
-        public double QueenPositionValues(int x, int y)
+        public double[,] QueenPositionValues()
         {
-            double[] ValuesFile1 = { -2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0 };
-            double[] ValuesFile2 = { -1.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, -1.0 };
-            double[] ValuesFile3 = { -1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0 };
-            double[] ValuesFile4 = { 0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -0.5 };
-            double[] ValuesFile5 = { -0.5, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -0.5 };
-            double[] ValuesFile6 = { -1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0 };
-            double[] ValuesFile7 = { -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0 };
-            double[] ValuesFile8 = { -2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0 };
-            double[,] QueenPositionValues = new double[8, 8];
+            double[] ValuesFile1 = { 0, -2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0 };
+            double[] ValuesFile2 = { 0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0 };
+            double[] ValuesFile3 = { 0, -1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0 };
+            double[] ValuesFile4 = { 0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0 };
+            double[] ValuesFile5 = { 0, -0.5, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -0.5 };
+            double[] ValuesFile6 = { 0, -1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0 };
+            double[] ValuesFile7 = { 0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0 };
+            double[] ValuesFile8 = { 0, -2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0 };
+            
             for (int i = 1; i < 9; i++)
             {
-                QueenPositionValues[1, i] = ValuesFile1[i];
-                QueenPositionValues[2, i] = ValuesFile2[i];
-                QueenPositionValues[3, i] = ValuesFile3[i];
-                QueenPositionValues[4, i] = ValuesFile4[i];
-                QueenPositionValues[5, i] = ValuesFile5[i];
-                QueenPositionValues[6, i] = ValuesFile6[i];
-                QueenPositionValues[7, i] = ValuesFile7[i];
-                QueenPositionValues[8, i] = ValuesFile8[i];
+                queenPositionValues[i, 1] = ValuesFile1[i];
+                queenPositionValues[i, 2] = ValuesFile2[i];
+                queenPositionValues[i, 3] = ValuesFile3[i];
+                queenPositionValues[i, 4] = ValuesFile4[i];
+                queenPositionValues[i, 5] = ValuesFile5[i];
+                queenPositionValues[i, 6] = ValuesFile6[i];
+                queenPositionValues[i, 7] = ValuesFile7[i];
+                queenPositionValues[i, 8] = ValuesFile8[i];
             }
-            return QueenPositionValues[x, y];
+            return queenPositionValues;
         }
 
-        public double KingPositionValues(int x, int y)
+        public double[,] KingPositionValues()
         {
-            double[] ValuesFile1 = { 2.0, 3.0, 1.0, 0.0, 0.0, 1.0, 3.0, 2.0 };
-            double[] ValuesFile2 = { 2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0 };
-            double[] ValuesFile3 = { -1.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -1.0 };
-            double[] ValuesFile4 = { -2.0, -3.0, -3.0, -4.0, -4.0, -3.0, -3.0, -2.0 };
-            double[] ValuesFile5 = { -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0 };
-            double[] ValuesFile6 = { -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0 };
-            double[] ValuesFile7 = { -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0 };
-            double[] ValuesFile8 = { -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0 };
-            double[,] KingPositionValues = new double[8, 8];
+            double[] ValuesFile1 = { 0, 2.0, 3.0, 1.0, 0.0, 0.0, 1.0, 3.0, 2.0 };
+            double[] ValuesFile2 = { 0, 2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0 };
+            double[] ValuesFile3 = { 0, -1.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -1.0 };
+            double[] ValuesFile4 = { 0, -2.0, -3.0, -3.0, -4.0, -4.0, -3.0, -3.0, -2.0 };
+            double[] ValuesFile5 = { 0, -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0 };
+            double[] ValuesFile6 = { 0, -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0 };
+            double[] ValuesFile7 = { 0, -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0 };
+            double[] ValuesFile8 = { 0, -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0 };
+            
             for (int i = 1; i < 9; i++)
             {
-                KingPositionValues[1, i] = ValuesFile1[i];
-                KingPositionValues[2, i] = ValuesFile2[i];
-                KingPositionValues[3, i] = ValuesFile3[i];
-                KingPositionValues[4, i] = ValuesFile4[i];
-                KingPositionValues[5, i] = ValuesFile5[i];
-                KingPositionValues[6, i] = ValuesFile6[i];
-                KingPositionValues[7, i] = ValuesFile7[i];
-                KingPositionValues[8, i] = ValuesFile8[i];
+                kingPositionValues[i, 1] = ValuesFile1[i];
+                kingPositionValues[i, 2] = ValuesFile2[i];
+                kingPositionValues[i, 3] = ValuesFile3[i];
+                kingPositionValues[i, 4] = ValuesFile4[i];
+                kingPositionValues[i, 5] = ValuesFile5[i];
+                kingPositionValues[i, 6] = ValuesFile6[i];
+                kingPositionValues[i, 7] = ValuesFile7[i];
+                kingPositionValues[i, 8] = ValuesFile8[i];
             }
-            return KingPositionValues[x, y];
+            return kingPositionValues;
         }
 
+        public static void PrintBoard(Board board)
+        {
+            Console.WriteLine();
+            Console.Write(board.ChessBoard[1, 8] + " "); Console.Write(board.ChessBoard[2, 8] + " "); Console.Write(board.ChessBoard[3, 8] + " "); Console.Write(board.ChessBoard[4, 8] + " "); Console.Write(board.ChessBoard[5, 8] + " "); Console.Write(board.ChessBoard[6, 8] + " "); Console.Write(board.ChessBoard[7, 8] + " "); Console.WriteLine(board.ChessBoard[8, 8] + " ");
+            Console.Write(board.ChessBoard[1, 7] + " "); Console.Write(board.ChessBoard[2, 7] + " "); Console.Write(board.ChessBoard[3, 7] + " "); Console.Write(board.ChessBoard[4, 7] + " "); Console.Write(board.ChessBoard[5, 7] + " "); Console.Write(board.ChessBoard[6, 7] + " "); Console.Write(board.ChessBoard[7, 7] + " "); Console.WriteLine(board.ChessBoard[8, 7] + " ");
+            Console.Write(board.ChessBoard[1, 6] + " "); Console.Write(board.ChessBoard[2, 6] + " "); Console.Write(board.ChessBoard[3, 6] + " "); Console.Write(board.ChessBoard[4, 6] + " "); Console.Write(board.ChessBoard[5, 6] + " "); Console.Write(board.ChessBoard[6, 6] + " "); Console.Write(board.ChessBoard[7, 6] + " "); Console.WriteLine(board.ChessBoard[8, 6] + " ");
+            Console.Write(board.ChessBoard[1, 5] + " "); Console.Write(board.ChessBoard[2, 5] + " "); Console.Write(board.ChessBoard[3, 5] + " "); Console.Write(board.ChessBoard[4, 5] + " "); Console.Write(board.ChessBoard[5, 5] + " "); Console.Write(board.ChessBoard[6, 5] + " "); Console.Write(board.ChessBoard[7, 5] + " "); Console.WriteLine(board.ChessBoard[8, 5] + " ");
+            Console.Write(board.ChessBoard[1, 4] + " "); Console.Write(board.ChessBoard[2, 4] + " "); Console.Write(board.ChessBoard[3, 4] + " "); Console.Write(board.ChessBoard[4, 4] + " "); Console.Write(board.ChessBoard[5, 4] + " "); Console.Write(board.ChessBoard[6, 4] + " "); Console.Write(board.ChessBoard[7, 4] + " "); Console.WriteLine(board.ChessBoard[8, 4] + " ");
+            Console.Write(board.ChessBoard[1, 3] + " "); Console.Write(board.ChessBoard[2, 3] + " "); Console.Write(board.ChessBoard[3, 3] + " "); Console.Write(board.ChessBoard[4, 3] + " "); Console.Write(board.ChessBoard[5, 3] + " "); Console.Write(board.ChessBoard[6, 3] + " "); Console.Write(board.ChessBoard[7, 3] + " "); Console.WriteLine(board.ChessBoard[8, 3] + " ");
+            Console.Write(board.ChessBoard[1, 2] + " "); Console.Write(board.ChessBoard[2, 2] + " "); Console.Write(board.ChessBoard[3, 2] + " "); Console.Write(board.ChessBoard[4, 2] + " "); Console.Write(board.ChessBoard[5, 2] + " "); Console.Write(board.ChessBoard[6, 2] + " "); Console.Write(board.ChessBoard[7, 2] + " "); Console.WriteLine(board.ChessBoard[8, 2] + " ");
+            Console.Write(board.ChessBoard[1, 1] + " "); Console.Write(board.ChessBoard[2, 1] + " "); Console.Write(board.ChessBoard[3, 1] + " "); Console.Write(board.ChessBoard[4, 1] + " "); Console.Write(board.ChessBoard[5, 1] + " "); Console.Write(board.ChessBoard[6, 1] + " "); Console.Write(board.ChessBoard[7, 1] + " "); Console.WriteLine(board.ChessBoard[8, 1] + " ");
+            Console.WriteLine();
+        }
 
     }
+
+    public class Move
+    {
+        public int x1 { get; set; }
+        public int y1 { get; set; }
+        public int x2 { get; set; }
+        public int y2 { get; set; }
+    }
+
+    public class MoveAndResponse
+    {
+        public Move move1 { get; set; }
+        public Move move2 { get; set; }
+
+        //public int x1 { get; set; }
+        //public int y1 { get; set; }
+        //public int x2 { get; set; }
+        //public int y2 { get; set; }
+        //public int x3 { get; set; }
+        //public int y3 { get; set; }
+        //public int x4 { get; set; }
+        //public int y4 { get; set; }         
+    }
+
 }

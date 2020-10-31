@@ -8,7 +8,7 @@
     {
         private const int Size = 9;
         int pointer; //lo uso para escribir la movida        
-        private bool player1;
+        public bool player1 { get; set; }
         private Stack<string> stackFullPlay;
         private string movement = string.Empty; // se llena con las dos movidas y luego se reinicia
 
