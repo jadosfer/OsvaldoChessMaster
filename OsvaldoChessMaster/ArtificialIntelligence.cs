@@ -112,10 +112,10 @@ namespace OsvaldoChessMaster
                                                                         y1 = j;
                                                                         x2 = k;
                                                                         y2 = l;
-                                                                        x3 = m;
-                                                                        y3 = n;
-                                                                        x4 = o;
-                                                                        y4 = p;
+                                                                        //x3 = m;
+                                                                        //y3 = n;
+                                                                        //x4 = o;
+                                                                        //y4 = p;
                                                                         x5 = q;
                                                                         y5 = r;
                                                                         x6 = s;
