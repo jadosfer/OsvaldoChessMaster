@@ -10,7 +10,7 @@
         public void CanJump()
         {
             // Arrange
-            var emptyPiece = new Piece.EmptyPiece(true);
+            var emptyPiece = new Piece.EmptyPiece(true, 0, 0);
 
             // Act
 
@@ -25,10 +25,10 @@
         public void IsValidMove(int x1, int y1, int x2, int y2, bool expected)
         {
             // Arrange
-            var emptyPiece = new Piece.EmptyPiece(true);
+            var emptyPiece = new Piece.EmptyPiece(true, 0, 0);
 
             // Act
-            var result = emptyPiece.IsValidMove(x1, y1, x2, y2);
+            var result = emptyPiece.IsValidMove(x2, y2);
 
             // Assert
             Assert.AreEqual(expected, result);

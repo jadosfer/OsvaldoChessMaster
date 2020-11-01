@@ -19,5 +19,44 @@
         public virtual bool GetCapturableByTheWay() => true;
         public virtual void SetCapturableByTheWay(bool CapturableByTheWay, int turnNumber) { }
         public virtual int GetturnNumberCapturableByTheWay() => 0;
+
+        public bool Equals([AllowNull] PieceBase other)
+        {
+            if (other == null)
+                return false;
+
+            if (other.CanJump != this.CanJump)
+                return false;
+
+            if (other.CanCastling != this.CanCastling)
+                return false;
+
+            if (other.LCastling != this.LCastling)
+                return false;
+
+            if (other.SCastling != this.SCastling)
+                return false;
+
+            if (other.Color != this.Color)
+                return false;
+
+            return true;
+        }
+
+        public abstract object Clone();
+
+        protected T Clone<T>()
+            where T : PieceBase, new()
+        {
+            var clone = new T()
+            {
+                CanCastling = this.CanCastling,
+                LCastling = this.LCastling,
+                SCastling = this.SCastling,
+                Color = this.Color
+            };
+
+            return clone;
+        }
     }
 }

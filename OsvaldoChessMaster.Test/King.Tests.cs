@@ -10,7 +10,7 @@
         public void CanJump()
         {
             // Arrange
-            var king = new King(true);
+            var king = new King(true, 0, 0);
 
             // Act
 
@@ -24,10 +24,10 @@
         public void IsValidMove(int x1, int y1, int x2, int y2, bool expected)
         {
             // Arrange
-            var king = new King(true);
+            var king = new King(true, 0, 0);
 
             // Act
-            var result = king.IsValidMove(x1, y1, x2, y2);
+            var result = king.IsValidMove(x2, y2);
 
             // Assert
             Assert.AreEqual(expected, result);
