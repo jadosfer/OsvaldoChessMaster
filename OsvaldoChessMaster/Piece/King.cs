@@ -5,25 +5,21 @@
     public class King : PieceBase
     {
         public override bool CanJump => false;
+        public override bool CanCastling { get; set; }
 
-        public King()
-            : this(false)
-        {
-        }
-
-        public King(bool color) 
-            : base(color)
+        public King(bool color, int PositionX, int PositionY)
+            : base(color, PositionX, PositionY)
         {
             this.CanCastling = true;
         }
 
-        public override bool IsValidMove(int x1, int y1, int x2, int y2)
+        public override bool IsValidMove(int x2, int y2)
         {
             // movimiento en el mismo lugar
-            if (x1 == x2 && y1 == y2)
+            if (PositionX == x2 && PositionY == y2)
                 return false;
 
-            if (Math.Sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1)) < 2)
+            if (Math.Sqrt((y2 - PositionY) * (y2 - PositionY) + (x2 - PositionX) * (x2 - PositionX)) < 2)
             {
                 return true;
             }
@@ -35,12 +31,7 @@
         {
             var color = this.Color ? "w" : "b";
 
-            return $"{color}_(_KING_)_";
-        }
-
-        public override object Clone()
-        {
-            return this.Clone<King>();
+            return $"{color}_(K)_";
         }
     }
 }

@@ -7,8 +7,8 @@
     public class Board
     {
         private const int Size = 9;
-        private int pointer;
-        private bool player1;
+        private int pointer;        
+        public bool player1 { get; set; }
         private Stack<string> stackFullPlay;
         private string movement = string.Empty; // se llena con las dos movidas y luego se reinicia
 
@@ -31,58 +31,58 @@
             TurnNumber = 1;
             this.player1 = player1;
             ChessBoard = new PieceBase[Size, Size];
+            
+            ChessBoard[1, 2] = new Pawn(player1, 1, 2);
+            ChessBoard[2, 2] = new Pawn(player1, 2, 2);
+            ChessBoard[3, 2] = new Pawn(player1, 3, 2);
+            ChessBoard[4, 2] = new Pawn(player1, 4, 2);
+            ChessBoard[5, 2] = new Pawn(player1, 5, 2);
+            ChessBoard[6, 2] = new Pawn(player1, 6, 2);
+            ChessBoard[7, 2] = new Pawn(player1, 7, 2);
+            ChessBoard[8, 2] = new Pawn(player1, 8, 2);
 
-            ChessBoard[1, 2] = new Pawn(player1);
-            ChessBoard[2, 2] = new Pawn(player1);
-            ChessBoard[3, 2] = new Pawn(player1);
-            ChessBoard[4, 2] = new Pawn(player1);
-            ChessBoard[5, 2] = new Pawn(player1);
-            ChessBoard[6, 2] = new Pawn(player1);
-            ChessBoard[7, 2] = new Pawn(player1);
-            ChessBoard[8, 2] = new Pawn(player1);
+            ChessBoard[1, 7] = new Pawn(!player1, 1, 7);
+            ChessBoard[2, 7] = new Pawn(!player1, 2, 7);
+            ChessBoard[3, 7] = new Pawn(!player1, 3, 7);
+            ChessBoard[4, 7] = new Pawn(!player1, 4, 7);
+            ChessBoard[5, 7] = new Pawn(!player1, 5, 7);
+            ChessBoard[6, 7] = new Pawn(!player1, 6, 7);
+            ChessBoard[7, 7] = new Pawn(!player1, 7, 7);
+            ChessBoard[8, 7] = new Pawn(!player1, 8, 7);
 
-            ChessBoard[1, 7] = new Pawn(!player1);
-            ChessBoard[2, 7] = new Pawn(!player1);
-            ChessBoard[3, 7] = new Pawn(!player1);
-            ChessBoard[4, 7] = new Pawn(!player1);
-            ChessBoard[5, 7] = new Pawn(!player1);
-            ChessBoard[6, 7] = new Pawn(!player1);
-            ChessBoard[7, 7] = new Pawn(!player1);
-            ChessBoard[8, 7] = new Pawn(!player1);
+            ChessBoard[1, 1] = new Rook(player1, 1, 1);
+            ChessBoard[8, 1] = new Rook(player1, 8, 1);
+            ChessBoard[1, 8] = new Rook(!player1, 1, 8);
+            ChessBoard[8, 8] = new Rook(!player1, 8, 8);
 
-            ChessBoard[1, 1] = new Rook(player1);
-            ChessBoard[8, 1] = new Rook(player1);
-            ChessBoard[1, 8] = new Rook(!player1);
-            ChessBoard[8, 8] = new Rook(!player1);
+            ChessBoard[2, 1] = new Knight(player1, 2, 1);
+            ChessBoard[7, 1] = new Knight(player1, 7, 1);
+            ChessBoard[2, 8] = new Knight(!player1, 2, 8);
+            ChessBoard[7, 8] = new Knight(!player1, 7, 8);
 
-            ChessBoard[2, 1] = new Knight(player1);
-            ChessBoard[7, 1] = new Knight(player1);
-            ChessBoard[2, 8] = new Knight(!player1);
-            ChessBoard[7, 8] = new Knight(!player1);
+            ChessBoard[3, 1] = new Bishop(player1, 3, 1);
+            ChessBoard[6, 1] = new Bishop(player1, 6, 1);
+            ChessBoard[3, 8] = new Bishop(!player1, 3 ,8);
+            ChessBoard[6, 8] = new Bishop(!player1, 6, 8);
 
-            ChessBoard[3, 1] = new Bishop(player1);
-            ChessBoard[6, 1] = new Bishop(player1);
-            ChessBoard[3, 8] = new Bishop(!player1);
-            ChessBoard[6, 8] = new Bishop(!player1);
+            ChessBoard[5, 1] = new King(player1, 5, 1);
+            ChessBoard[5, 8] = new King(!player1, 5, 8);
 
-            ChessBoard[5, 1] = new King(player1);
-            ChessBoard[5, 8] = new King(!player1);
-
-            ChessBoard[4, 1] = new Queen(player1);
-            ChessBoard[4, 8] = new Queen(!player1);
+            ChessBoard[4, 1] = new Queen(player1, 4, 1);
+            ChessBoard[4, 8] = new Queen(!player1, 4, 8);
 
             for (int i = 1; i < 9; i++)
             {
                 for (int j = 3; j < 7; j++)
                 {
-                    ChessBoard[i, j] = new EmptyPiece(player1);
+                    ChessBoard[i, j] = new EmptyPiece(player1, i, j);
                 }
             }
 
         }
         public PieceBase GetPiece(int x, int y)
         {
-            return ChessBoard[x, y] ?? new EmptyPiece(player1);
+            return ChessBoard[x, y] ?? new EmptyPiece(player1, x, y);
         }
 
         public bool IsAlly(int x1, int y1, int x2, int y2) //solo es true si hay otra pieza del mismo color, sino false siempre
@@ -162,7 +162,7 @@
                 }
 
                 // El peon sube
-                if (player1 == Turn && y2 > y1 && piece1.IsValidMove(x1, y1, x2, y2))
+                if (player1 == Turn && y2 > y1 && piece1.IsValidMove(x2, y2))
                 {
                     if (IsPawnCapturing(x1, x2))
                     {
@@ -177,12 +177,11 @@
                         if (IsPawn(GetPiece(x2, y2 - 1)) && !IsAlly(x1, y1, x2, y2 - 1))
                         {
                             if (GetPiece(x2, y2 - 1).GetCapturableByTheWay() && TurnNumber - GetPiece(x2, y2 - 1).GetturnNumberCapturableByTheWay() < 2)
-                            {
-                                // FinallyMove(x1, y1, x2, y2, piece1, player1);
+                            {                                
                                 if (!testing)
                                 {
                                     //come al paso
-                                    ChessBoard[x2, y2 - 1] = new EmptyPiece(player1);
+                                    ChessBoard[x2, y2 - 1] = GetPiece(x2, y2);// pongo la pieza vacía
                                 }
                                 return true;
                             }
@@ -199,8 +198,7 @@
                             return true;
                         }
                         if (IsEmpty(x2, y2 - 1) && IsEmpty(x2, y2)) //sube 2 casilleros chequea 2 vacios
-                        {
-                            //FinallyMove(x1, y1, x2, y2, piece1, player1);
+                        {                            
                             if (!testing)
                             {
                                 piece1.SetCapturableByTheWay(true, TurnNumber);
@@ -210,7 +208,7 @@
                     }
                 }
 
-                if (player1 != Turn && y2 < y1 && piece1.IsValidMove(x1, y1, x2, y2)) //el peon baja
+                if (player1 != Turn && y2 < y1 && piece1.IsValidMove(x2, y2)) //el peon baja
                 {
 
                     if (IsPawnCapturing(x1, x2))
@@ -229,11 +227,10 @@
                         if (!IsEmpty(x2, y2 + 1) && !IsAlly(x1, y1, x2, y2 + 1))
                         {
                             if (GetPiece(x2, y2 + 1).GetCapturableByTheWay() && TurnNumber - GetPiece(x2, y2 + 1).GetturnNumberCapturableByTheWay() < 2)
-                            {
-                                //FinallyMove(x1, y1, x2, y2, piece1, player1);
+                            {                                
                                 if (!testing)
                                 {
-                                    ChessBoard[x2, y2 + 1] = new EmptyPiece(true); //come al paso
+                                    ChessBoard[x2, y2 + 1] = GetPiece(x2, y2); //come al paso
                                 }
                                 return true;
                             }
@@ -250,8 +247,7 @@
                             return true;
                         }
                         if (IsEmpty(x2, y2 + 1) && IsEmpty(x2, y2)) //baja 2 casilleros chequea 2 vacios
-                        {
-                            //FinallyMove(x1, y1, x2, y2, piece1, player1);
+                        {                            
                             if (!testing)
                             {
                                 piece1.SetCapturableByTheWay(true, TurnNumber); //solucionar esto en los chequeos de bloqueo de jaque                            
@@ -262,7 +258,7 @@
                     }
 
                 }
-                if (!piece1.IsValidMove(x1, y1, x2, y2))
+                if (!piece1.IsValidMove(x2, y2))
                 {
                     Console.WriteLine("Not valid move");
                     return false;
@@ -290,21 +286,20 @@
         {            
             var limit = moveUp ? 8 : 1;
             if (y2 == limit)
-            {
-                var piece2 = new Queen(Turn);
-                ChessBoard[x2, y2] = piece2;
+            {                
+                ChessBoard[x2, y2] = new Queen(Turn, x2, y2);
             }
         }
 
-        public void FinallyMove(int x1, int y1, int x2, int y2, bool player1)
+        public void FinallyMove(int x1, int y1, int x2, int y2)
         {
             if (CanMovePiece(x1, y1, x2, y2, player1, false))
             {
                 var piece1 = GetPiece(x1, y1);
                 ChessBoard[x2, y2] = piece1;
-                ChessBoard[x1, y1] = new EmptyPiece(true);
-                //piece1.PositionX = x2;
-                //piece1.PositionY = y2;
+                ChessBoard[x1, y1] = new EmptyPiece(true, x1, y1);
+                piece1.PositionX = x2;
+                piece1.PositionY = y2;
 
                 if (piece1.GetType() == typeof(King) && piece1.CanCastling)
                 {
@@ -450,7 +445,7 @@
             {
                 var piece1 = GetPiece(x1, y1);
 
-                if (!piece1.IsValidMove(x1, y1, x2, y2) && !(piece1.GetType() == typeof(King) && piece1.GetType() == typeof(Rook) && x1 == 5 && x2 == 3 && y1 == y2 && (y1 == 1 || y1 == 8) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && IsEmpty(x2 + 1, y2) && piece1.CanCastling && !IsSquareCheck(2, y1, piece1.Color) && !IsSquareCheck(3, y1, piece1.Color) && !IsSquareCheck(4, y1, piece1.Color)) && !(x1 == 5 && x2 == 7 && y1 == y2 && (y1 == 1 || y1 == 8) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && piece1.CanCastling && !IsSquareCheck(6, y1, piece1.Color) && !IsSquareCheck(7, y1, piece1.Color)))
+                if (!piece1.IsValidMove(x2, y2) && !(piece1.GetType() == typeof(King) && piece1.GetType() == typeof(Rook) && x1 == 5 && x2 == 3 && y1 == y2 && (y1 == 1 || y1 == 8) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && IsEmpty(x2 + 1, y2) && piece1.CanCastling && !IsSquareCheck(2, y1, piece1.Color) && !IsSquareCheck(3, y1, piece1.Color) && !IsSquareCheck(4, y1, piece1.Color)) && !(x1 == 5 && x2 == 7 && y1 == y2 && (y1 == 1 || y1 == 8) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && piece1.CanCastling && !IsSquareCheck(6, y1, piece1.Color) && !IsSquareCheck(7, y1, piece1.Color)))
                 {
                     return false;
                 }
@@ -460,9 +455,9 @@
                 {
                     return false;
                 }
-                if (piece1.CanJump && piece1.IsValidMove(x1, y1, x2, y2))
+                if (piece1.CanJump && piece1.IsValidMove(x2, y2))
                 {
-                    //FinallyMove(x1, y1, x2, y2, piece1, player1);
+                    
                     return true;
                 }
 
@@ -482,7 +477,7 @@
                             if (!testing)
                             {
                                 piece1.CanCastling = false; // ya no va a poder enrocar mas (a la torre no hace falta)
-                                piece1.LCastling = true; // esto es para escribir la jugada                              
+                                piece1.LongCastling = true; // esto es para escribir la jugada                              
                             }
 
                             int XKING = XKing(piece1.Color); //coordenadas del rey del player que mueve
@@ -496,12 +491,13 @@
                                 return false;
                             }
                             else
-                            {
-                                //FinallyMove(x1, y1, x2, y2, piece1, player1); 
+                            {                                
                                 if (!testing)
                                 {
-                                    ChessBoard[x2 + 1, y2] = new Rook(true); //termino de mover la torre
-                                    ChessBoard[1, y1] = new EmptyPiece(true);
+                                    //termino de mover la torre                                    
+                                    PieceBase AuxEmptyPiece = GetPiece(x2 + 1, y2);
+                                    ChessBoard[x2 + 1, y2] = GetPiece(1, y1);
+                                    ChessBoard[1, y1] = AuxEmptyPiece;
                                 }
                                 return true;
                             }
@@ -519,7 +515,7 @@
                             if (!testing)
                             {
                                 piece1.CanCastling = false; // ya no va a poder enrocar mas
-                                piece1.SCastling = true; // esto es para escribir la jugada
+                                piece1.ShortCastling = true; // esto es para escribir la jugada
                             }
 
                             int XKING = XKing(piece1.Color); //coordenadas del rey del player que mueve
@@ -533,12 +529,13 @@
                                 return false;
                             }
                             else
-                            {
-                                //FinallyMove(x1, y1, x2, y2, piece1, player1);
+                            {                                
                                 if (!testing)
                                 {
-                                    ChessBoard[x1 + 1, y2] = new Rook(true); //termino de mover la torre
-                                    ChessBoard[8, y1] = new EmptyPiece(true);
+                                    //termino de mover la torre                                    
+                                    PieceBase AuxEmptyPiece = GetPiece(x1 + 1, y2);
+                                    ChessBoard[x1 + 1, y2] = GetPiece(8, y1);
+                                    ChessBoard[8, y1] = AuxEmptyPiece;
                                 }
                                 return true;
                             }
@@ -546,18 +543,14 @@
                     }
 
 
-                    if (!piece1.CanJump && (x1 == x2 || y1 == y2) && piece1.IsValidMove(x1, y1, x2, y2) && IsLineEmpty(x1, y1, x2, y2))
-                    {
-                        //FinallyMove(x1, y1, x2, y2, piece1, player1);
+                    if (!piece1.CanJump && (x1 == x2 || y1 == y2) && piece1.IsValidMove(x2, y2) && IsLineEmpty(x1, y1, x2, y2))
+                    {                        
                         return true;
                     }
 
-                    if (!piece1.CanJump && x1 != x2 && y1 != y2 && piece1.IsValidMove(x1, y1, x2, y2) && IsDiagonalEmpty(x1, y1, x2, y2))
-                    {
-
-                        //FinallyMove(x1, y1, x2, y2, piece1, player1);
+                    if (!piece1.CanJump && x1 != x2 && y1 != y2 && piece1.IsValidMove(x2, y2) && IsDiagonalEmpty(x1, y1, x2, y2))
+                    {                     
                         return true;
-
                     }
                     return false;
                 }
@@ -606,13 +599,13 @@
             }
             if (piece1.GetType() == typeof(King))
             {
-                if (piece1.SCastling)
+                if (piece1.ShortCastling)
                 {
                     movement = movement.Insert(pointer, "0-0");
                     pointer += 3;
                     return;
                 }
-                if (piece1.SCastling)
+                if (piece1.ShortCastling)
                 {
                     movement = movement.Insert(pointer, "0-0-0");
                     pointer += 5;
@@ -657,7 +650,7 @@
         {
             var piece1 = GetPiece(xPiece, yPiece);
 
-            if (piece1.Color != targetColor && piece1.IsValidMove(xPiece, yPiece, xTarget, yTarget))
+            if (piece1.Color != targetColor && piece1.IsValidMove(xTarget, yTarget))
             {
                 if (IsPawn(piece1))
                 {
@@ -753,6 +746,7 @@
 
         public bool CanAllyBlock(int Xking, int Yking, bool KingColor)
         {
+            PieceBase AuxEmptyPiece = new EmptyPiece(true, 0, 0);
             for (int i = 1; i < 9; i++)
             {
                 for (int j = 1; j < 9; j++)
@@ -764,11 +758,10 @@
                         for (int k = 1; k < 9; k++)
                         {
                             for (int l = 1; l < 9; l++)
-                            {
-                                var auxPiece = GetPiece(k, l);
-                                //MovePiece(i, j, k, l, player1);
+                            {                                
+                                var auxPiece = GetPiece(k, l);                                
                                 ChessBoard[k, l] = pieceA;
-                                ChessBoard[i, j] = new EmptyPiece(player1);
+                                ChessBoard[i, j] = AuxEmptyPiece;
 
                                 //MovePiece(i, j, k, l, player1);
                                 if (!IsSquareCheck(Xking, Yking, KingColor))
@@ -782,7 +775,6 @@
                             }
                         }
                     }
-
                 }
             }
 

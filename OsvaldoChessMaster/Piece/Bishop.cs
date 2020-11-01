@@ -5,18 +5,16 @@
     public class Bishop : PieceBase
     {
         public override bool CanJump => false;
+        public Bishop(bool color, int PositionX, int PositionY)
+            : base(color, PositionX, PositionY) { }
 
-        public Bishop() { }
-
-        public Bishop(bool color) : base(color) { }
-
-        public override bool IsValidMove(int x1, int y1, int x2, int y2)
+        public override bool IsValidMove(int x2, int y2)
         {
             // movimiento en el mismo lugar
-            if (x1 == x2 && y1 == y2)
+            if (PositionX == x2 && PositionY == y2)
                 return false;
 
-            if (Math.Abs(y2 - y1) == (Math.Abs(x2 - x1)))
+            if (Math.Abs(y2 - PositionY) == (Math.Abs(x2 - PositionX)))
             {
                 return true;
             }
@@ -28,12 +26,7 @@
         {
             var color = this.Color ? "w" : "b";
 
-            return $"{color}_(BISHOP)_";
-        }
-
-        public override object Clone()
-        {
-            return this.Clone<Bishop>();
+            return $"{color}_(B)_";
         }
     }
 }

@@ -5,16 +5,16 @@
     public class Knight : PieceBase
     {
         public override bool CanJump => true;
-        public Knight() { }
-        public Knight(bool color) : base(color) { }
+        public Knight(bool color, int PositionX, int PositionY)
+            : base(color, PositionX, PositionY) { }
 
-        public override bool IsValidMove(int x1, int y1, int x2, int y2)
+        public override bool IsValidMove(int x2, int y2)
         {
             // movimiento en el mismo lugar
-            if (x1 == x2 && y1 == y2)
+            if (PositionX == x2 && PositionY == y2)
                 return false;
 
-            if ((Math.Abs(y2 - y1) == 2 && (Math.Abs(x2 - x1) == 1)) || (Math.Abs(y2 - y1) == 1 && (Math.Abs(x2 - x1) == 2)))
+            if ((Math.Abs(y2 - PositionY) == 2 && (Math.Abs(x2 - PositionX) == 1)) || (Math.Abs(y2 - y1) == 1 && (Math.Abs(x2 - x1) == 2)))
             {
                 return true;
             }
@@ -26,12 +26,7 @@
         {
             var color = this.Color ? "w" : "b";
 
-            return $"{color}_(KNIGHT)_";
-        }
-
-        public override object Clone()
-        {
-            return this.Clone<Knight>();
+            return $"{color}_(N)_";
         }
     }
 }

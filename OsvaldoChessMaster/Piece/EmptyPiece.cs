@@ -4,24 +4,17 @@
     {
         public override bool CanJump => false;
 
-        public EmptyPiece() { }
+        public EmptyPiece(bool color, int PositionX, int PositionY)
+            : base(color, PositionX, PositionY) { }
 
-        public EmptyPiece(bool color) 
-            : base(color) { }
-
-        public override bool IsValidMove(int x1, int y1, int x2, int y2)
+        public override bool IsValidMove(int x2, int y2)
         {
             return false;
         }
 
         public override string ToString()
         {
-            return "___________";
-        }
-
-        public override object Clone()
-        {
-            return this.Clone<EmptyPiece>();
+            return "____";
         }
     }
 }
