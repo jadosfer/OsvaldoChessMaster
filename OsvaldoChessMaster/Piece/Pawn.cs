@@ -8,10 +8,9 @@
         private bool CapturableByTheWay;
         private int turnNumberCapturableByTheWay;
 
-        public Pawn(bool color) 
-            : base(color)
-        {
-        }
+        public Pawn() { }
+
+        public Pawn(bool color) : base(color) { }
 
         public override bool IsValidMove(int x1, int y1, int x2, int y2)
         {
@@ -57,6 +56,11 @@
             var color = this.Color ? "w" : "b";
 
             return $"{color}_(_PAWN_)_";
+        }
+
+        public override object Clone()
+        {
+            return this.Clone<Pawn>();
         }
     }
 }

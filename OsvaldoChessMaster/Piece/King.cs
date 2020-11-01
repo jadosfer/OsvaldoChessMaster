@@ -5,7 +5,11 @@
     public class King : PieceBase
     {
         public override bool CanJump => false;
-        public override bool CanCastling { get; set; }
+
+        public King()
+            : this(false)
+        {
+        }
 
         public King(bool color) 
             : base(color)
@@ -32,6 +36,11 @@
             var color = this.Color ? "w" : "b";
 
             return $"{color}_(_KING_)_";
+        }
+
+        public override object Clone()
+        {
+            return this.Clone<King>();
         }
     }
 }

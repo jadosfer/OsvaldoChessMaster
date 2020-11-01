@@ -5,6 +5,7 @@
     public class Knight : PieceBase
     {
         public override bool CanJump => true;
+        public Knight() { }
         public Knight(bool color) : base(color) { }
 
         public override bool IsValidMove(int x1, int y1, int x2, int y2)
@@ -26,6 +27,11 @@
             var color = this.Color ? "w" : "b";
 
             return $"{color}_(KNIGHT)_";
+        }
+
+        public override object Clone()
+        {
+            return this.Clone<Knight>();
         }
     }
 }

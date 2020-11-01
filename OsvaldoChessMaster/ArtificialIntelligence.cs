@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using OsvaldoChessMaster.Piece;
 
 namespace OsvaldoChessMaster
 {
     public class ArtificialIntelligence
-    {
-       
-        public int[] move;
-        public double[,] moves;
+    {       
         public double[,] pawnPositionValues = new double[9, 9];
         public double[,] knightPositionValues = new double[9, 9];
         public double[,] bishopPositionValues = new double[9, 9];
@@ -17,12 +13,6 @@ namespace OsvaldoChessMaster
         public double[,] queenPositionValues = new double[9, 9];
         public double[,] kingPositionValues = new double[9, 9];
 
-        public double[,] PawnPositionValues(int x, int y) => pawnPositionValues;
-        public double[,] KnightPositionValues(int x, int y) => knightPositionValues;
-        public double[,] BishopPositionValues(int x, int y) => bishopPositionValues;
-        public double[,] RookPositionValues(int x, int y) => rookPositionValues;
-        public double[,] QueenPositionValues(int x, int y) => queenPositionValues;
-        public double[,] KingPositionValues(int x, int y) => kingPositionValues;
         public ArtificialIntelligence(Board board)
         {
             pawnPositionValues = PawnPositionValues();
@@ -38,12 +28,14 @@ namespace OsvaldoChessMaster
             double actualValue = EvaluateBoard(board);
             List<Move> AllMoves = new List<Move>();
             //int count = 0;
-            PieceBase[,] ChessBoardAux = (PieceBase[,]) board.ChessBoard.Clone();
+            PieceBase[,] ChessBoardAux = board.CloneChessBoard();
+
             for (int i = 1; i < 9; i++)
             {
                 for (int j = 1; j < 9; j++)
                 {
                     var piece1 = board.GetPiece(i, j);
+
                     if (piece1.Color == board.Turn) // o sino si es == computerColor
                     {
                         for (int k = 1; k < 9; k++)
@@ -69,13 +61,15 @@ namespace OsvaldoChessMaster
                     }
                 }
             }
+
             return AllMoves;
         }
 
         public List<Move> BestResponses(Board board, List<Move> previousMoves)
         {
-            List<Move> responses = new List<Move>();            
-            PieceBase[,] ChessBoardAux = (PieceBase[,])board.ChessBoard.Clone();
+            List<Move> responses = new List<Move>();
+            PieceBase[,] ChessBoardAux = board.CloneChessBoard();
+
             foreach (Move previousMove in previousMoves)
             {
                 board.FinallyMove(previousMove.x1, previousMove.y1, previousMove.x2, previousMove.y2, board.player1);
@@ -85,24 +79,22 @@ namespace OsvaldoChessMaster
                 // back to previous turn
                 board.TurnChange();
             }
+
             return responses;
         }
 
         public Move BestResponse(Board board)
         {
-            var ChessBoardAux = CloneBoard(board);
-            //PrintBoard(board);
-            //Console.WriteLine("Print arriba despeus de clonar");
-            //PieceBase[,] ChessBoardAux = (PieceBase[,]) board.ChessBoard.Clone();
+            var ChessBoardAux = board.CloneChessBoard();
             double actualValue = EvaluateBoard(board);
             Move response = new Move();            
 
             for (int i = 1; i < 9; i++)
             {
                 for (int j = 1; j < 9; j++)
-                {
-                    
+                {                    
                     var piece1 = board.GetPiece(i, j);
+
                     if (piece1.Color == board.Turn && piece1.GetType() != typeof(EmptyPiece))
                     {
                         for (int k = 1; k < 9; k++)
@@ -111,8 +103,6 @@ namespace OsvaldoChessMaster
                             {
                                 if (board.FinallyMove(i, j, k, l, board.player1))
                                 {
-                                    //PrintBoard(board);
-                                    //Console.WriteLine("primer print arriba. despues del finally");
                                     // si mueve el de abajo
                                     if (board.player1)
                                     {   // guardo la mejor movida
@@ -136,10 +126,12 @@ namespace OsvaldoChessMaster
                                             response.y2 = l;
                                         }
                                     }
+
                                     // back to previous board
                                     board.ChessBoard = ChessBoardAux;
                                     PrintChessBoard(ChessBoardAux);
                                     Console.WriteLine("arriba imprimo el Aux");
+                                    
                                     // back to previous turn                                    
                                     board.TurnChange();
                                     PrintBoard(board);
@@ -150,59 +142,25 @@ namespace OsvaldoChessMaster
                         }
                     }
                 }
-            }                       
+            }    
+            
             return response;
         }
-
-        public PieceBase[,] CloneBoard(Board board)
-        {
-            PieceBase[,] clonedBoard = new PieceBase[9, 9];
-            for (int i = 1; i < 9; i++)
-            {
-                for (int j = 1; j < 9; j++)
-                {                    
-                    switch (board.GetPiece(i, j).GetType().Name)
-                    {
-                        case nameof(Pawn):
-                            clonedBoard[i, j] = new Pawn(board.player1);
-                            break;
-                        case nameof(Knight):
-                            clonedBoard[i, j] = new Knight(board.player1);
-                            break;
-                        case nameof(Bishop):
-                            clonedBoard[i, j] = new Bishop(board.player1);
-                            break;
-                        case nameof(Rook):
-                            clonedBoard[i, j] = new Rook(board.player1);
-                            break;
-                        case nameof(Queen):
-                            clonedBoard[i, j] = new Queen(board.player1);
-                            break;
-                        case nameof(King):
-                            clonedBoard[i, j] = new King(board.player1);
-                            break;
-                        case nameof(EmptyPiece):
-                            clonedBoard[i, j] = new EmptyPiece(board.player1);
-                            break;
-                    }
-                }
-            }
-            return clonedBoard;
-        }
-
     
         public Move BestComputerMoveDepth4(Board board)
         {
-            PieceBase[,] ChessBoardAux = (PieceBase[,])board.ChessBoard.Clone();
+            PieceBase[,] ChessBoardAux = board.CloneChessBoard();
             double value = EvaluateBoard(board);
             Move bestMove = null;
             List<Move> allMove1 = AllPosiblePlays(board);
+
             foreach (Move move1 in allMove1)
             {
                 board.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board.player1);
                 board.FinallyMove(BestResponse(board).x1, BestResponse(board).y1, BestResponse(board).x2, BestResponse(board).y2, board.player1);
                 List<Move> allMove3 = AllPosiblePlays(board);
-                PieceBase[,] ChessBoardAux2 = (PieceBase[,])board.ChessBoard.Clone();                
+                PieceBase[,] ChessBoardAux2 = board.CloneChessBoard();
+
                 foreach (Move move3 in allMove3)
                 {
                     board.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board.player1);
@@ -218,6 +176,7 @@ namespace OsvaldoChessMaster
                 // back to previous board
                 board.ChessBoard = ChessBoardAux;
             }
+
             return bestMove;
         }
 
@@ -266,6 +225,7 @@ namespace OsvaldoChessMaster
                 for (int j = 1; j < 9; j++)
                 {
                     var piece1 = board.GetPiece(i, j);
+
                     if (piece1.Color == board.player1) //piezas del jugador suman y de pc restan
                     {
                         switch (piece1.GetType().Name)
@@ -318,6 +278,7 @@ namespace OsvaldoChessMaster
                     }
                 }
             }
+
             return sum;
         }
 
@@ -343,6 +304,7 @@ namespace OsvaldoChessMaster
                 pawnPositionValues[i, 7] = ValuesFile7[i];
                 pawnPositionValues[i, 8] = ValuesFile8[i];
             }
+
             return pawnPositionValues;
         }
 
@@ -357,6 +319,7 @@ namespace OsvaldoChessMaster
             double[] ValuesFile7 = { 0, -4.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -4.0 };
             double[] ValuesFile8 = { 0, -5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0 };
             double[,] knightPositionValues = new double[9, 9];
+
             for (int i = 1; i < 9; i++)
             {
                 knightPositionValues[i, 1] = ValuesFile1[i];
@@ -368,6 +331,7 @@ namespace OsvaldoChessMaster
                 knightPositionValues[i, 7] = ValuesFile7[i];
                 knightPositionValues[i, 8] = ValuesFile8[i];
             }
+
             return knightPositionValues;
         }
 
@@ -393,6 +357,7 @@ namespace OsvaldoChessMaster
                 bishopPositionValues[i, 7] = ValuesFile7[i];
                 bishopPositionValues[i, 8] = ValuesFile8[i];
             }
+
             return bishopPositionValues;
         }
 
@@ -405,7 +370,8 @@ namespace OsvaldoChessMaster
             double[] ValuesFile5 = { 0, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5 };
             double[] ValuesFile6 = { 0, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5 };
             double[] ValuesFile7 = { 0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5 };
-            double[] ValuesFile8 = { 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };            
+            double[] ValuesFile8 = { 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+
             for (int i = 1; i < 9; i++)
             {
                 rookPositionValues[i, 1] = ValuesFile1[i];
@@ -417,6 +383,7 @@ namespace OsvaldoChessMaster
                 rookPositionValues[i, 7] = ValuesFile7[i];
                 rookPositionValues[i, 8] = ValuesFile8[i];
             }
+
             return rookPositionValues;
         }
 
@@ -442,6 +409,7 @@ namespace OsvaldoChessMaster
                 queenPositionValues[i, 7] = ValuesFile7[i];
                 queenPositionValues[i, 8] = ValuesFile8[i];
             }
+
             return queenPositionValues;
         }
 
@@ -467,6 +435,7 @@ namespace OsvaldoChessMaster
                 kingPositionValues[i, 7] = ValuesFile7[i];
                 kingPositionValues[i, 8] = ValuesFile8[i];
             }
+
             return kingPositionValues;
         }
 
@@ -497,30 +466,5 @@ namespace OsvaldoChessMaster
             Console.Write(ChessBoard[1, 1] + " "); Console.Write(ChessBoard[2, 1] + " "); Console.Write(ChessBoard[3, 1] + " "); Console.Write(ChessBoard[4, 1] + " "); Console.Write(ChessBoard[5, 1] + " "); Console.Write(ChessBoard[6, 1] + " "); Console.Write(ChessBoard[7, 1] + " "); Console.WriteLine(ChessBoard[8, 1] + " ");
             Console.WriteLine();
         }
-
     }
-
-    public class Move
-    {
-        public int x1 { get; set; }
-        public int y1 { get; set; }
-        public int x2 { get; set; }
-        public int y2 { get; set; }
-    }
-
-    public class MoveAndResponse
-    {
-        public Move move1 { get; set; }
-        public Move move2 { get; set; }
-
-        //public int x1 { get; set; }
-        //public int y1 { get; set; }
-        //public int x2 { get; set; }
-        //public int y2 { get; set; }
-        //public int x3 { get; set; }
-        //public int y3 { get; set; }
-        //public int x4 { get; set; }
-        //public int y4 { get; set; }         
-    }
-
 }

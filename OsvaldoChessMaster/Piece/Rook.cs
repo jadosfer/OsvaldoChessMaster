@@ -4,6 +4,11 @@
     {
         public override bool CanJump => false;
 
+        public Rook()
+            : this(false)
+        {
+        }
+
         public Rook(bool color) 
             : base(color)
         {
@@ -29,6 +34,11 @@
             var color = this.Color ? "w" : "b";
 
             return $"{color}_(_ROOK_)_";
+        }
+
+        public override object Clone()
+        {
+            return this.Clone<Rook>();
         }
     }
 }

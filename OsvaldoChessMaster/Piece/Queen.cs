@@ -6,6 +6,8 @@
     {
         public override bool CanJump => false;
 
+        public Queen() { }
+
         public Queen(bool color) 
             : base(color) { }
 
@@ -33,6 +35,11 @@
             var color = this.Color ? "w" : "b";
 
             return $"{color}_(QUEEN_)_";
+        }
+
+        public override object Clone()
+        {
+            return this.Clone<Queen>();
         }
     }
 }
