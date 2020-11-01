@@ -816,5 +816,24 @@
 
             return false;
         }
+        /// <summary>
+        /// Method to perform deep clone/copy of a Chess Board.
+        /// </summary>
+        /// <returns></returns>
+        public PieceBase[,] CloneChessBoard()
+        {
+            var clonedChessBoard = new PieceBase[Size, Size];
+
+            for (int i = 0; i < Size; i++)
+            {
+                for (int j = 0; j < Size; j++)
+                {
+                    if (this.ChessBoard[i, j] != null)
+                        clonedChessBoard[i, j] = this.ChessBoard[i, j].Clone() as PieceBase;
+                }
+            }
+
+            return clonedChessBoard;
+        }
     }
 }

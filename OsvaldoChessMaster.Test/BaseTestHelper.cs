@@ -13,16 +13,16 @@
             var piece1 = new T
             {
                 CanCastling = canCastling1,
-                LCastling = lCastling1,
-                SCastling = sCastling1,
+                LongCastling = lCastling1,
+                ShortCastling = sCastling1,
                 Color = color1
             };
 
             var piece2 = new T
             {
                 CanCastling = canCastling2,
-                LCastling = lCastling2,
-                SCastling = sCastling2,
+                LongCastling = lCastling2,
+                ShortCastling = sCastling2,
                 Color = color2
             };
 
