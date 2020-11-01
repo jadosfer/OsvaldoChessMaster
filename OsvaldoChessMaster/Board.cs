@@ -12,14 +12,14 @@
         private Stack<string> stackFullPlay;
         private string movement = string.Empty; // se llena con las dos movidas y luego se reinicia
 
-        public int TurnNumber { get; set; }
+        private int TurnNumber { get; set; }
         public bool Turn { get; set; } //Turn = true es el turno del player1
 
         public PieceBase[,] ChessBoard { get; set; }
-          
+
         public bool isCheckmate { get; private set; }
-        public bool isCheck;
-        public bool isCantMoveCheck;
+        private bool isCheck;
+        private bool isCantMoveCheck;
         public bool isCastling;
 
         private static Dictionary<int, string> columnLetters = new Dictionary<int, string>
@@ -92,7 +92,7 @@
             return ChessBoard[x, y] ?? new EmptyPiece(player1);
         }
 
-        public bool IsAlly(int x1, int y1, int x2, int y2) //solo es true si hay otra pieza del mismo color, sino false siempre
+        private bool IsAlly(int x1, int y1, int x2, int y2) //solo es true si hay otra pieza del mismo color, sino false siempre
         {
             var piece1 = GetPiece(x1, y1);
             var piece2 = GetPiece(x2, y2);
@@ -101,17 +101,17 @@
 
         }
 
-        public bool IsInRange(int x1, int y1, int x2, int y2)
+        private bool IsInRange(int x1, int y1, int x2, int y2)
         {
             if (!(x1 < 1) && !(x1 > 8) && !(y1 < 1) && !(y1 > 8) && !(x2 < 1) && !(x2 > 8) && !(y2 < 1) && !(y2 > 8))
             {
                 return true;
             }
-            Console.WriteLine("Out of range");
+            //Console.WriteLine("Out of range JFM");
             return false;
         }
 
-        public bool IsColorTurn(PieceBase piece1)
+        private bool IsColorTurn(PieceBase piece1)
         {
             return piece1.Color == Turn;
         }

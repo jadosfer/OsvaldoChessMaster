@@ -7,7 +7,6 @@ namespace OsvaldoChessMaster
 {
     public class ArtificialIntelligence
     {
-       
         public int[] move;
         public double[,] moves;
         public double[,] pawnPositionValues = new double[9, 9];
@@ -37,8 +36,7 @@ namespace OsvaldoChessMaster
         {
             double actualValue = EvaluateBoard(board);
             List<Move> AllMoves = new List<Move>();
-            //int count = 0;
-            PieceBase[,] ChessBoardAux = (PieceBase[,]) board.ChessBoard.Clone();
+            //int count = 0;            
             for (int i = 1; i < 9; i++)
             {
                 for (int j = 1; j < 9; j++)
@@ -50,9 +48,9 @@ namespace OsvaldoChessMaster
                         {
                             for (int l = 1; l < 9; l++)
                             {
-                                
+                                PieceBase auxPiece = board.GetPiece(k, l);
                                 if (board.FinallyMove(i, j, k, l, board.player1))
-                                {                                    
+                                {
                                     // solo lo guardo si no empeora la situacion (cuanto ams negativo mejor para la pc
                                     if (EvaluateBoard(board) <= actualValue)
                                     {
@@ -60,9 +58,9 @@ namespace OsvaldoChessMaster
                                         AllMoves.Add(new Move { x1 = i, y1 = j, x2 = k, y2 = l });
                                     }
                                     // back to previous board
-                                    board.ChessBoard = ChessBoardAux;
+                                    UndoMove(board, i, j, k, l, piece1, auxPiece); ;
                                     // back to previous turn
-                                    board.TurnChange();                                    
+                                    board.TurnChange();
                                 }
                             }
                         }
@@ -74,7 +72,7 @@ namespace OsvaldoChessMaster
 
         public List<Move> BestResponses(Board board, List<Move> previousMoves)
         {
-            List<Move> responses = new List<Move>();            
+            List<Move> responses = new List<Move>();
             PieceBase[,] ChessBoardAux = (PieceBase[,])board.ChessBoard.Clone();
             foreach (Move previousMove in previousMoves)
             {
@@ -90,31 +88,37 @@ namespace OsvaldoChessMaster
 
         public Move BestResponse(Board board)
         {
-            var ChessBoardAux = CloneBoard(board);
-            //PrintBoard(board);
-            //Console.WriteLine("Print arriba despeus de clonar");
+            //var ChessBoardAux = CloneBoard(board);
+            //PrintBoard(board);            
             //PieceBase[,] ChessBoardAux = (PieceBase[,]) board.ChessBoard.Clone();
             double actualValue = EvaluateBoard(board);
-            Move response = new Move();            
+            Move response = new Move();
+            Move responseAux = new Move();
 
             for (int i = 1; i < 9; i++)
             {
                 for (int j = 1; j < 9; j++)
                 {
-                    
+
                     var piece1 = board.GetPiece(i, j);
                     if (piece1.Color == board.Turn && piece1.GetType() != typeof(EmptyPiece))
                     {
+
                         for (int k = 1; k < 9; k++)
                         {
                             for (int l = 1; l < 9; l++)
                             {
+
+
+                                var auxPiece = board.GetPiece(k, l);
                                 if (board.FinallyMove(i, j, k, l, board.player1))
                                 {
-                                    //PrintBoard(board);
-                                    //Console.WriteLine("primer print arriba. despues del finally");
+                                    responseAux.x1 = i;
+                                    responseAux.y1 = j;
+                                    responseAux.x2 = k;
+                                    responseAux.y2 = l;
                                     // si mueve el de abajo
-                                    if (board.player1)
+                                    if (board.Turn != board.player1)
                                     {   // guardo la mejor movida
                                         if (EvaluateBoard(board) >= actualValue)
                                         {
@@ -137,124 +141,83 @@ namespace OsvaldoChessMaster
                                         }
                                     }
                                     // back to previous board
-                                    board.ChessBoard = ChessBoardAux;
-                                    PrintChessBoard(ChessBoardAux);
-                                    Console.WriteLine("arriba imprimo el Aux");
+                                    UndoMove(board, i, j, k, l, piece1, auxPiece);
                                     // back to previous turn                                    
                                     board.TurnChange();
-                                    PrintBoard(board);
-                                    Console.WriteLine("arriba El board undo");
-                                    //Console.WriteLine("" + response.x1 + response.y1 + response.x2 + response.y2);
+                                    //PrintBoard(board);                                    
+                                    //onsole.WriteLine("" + response.x1 + response.y1 + response.x2 + response.y2);
                                 }
-                            }
-                        }
-                    }
-                }
-            }                       
-            return response;
-        }
 
-        public PieceBase[,] CloneBoard(Board board)
-        {
-            PieceBase[,] clonedBoard = new PieceBase[9, 9];
-            for (int i = 1; i < 9; i++)
-            {
-                for (int j = 1; j < 9; j++)
-                {                    
-                    switch (board.GetPiece(i, j).GetType().Name)
-                    {
-                        case nameof(Pawn):
-                            clonedBoard[i, j] = new Pawn(board.player1);
-                            break;
-                        case nameof(Knight):
-                            clonedBoard[i, j] = new Knight(board.player1);
-                            break;
-                        case nameof(Bishop):
-                            clonedBoard[i, j] = new Bishop(board.player1);
-                            break;
-                        case nameof(Rook):
-                            clonedBoard[i, j] = new Rook(board.player1);
-                            break;
-                        case nameof(Queen):
-                            clonedBoard[i, j] = new Queen(board.player1);
-                            break;
-                        case nameof(King):
-                            clonedBoard[i, j] = new King(board.player1);
-                            break;
-                        case nameof(EmptyPiece):
-                            clonedBoard[i, j] = new EmptyPiece(board.player1);
-                            break;
+                            }
+
+                        }
+
+
                     }
                 }
             }
-            return clonedBoard;
+            if (response == null)
+            {
+                return responseAux;
+            }
+            return response;
         }
 
-    
         public Move BestComputerMoveDepth4(Board board)
         {
             PieceBase[,] ChessBoardAux = (PieceBase[,])board.ChessBoard.Clone();
-            double value = EvaluateBoard(board);
-            Move bestMove = null;
+            double value = 10000;
+            Move bestMove = new Move();
             List<Move> allMove1 = AllPosiblePlays(board);
             foreach (Move move1 in allMove1)
             {
+                PieceBase piece1 = board.GetPiece(move1.x1, move1.y1);
+                PieceBase auxPiece = board.GetPiece(move1.x2, move1.y2);
+                //PC movement
                 board.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board.player1);
+
+                int piece2x = BestResponse(board).x1;
+                int piece2y = BestResponse(board).y1;
+                PieceBase piece2 = board.GetPiece(piece2x, piece2y);
+
+                int auxPiece2x = BestResponse(board).x2;
+                int auxPiece2y = BestResponse(board).y2;
+                PieceBase auxPiece2 = board.GetPiece(auxPiece2x, auxPiece2y);
+                //human BestResponse movement
                 board.FinallyMove(BestResponse(board).x1, BestResponse(board).y1, BestResponse(board).x2, BestResponse(board).y2, board.player1);
+
                 List<Move> allMove3 = AllPosiblePlays(board);
-                PieceBase[,] ChessBoardAux2 = (PieceBase[,])board.ChessBoard.Clone();                
+                PieceBase[,] ChessBoardAux2 = (PieceBase[,])board.ChessBoard.Clone();
                 foreach (Move move3 in allMove3)
                 {
-                    board.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board.player1);
-                    board.FinallyMove(BestResponse(board).x1, BestResponse(board).y1, BestResponse(board).x2, BestResponse(board).y2, board.player1);
+                    PieceBase piece3 = board.GetPiece(move3.x1, move3.y1);
+                    PieceBase auxPiece3 = board.GetPiece(move3.x2, move3.y2);
+                    //PC second movement
+                    board.FinallyMove(move3.x1, move3.y1, move3.x2, move3.y2, board.player1);
+
+                    int piece4x = BestResponse(board).x1;
+                    int piece4y = BestResponse(board).y1;
+                    PieceBase piece4 = board.GetPiece(piece4x, piece4y);
+
+                    int auxPiece4x = BestResponse(board).x2;
+                    int auxPiece4y = BestResponse(board).y2;
+                    PieceBase auxPiece4 = board.GetPiece(auxPiece4x, auxPiece4y);
+
+                    board.FinallyMove(piece4x, piece4y, auxPiece4x, auxPiece4y, board.player1);
                     if (EvaluateBoard(board) < value)
                     {
                         value = EvaluateBoard(board);
                         bestMove = move1; //me quedo con la move1 que produce la menor bestresponse
                     }
                     // back to previous board
-                    board.ChessBoard = ChessBoardAux2;
+                    UndoMove(board, piece4x, piece4y, auxPiece4x, auxPiece4y, piece4, auxPiece4);
+                    UndoMove(board, move3.x1, move3.y1, move3.x2, move3.y2, piece3, auxPiece3);
                 }
                 // back to previous board
-                board.ChessBoard = ChessBoardAux;
+                UndoMove(board, piece2x, piece2y, auxPiece2x, auxPiece2y, piece2, auxPiece2);
+                UndoMove(board, move1.x1, move1.y1, move1.x2, move1.y2, piece1, auxPiece);
             }
             return bestMove;
-        }
-
-        public void UndoRookCastling(Board board, bool computerColor, PieceBase auxPiece, int i, int j, int k, int l)
-        {
-            //undo rook castling
-            if (board.isCastling)
-            {   //if white is below  && move to right
-                if (!computerColor && i < k)
-                {   //copy rook on x=6 to x=8
-                    board.ChessBoard[8, j] = board.ChessBoard[6, j];
-                    //if was Castling auxPiece is emptyPiece    
-                    board.ChessBoard[6, j] = auxPiece;
-                }
-                //if white is below  && move to left
-                if (!computerColor && i > k)
-                {   //copy rook on x=4 to x=1
-                    board.ChessBoard[1, j] = board.ChessBoard[4, j];
-                    //if was Castling auxPiece is emptyPiece    
-                    board.ChessBoard[4, j] = auxPiece;
-                }
-                //if black is below  && move to right
-                if (computerColor && i < k)
-                {   //copy rook on x=5 to x=8
-                    board.ChessBoard[8, j] = board.ChessBoard[5, j];
-                    //if was Castling auxPiece is emptyPiece    
-                    board.ChessBoard[5, j] = auxPiece;
-                }
-                //if black is below  && move to left
-                if (computerColor && i > k)
-                {   //copy rook on x=4 to x=1
-                    board.ChessBoard[1, j] = board.ChessBoard[3, j];
-                    //if was Castling auxPiece is emptyPiece    
-                    board.ChessBoard[3, j] = auxPiece;
-                }
-                board.isCastling = false;
-            }
         }
 
         public double EvaluateBoard(Board board)
@@ -321,6 +284,48 @@ namespace OsvaldoChessMaster
             return sum;
         }
 
+        public void UndoMove(Board board, int x1, int y1, int x2, int y2, PieceBase piece1, PieceBase auxPiece)
+        {
+            board.ChessBoard[x1, y1] = piece1;
+            board.ChessBoard[x2, y2] = auxPiece;
+            UndoRookCastling(board, auxPiece, x1, y1, x2, y2);
+        }
+        public void UndoRookCastling(Board board, PieceBase auxPiece, int i, int j, int k, int l)
+        {
+            //undo rook castling
+            if (board.isCastling)
+            {   //if white is below  && move to right
+                if (board.player1 && i < k)
+                {   //copy rook on x=6 to x=8
+                    board.ChessBoard[8, j] = board.ChessBoard[6, j];
+                    //if was Castling auxPiece is emptyPiece    
+                    board.ChessBoard[6, j] = auxPiece;
+                }
+                //if white is below  && move to left
+                if (board.player1 && i > k)
+                {   //copy rook on x=4 to x=1
+                    board.ChessBoard[1, j] = board.ChessBoard[4, j];
+                    //if was Castling auxPiece is emptyPiece    
+                    board.ChessBoard[4, j] = auxPiece;
+                }
+                //if black is below  && move to right
+                if (!board.player1 && i < k)
+                {   //copy rook on x=5 to x=8
+                    board.ChessBoard[8, j] = board.ChessBoard[5, j];
+                    //if was Castling auxPiece is emptyPiece    
+                    board.ChessBoard[5, j] = auxPiece;
+                }
+                //if black is below  && move to left
+                if (!board.player1 && i > k)
+                {   //copy rook on x=4 to x=1
+                    board.ChessBoard[1, j] = board.ChessBoard[3, j];
+                    //if was Castling auxPiece is emptyPiece    
+                    board.ChessBoard[3, j] = auxPiece;
+                }
+                board.isCastling = false;
+            }
+        }
+
         public double[,] PawnPositionValues()
         {
             double[] ValuesFile1 = { 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
@@ -381,7 +386,7 @@ namespace OsvaldoChessMaster
             double[] ValuesFile6 = { 0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0 };
             double[] ValuesFile7 = { 0, -1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, -1.0 };
             double[] ValuesFile8 = { 0, -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0 };
-            
+
             for (int i = 1; i < 9; i++)
             {
                 bishopPositionValues[i, 1] = ValuesFile1[i];
@@ -405,7 +410,7 @@ namespace OsvaldoChessMaster
             double[] ValuesFile5 = { 0, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5 };
             double[] ValuesFile6 = { 0, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5 };
             double[] ValuesFile7 = { 0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5 };
-            double[] ValuesFile8 = { 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };            
+            double[] ValuesFile8 = { 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
             for (int i = 1; i < 9; i++)
             {
                 rookPositionValues[i, 1] = ValuesFile1[i];
@@ -430,7 +435,7 @@ namespace OsvaldoChessMaster
             double[] ValuesFile6 = { 0, -1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0 };
             double[] ValuesFile7 = { 0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0 };
             double[] ValuesFile8 = { 0, -2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0 };
-            
+
             for (int i = 1; i < 9; i++)
             {
                 queenPositionValues[i, 1] = ValuesFile1[i];
@@ -455,7 +460,7 @@ namespace OsvaldoChessMaster
             double[] ValuesFile6 = { 0, -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0 };
             double[] ValuesFile7 = { 0, -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0 };
             double[] ValuesFile8 = { 0, -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0 };
-            
+
             for (int i = 1; i < 9; i++)
             {
                 kingPositionValues[i, 1] = ValuesFile1[i];
@@ -498,6 +503,41 @@ namespace OsvaldoChessMaster
             Console.WriteLine();
         }
 
+        public PieceBase[,] CloneBoard(Board board)
+        {
+            PieceBase[,] clonedBoard = new PieceBase[9, 9];
+            for (int i = 1; i < 9; i++)
+            {
+                for (int j = 1; j < 9; j++)
+                {
+                    switch (board.GetPiece(i, j).GetType().Name)
+                    {
+                        case nameof(Pawn):
+                            clonedBoard[i, j] = new Pawn(board.player1);
+                            break;
+                        case nameof(Knight):
+                            clonedBoard[i, j] = new Knight(board.player1);
+                            break;
+                        case nameof(Bishop):
+                            clonedBoard[i, j] = new Bishop(board.player1);
+                            break;
+                        case nameof(Rook):
+                            clonedBoard[i, j] = new Rook(board.player1);
+                            break;
+                        case nameof(Queen):
+                            clonedBoard[i, j] = new Queen(board.player1);
+                            break;
+                        case nameof(King):
+                            clonedBoard[i, j] = new King(board.player1);
+                            break;
+                        case nameof(EmptyPiece):
+                            clonedBoard[i, j] = new EmptyPiece(board.player1);
+                            break;
+                    }
+                }
+            }
+            return clonedBoard;
+        }
     }
 
     public class Move
