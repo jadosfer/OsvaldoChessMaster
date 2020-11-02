@@ -241,7 +241,7 @@
                 }
                 if (!piece1.IsValidMove(x2, y2))
                 {
-                    Console.WriteLine("Not valid move");
+                    //Console.WriteLine("Not valid move");
                     return false;
                 }
             }

@@ -18,13 +18,14 @@
             Assert.IsFalse(pawn.CanJump);
         }
 
-        [TestCase(0, 0, 0, 0, false)]
-        [TestCase(0, 0, 1, 0, false)]
-        [TestCase(0, 0, 1, 1, true)]
+        //[TestCase(0, 0, 0, 0, false)]
+        //[TestCase(0, 0, 1, 0, false)]
+        //[TestCase(0, 0, 1, 1, true)]
+        [TestCase(4, 7, 4, 6, true)]
         public void IsValidMove(int x1, int y1, int x2, int y2, bool expected)
         {
             // Arrange
-            var pawn = new Pawn(true, 0, 0);
+            var pawn = new Pawn(true, 4, 7);
 
             // Act
             var result = pawn.IsValidMove(x2, y2);

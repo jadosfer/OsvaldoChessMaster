@@ -1,5 +1,7 @@
 ﻿using System;
 using OsvaldoChessMaster;
+using OsvaldoChessMaster.Piece;
+using System.Collections.Generic;
 
 namespace ocm
 {
@@ -8,56 +10,68 @@ namespace ocm
 
         static void Main(string[] args)
         {
+            
             //bool turn = true; // true si mueven blancas
             bool player1 = true; //true para blancas abajo y negras arriba                        
             Board board = new Board(player1);
-            
+            ArtificialIntelligence artificInt = new ArtificialIntelligence(board);
 
-            Program.PrintBoard(board);
+            PieceBase[,] BackupBoard = board.CloneChessBoard();
+            List<Move> AllMoves = new List<Move>();            
+            //Program.PrintBoard(board);
 
             board.FinallyMove(5, 2, 5, 4); //blancas
-            PrintBoard(board);
-            board.FinallyMove(5, 7, 5, 5);
-            PrintBoard(board);
-            board.FinallyMove(6, 1, 3, 4); //blancas
-            PrintBoard(board);
-            board.FinallyMove(6, 7, 6, 6);
-            PrintBoard(board);
-            board.FinallyMove(1, 2, 1, 3); //blancas
-            PrintBoard(board);
-            board.FinallyMove(7, 8, 8, 6);
-            PrintBoard(board);
-            board.FinallyMove(7, 1, 8, 3); //blancas
-            PrintBoard(board);
-            board.FinallyMove(6, 8, 1, 3);
-            PrintBoard(board);
-            board.FinallyMove(2, 2, 1, 3); //blancas
-            PrintBoard(board);
-            board.FinallyMove(5, 8, 7, 8); // enroque no permitido
-            PrintBoard(board);
-            board.FinallyMove(4, 7, 4, 5);
-            PrintBoard(board);
-            board.FinallyMove(1, 3, 1, 4); //blancas
-            PrintBoard(board);
-            board.FinallyMove(1, 7, 1, 6);
-            PrintBoard(board);
-            board.FinallyMove(3, 1, 1, 3); //blancas
-            PrintBoard(board);
-            board.FinallyMove(4, 8, 4, 6);
-            PrintBoard(board);
-            board.FinallyMove(1, 4, 1, 5); //blancas
-            PrintBoard(board);
-            board.FinallyMove(8, 8, 7, 8); // muevo torre
-            PrintBoard(board);
+            double actualValue = artificInt.EvaluateBoard(board);
+            
 
-            board.FinallyMove(7, 2, 7, 3); //blancas
-            PrintBoard(board);
-            board.FinallyMove(7, 8, 8, 8); // muevo torre
-            PrintBoard(board);
-            board.FinallyMove(7, 3, 7, 4); //blancas
-            PrintBoard(board);
-            board.FinallyMove(5, 8, 7, 8); // enroque no permitido
-            PrintBoard(board);
+            artificInt.AllPosiblePiecePlays(board, BackupBoard, 4, 7, AllMoves, actualValue);
+
+            //board.FinallyMove(artificInt.BestComputerMoveDepth4(board).x1, artificInt.BestComputerMoveDepth4(board).y1, artificInt.BestComputerMoveDepth4(board).x2, artificInt.BestComputerMoveDepth4(board).y2);
+            //PrintBoard(board);
+
+            //board.FinallyMove(5, 2, 5, 4); //blancas
+            //PrintBoard(board);
+            //board.FinallyMove(5, 7, 5, 5);
+            //PrintBoard(board);
+            //board.FinallyMove(6, 1, 3, 4); //blancas
+            //PrintBoard(board);
+            //board.FinallyMove(6, 7, 6, 6);
+            //PrintBoard(board);
+            //board.FinallyMove(1, 2, 1, 3); //blancas
+            //PrintBoard(board);
+            //board.FinallyMove(7, 8, 8, 6);
+            //PrintBoard(board);
+            //board.FinallyMove(7, 1, 8, 3); //blancas
+            //PrintBoard(board);
+            //board.FinallyMove(6, 8, 1, 3);
+            //PrintBoard(board);
+            //board.FinallyMove(2, 2, 1, 3); //blancas
+            //PrintBoard(board);
+            //board.FinallyMove(5, 8, 7, 8); // enroque no permitido
+            //PrintBoard(board);
+            //board.FinallyMove(4, 7, 4, 5);
+            //PrintBoard(board);
+            //board.FinallyMove(1, 3, 1, 4); //blancas
+            //PrintBoard(board);
+            //board.FinallyMove(1, 7, 1, 6);
+            //PrintBoard(board);
+            //board.FinallyMove(3, 1, 1, 3); //blancas
+            //PrintBoard(board);
+            //board.FinallyMove(4, 8, 4, 6);
+            //PrintBoard(board);
+            //board.FinallyMove(1, 4, 1, 5); //blancas
+            //PrintBoard(board);
+            //board.FinallyMove(8, 8, 7, 8); // muevo torre
+            //PrintBoard(board);
+
+            //board.FinallyMove(7, 2, 7, 3); //blancas
+            //PrintBoard(board);
+            //board.FinallyMove(7, 8, 8, 8); // muevo torre
+            //PrintBoard(board);
+            //board.FinallyMove(7, 3, 7, 4); //blancas
+            //PrintBoard(board);
+            //board.FinallyMove(5, 8, 7, 8); // enroque no permitido
+            //PrintBoard(board);
         }
 
         public static void PrintBoard(Board board)

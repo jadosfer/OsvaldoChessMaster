@@ -26,9 +26,10 @@ namespace OsvaldoChessMaster
         public List<Move> AllPosiblePlays(Board board)
         {
             double actualValue = EvaluateBoard(board);
-            List<Move> AllMoves = new List<Move>();
+            List<Move> AllMoves = new List<Move>();            
+
             //int count = 0;
-            PieceBase[,] ChessBoardAux = board.CloneChessBoard();
+            PieceBase[,] BackupBoard = board.CloneChessBoard();
 
             for (int i = 1; i < 9; i++)
             {
@@ -36,34 +37,44 @@ namespace OsvaldoChessMaster
                 {
                     var piece1 = board.GetPiece(i, j);
 
-                    if (piece1.Color == board.Turn) // o sino si es == computerColor
+                    if (piece1.Color == !board.player1) // o sino si es == computerColor
                     {
-                        for (int k = 1; k < 9; k++)
-                        {
-                            for (int l = 1; l < 9; l++)
-                            {
-                                
-                                if (board.FinallyMove(i, j, k, l))
-                                {                                    
-                                    // solo lo guardo si no empeora la situacion (cuanto ams negativo mejor para la pc
-                                    if (EvaluateBoard(board) <= actualValue)
-                                    {
-                                        actualValue = EvaluateBoard(board);
-                                        AllMoves.Add(new Move { x1 = i, y1 = j, x2 = k, y2 = l });
-                                    }
-                                    // back to previous board
-                                    board.ChessBoard = ChessBoardAux;
-                                    // back to previous turn
-                                    board.TurnChange();                                    
-                                }
-                            }
-                        }
+                        AllPosiblePiecePlays(board, BackupBoard, i, j, AllMoves, actualValue);
                     }
                 }
             }
 
             return AllMoves;
         }
+        
+        public void AllPosiblePiecePlays(Board board, PieceBase[,] BackupBoard, int i, int j, List<Move> AllMoves, double actualValue)
+        {
+            for (int k = 1; k < 9; k++)
+            {
+                for (int l = 1; l < 9; l++)
+                {
+                    //Console.WriteLine("ijkl" + i+j+k+l + board.FinallyMove(i, j, k, l));
+
+                    if (board.FinallyMove(i, j, k, l))
+                    {
+
+                        // solo lo guardo si no empeora la situacion (cuanto ams negativo mejor para la pc
+                        double Eval = EvaluateBoard(board);
+                        if (Eval <= actualValue)
+                        {
+                            //actualValue = EvaluateBoard(board);
+                            AllMoves.Add(new Move { x1 = i, y1 = j, x2 = k, y2 = l });
+                        }
+                        // back to previous board
+                        board.ChessBoard = BackupBoard;
+                        // back to previous turn
+                        board.TurnChange();
+                    }
+                }
+             }            
+        }       
+
+
 
         public List<Move> BestResponses(Board board, List<Move> previousMoves)
         {
@@ -129,13 +140,13 @@ namespace OsvaldoChessMaster
 
                                     // back to previous board
                                     board.ChessBoard = ChessBoardAux;
-                                    PrintChessBoard(ChessBoardAux);
-                                    Console.WriteLine("arriba imprimo el Aux");
+                                    //PrintChessBoard(ChessBoardAux);
+                                    //Console.WriteLine("arriba imprimo el Aux");
                                     
                                     // back to previous turn                                    
                                     board.TurnChange();
-                                    PrintBoard(board);
-                                    Console.WriteLine("arriba El board undo");
+                                    //PrintBoard(board);
+                                    //Console.WriteLine("arriba El board undo");
                                     //Console.WriteLine("" + response.x1 + response.y1 + response.x2 + response.y2);
                                 }
                             }
