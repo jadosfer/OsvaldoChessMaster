@@ -9,6 +9,23 @@
     {
         private const int Size = 9;
 
+        [TestCase(0, 0, 1, 0, false)]
+        [TestCase(0, 3, 4, 5, false)]        
+        [TestCase(2, 5, 6, 8, true)]
+        public void IsInRange(int x1, int y1, int x2, int y2, bool expected)
+        {
+            // Arrange
+            var board = new Board(true);
+
+            // Act
+            var result = board.IsInRange(x1, y1, x2, y2);            
+
+            // Assert
+            Assert.AreEqual(expected, result);
+        }
+
+        
+
         [Test]
         public void CloneChessBoard()
         {
@@ -29,8 +46,8 @@
         private PieceBase[,] GetExpectedChessBoard()
         {
             var chessBoard = new PieceBase[Size, Size];
-            chessBoard[0, 0] = new Pawn(true);
-            chessBoard[Size - 1, Size - 1] = new Rook(false);
+            chessBoard[0, 0] = new Pawn(true, 0, 0);
+            chessBoard[Size - 1, Size - 1] = new Rook(false, Size - 1, Size - 1);
 
             return chessBoard;
         }

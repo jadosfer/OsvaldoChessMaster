@@ -18,13 +18,13 @@
             Assert.IsFalse(queen.CanJump);
         }
 
-        [TestCase(0, 0, 0, 0, false)]
-        [TestCase(0, 0, 1, 0, true)]
-        [TestCase(0, 0, 1, 1, true)]
+        [TestCase(0, 0, false)]
+        [TestCase(1, 0, true)]
+        [TestCase(1, 1, true)]
         public void IsValidMove(int x2, int y2, bool expected)
         {
             // Arrange
-            var queen = new Queen(true, 0, 0);
+            var queen = new Queen(true, 1, 4);
 
             // Act
             var result = queen.IsValidMove(x2, y2);

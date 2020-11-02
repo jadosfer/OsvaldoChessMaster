@@ -43,7 +43,7 @@ namespace OsvaldoChessMaster
                             for (int l = 1; l < 9; l++)
                             {
                                 
-                                if (board.FinallyMove(i, j, k, l, board.player1))
+                                if (board.FinallyMove(i, j, k, l))
                                 {                                    
                                     // solo lo guardo si no empeora la situacion (cuanto ams negativo mejor para la pc
                                     if (EvaluateBoard(board) <= actualValue)
@@ -72,7 +72,7 @@ namespace OsvaldoChessMaster
 
             foreach (Move previousMove in previousMoves)
             {
-                board.FinallyMove(previousMove.x1, previousMove.y1, previousMove.x2, previousMove.y2, board.player1);
+                board.FinallyMove(previousMove.x1, previousMove.y1, previousMove.x2, previousMove.y2);
                 responses.Add(BestResponse(board));
                 // back to previous board
                 board.ChessBoard = ChessBoardAux;
@@ -101,7 +101,7 @@ namespace OsvaldoChessMaster
                         {
                             for (int l = 1; l < 9; l++)
                             {
-                                if (board.FinallyMove(i, j, k, l, board.player1))
+                                if (board.FinallyMove(i, j, k, l))
                                 {
                                     // si mueve el de abajo
                                     if (board.player1)
@@ -156,15 +156,15 @@ namespace OsvaldoChessMaster
 
             foreach (Move move1 in allMove1)
             {
-                board.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board.player1);
-                board.FinallyMove(BestResponse(board).x1, BestResponse(board).y1, BestResponse(board).x2, BestResponse(board).y2, board.player1);
+                board.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2);
+                board.FinallyMove(BestResponse(board).x1, BestResponse(board).y1, BestResponse(board).x2, BestResponse(board).y2);
                 List<Move> allMove3 = AllPosiblePlays(board);
                 PieceBase[,] ChessBoardAux2 = board.CloneChessBoard();
 
                 foreach (Move move3 in allMove3)
                 {
-                    board.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board.player1);
-                    board.FinallyMove(BestResponse(board).x1, BestResponse(board).y1, BestResponse(board).x2, BestResponse(board).y2, board.player1);
+                    board.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2);
+                    board.FinallyMove(BestResponse(board).x1, BestResponse(board).y1, BestResponse(board).x2, BestResponse(board).y2);
                     if (EvaluateBoard(board) < value)
                     {
                         value = EvaluateBoard(board);
@@ -183,7 +183,7 @@ namespace OsvaldoChessMaster
         public void UndoRookCastling(Board board, bool computerColor, PieceBase auxPiece, int i, int j, int k, int l)
         {
             //undo rook castling
-            if (board.isCastling)
+            if (board.IsCastlingFlag)
             {   //if white is below  && move to right
                 if (!computerColor && i < k)
                 {   //copy rook on x=6 to x=8
@@ -212,7 +212,7 @@ namespace OsvaldoChessMaster
                     //if was Castling auxPiece is emptyPiece    
                     board.ChessBoard[3, j] = auxPiece;
                 }
-                board.isCastling = false;
+                board.IsCastlingFlag = false;
             }
         }
 

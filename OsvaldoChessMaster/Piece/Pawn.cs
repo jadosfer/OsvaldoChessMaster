@@ -8,6 +8,7 @@
         private bool CapturableByTheWay;
         private int turnNumberCapturableByTheWay;
 
+        public Pawn() { }
         public Pawn(bool color, int PositionX, int PositionY) 
             : base(color, PositionX, PositionY)
         {            
@@ -16,20 +17,20 @@
         public override bool IsValidMove(int x2, int y2)
         {
             // movimiento en el mismo lugar
-            if (PositionX == x2 && PositionY == y2)
+            if (Position.PositionX == x2 && Position.PositionY == y2)
                 return false;
 
             // si quiere moverse en la misma columna
-            if (PositionX == x2)
+            if (Position.PositionX == x2)
             {
-                if ((Math.Abs(y2 - PositionY) == 1) || (Math.Abs(y2 - PositionY) == 2 && (y1 == 2 || y1 == 7)))
+                if ((Math.Abs(y2 - Position.PositionY) == 1) || (Math.Abs(y2 - Position.PositionY) == 2 && (Position.PositionY == 2 || Position.PositionY == 7)))
                 {
                     return true;
                 }
             }
 
             // si quiere moverse a las columnas de al lado            
-            if ((Math.Abs(x2 - PositionX) == 1) && Math.Abs(y2 - PositionY) == 1)
+            if ((Math.Abs(x2 - Position.PositionX) == 1) && Math.Abs(y2 - Position.PositionY) == 1)
             {
                 return true;
             }
@@ -56,7 +57,11 @@
         {
             var color = this.Color ? "w" : "b";
 
-            return $"{color}_(P)_";
+            return $"{color}__PAWN__";
+        }
+        public override object Clone()
+        {
+            return this.Clone<Pawn>();
         }
     }
 }

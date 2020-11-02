@@ -1,20 +1,23 @@
-﻿namespace OsvaldoChessMaster.Piece
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+
+namespace OsvaldoChessMaster.Piece
 {
-    public abstract class PieceBase
+    public abstract class PieceBase : ICloneable, IEquatable<PieceBase>
     {
         public abstract bool CanJump { get; }        
         public virtual bool CanCastling { get; set; }
-        public int PositionX { get; set; }
-        public int PositionY { get; set; }
+        public PieceStatus Position{ get; set; }
+
+    
         public bool LongCastling { get; set; }
         public bool ShortCastling { get; set; }
         public bool Color { get; set; }
 
-        public PieceBase(bool color, int PositionX, int PositionY)
+        public PieceBase(bool color = false, int PositionX = 0, int PositionY = 0)
         {
-            this.Color = color;
-            this.PositionX = PositionX;
-            this.PositionY = PositionY;
+            this.Position = new PieceStatus(PositionX, PositionY);
+            this.Color = color;            
         }
 
         public abstract bool IsValidMove(int x2, int y2);
@@ -33,10 +36,10 @@
             if (other.CanCastling != this.CanCastling)
                 return false;
 
-            if (other.LCastling != this.LCastling)
+            if (other.LongCastling != this.LongCastling)
                 return false;
 
-            if (other.SCastling != this.SCastling)
+            if (other.ShortCastling != this.ShortCastling)
                 return false;
 
             if (other.Color != this.Color)
@@ -53,8 +56,8 @@
             var clone = new T()
             {
                 CanCastling = this.CanCastling,
-                LCastling = this.LCastling,
-                SCastling = this.SCastling,
+                LongCastling = this.LongCastling,
+                ShortCastling = this.ShortCastling,
                 Color = this.Color
             };
 
