@@ -286,7 +286,7 @@
                 {                    
                     ChessBoard[x1, y1] = auxEmptyPiece; //pongo pieza vacia
                     auxEmptyPiece.Position.PositionX = x1;
-                    auxEmptyPiece.Position.PositionX = x2;
+                    auxEmptyPiece.Position.PositionY = y1;
                 }
                 else
                 {                
@@ -351,8 +351,7 @@
         }
 
         public bool IsLineEmpty(int x1, int y1, int x2, int y2) // chequea 
-        {
-            bool abort = false;
+        {              
             if (x1 == x2)
             {
                 if (Math.Abs(y1 - y2) > 1)
@@ -363,14 +362,14 @@
                         {
                             if (!IsEmpty(x1, y1 + i))
                             {
-                                abort = true;
+                                return false;
                             }
                         }
                         else
                         {
                             if (!IsEmpty(x1, y1 - i))
                             {
-                                abort = true;
+                                return false;
                             }
                         }
                     }
@@ -385,20 +384,23 @@
                     {
                         if (!IsEmpty(x1 + i, y1))
                         {
-                            abort = true;
+                            return false;
                         }
                     }
                     else
                     {
                         if (!IsEmpty(x1 - i, y1))
                         {
-                            abort = true;
+                            return false;
                         }
                     }
                 }
             }
-
-            return !abort;
+            if (x1 != x2 && y1 != y2)
+            {
+                return false;
+            }
+            return true;
         }
 
         public bool IsDiagonalEmpty(int x1, int y1, int x2, int y2)
@@ -866,6 +868,6 @@
                 }
             }
             return clonedChessBoard;
-        }
+        }        
     }
 }

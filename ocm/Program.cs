@@ -14,20 +14,19 @@ namespace ocm
             //bool turn = true; // true si mueven blancas
             bool player1 = true; //true para blancas abajo y negras arriba                        
             Board board = new Board(player1);
-            ArtificialIntelligence artificInt = new ArtificialIntelligence(board);
-
+            ArtificialIntelligence artificInt = new ArtificialIntelligence(board);            
+            
             PieceBase[,] BackupBoard = board.CloneChessBoard();
             List<Move> AllMoves = new List<Move>();            
             //Program.PrintBoard(board);
 
             board.FinallyMove(5, 2, 5, 4); //blancas
-            double actualValue = artificInt.EvaluateBoard(board);
-            
+            PrintBoard(board);
 
-            artificInt.AllPosiblePiecePlays(board, BackupBoard, 4, 7, AllMoves, actualValue);
+            artificInt.AllPosiblePlays(board);
 
             //board.FinallyMove(artificInt.BestComputerMoveDepth4(board).x1, artificInt.BestComputerMoveDepth4(board).y1, artificInt.BestComputerMoveDepth4(board).x2, artificInt.BestComputerMoveDepth4(board).y2);
-            //PrintBoard(board);
+            PrintBoard(board);
 
             //board.FinallyMove(5, 2, 5, 4); //blancas
             //PrintBoard(board);

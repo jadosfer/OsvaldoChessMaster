@@ -26,52 +26,66 @@ namespace OsvaldoChessMaster
         public List<Move> AllPosiblePlays(Board board)
         {
             double actualValue = EvaluateBoard(board);
+
             List<Move> AllMoves = new List<Move>();            
 
-            //int count = 0;
             PieceBase[,] BackupBoard = board.CloneChessBoard();
 
-            for (int i = 1; i < 9; i++)
+            //for (int i = 1; i < 9; i++)
+            for (int i = 2; i < 3; i++)
             {
-                for (int j = 1; j < 9; j++)
+                for (int j = 8; j < 9; j++)
+                //for (int j = 1; j < 9; j++) 
                 {
                     var piece1 = board.GetPiece(i, j);
 
                     if (piece1.Color == !board.player1) // o sino si es == computerColor
                     {
-                        AllPosiblePiecePlays(board, BackupBoard, i, j, AllMoves, actualValue);
+                        AllMoves = AllPosiblePiecePlays(board, BackupBoard, i, j, AllMoves, actualValue);
                     }
                 }
-            }
-
+            }            
             return AllMoves;
+            
         }
         
-        public void AllPosiblePiecePlays(Board board, PieceBase[,] BackupBoard, int i, int j, List<Move> AllMoves, double actualValue)
+        public List<Move> AllPosiblePiecePlays(Board board, PieceBase[,] BackupBoard, int i, int j, List<Move> AllMoves, double actualValue)
         {
             for (int k = 1; k < 9; k++)
             {
                 for (int l = 1; l < 9; l++)
                 {
-                    //Console.WriteLine("ijkl" + i+j+k+l + board.FinallyMove(i, j, k, l));
-
+                    //Console.WriteLine("ijkl" + i+j+k+l + board.FinallyMove(i, j, k, l));                    
+                    PieceBase auxPiece = board.GetPiece(k, l);
+                    //PrintBoard(board);
+                    //Console.WriteLine("arriba ante de finally");
                     if (board.FinallyMove(i, j, k, l))
                     {
-
+                        Console.WriteLine("ijkl " +i+j+k+l);
                         // solo lo guardo si no empeora la situacion (cuanto ams negativo mejor para la pc
                         double Eval = EvaluateBoard(board);
+                        //Console.WriteLine("Evaluate " + EvaluateBoard(board) + "actualValue " + actualValue);
                         if (Eval <= actualValue)
                         {
                             //actualValue = EvaluateBoard(board);
                             AllMoves.Add(new Move { x1 = i, y1 = j, x2 = k, y2 = l });
                         }
-                        // back to previous board
-                        board.ChessBoard = BackupBoard;
-                        // back to previous turn
-                        board.TurnChange();
-                    }
+                        // back to previous turn                        
+                        
+                        PrintBoard(board);
+                        Console.WriteLine("arriba antes de revertir" +i+j+k+l);
+
+                        board.TurnChange();                        
+                        //board.ChessBoard[i, j] = board.GetPiece(k, l);
+                        //board.ChessBoard[k, l] = auxPiece;
+
+                        board.ChessBoard = BackupBoard; //vualve al board clonado
+                        PrintBoard(board);
+                        Console.WriteLine("arriba despues de revertir" + i + j + k + l);
+                    }                    
                 }
-             }            
+            }            
+            return AllMoves;
         }       
 
 
@@ -231,10 +245,10 @@ namespace OsvaldoChessMaster
         {
             double sum = 0;
 
-            for (int i = 1; i < 9; i++)
+            for (int i = 1; i < 9; i++)            
             {
-                for (int j = 1; j < 9; j++)
-                {
+                for (int j = 1; j < 9; j++)                
+                    {
                     var piece1 = board.GetPiece(i, j);
 
                     if (piece1.Color == board.player1) //piezas del jugador suman y de pc restan

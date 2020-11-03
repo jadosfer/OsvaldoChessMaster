@@ -57,7 +57,7 @@
         {
             var color = this.Color ? "w" : "b";
 
-            return $"{color}__PAWN__";
+            return $"{color}  PAWN  ";
         }
         public override object Clone()
         {

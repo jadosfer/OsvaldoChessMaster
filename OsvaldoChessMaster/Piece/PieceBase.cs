@@ -56,9 +56,13 @@ namespace OsvaldoChessMaster.Piece
             var clone = new T()
             {
                 CanCastling = this.CanCastling,
+                Position = this.Position,
                 LongCastling = this.LongCastling,
                 ShortCastling = this.ShortCastling,
                 Color = this.Color
+
+
+
             };
 
             return clone;

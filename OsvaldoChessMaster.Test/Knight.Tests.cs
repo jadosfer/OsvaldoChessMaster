@@ -10,7 +10,7 @@
         public void CanJump()
         {
             // Arrange
-            var knight = new Knight(true, 0, 0);
+            var knight = new Knight(false, 2, 8);
 
             // Act
 
@@ -18,7 +18,7 @@
             Assert.IsTrue(knight.CanJump);
         }
 
-        [TestCase(0, 0, 0, 0, false)]
+        [TestCase(2, 8, 2, 4, false)]
         [TestCase(0, 0, 1, 0, false)]
         [TestCase(0, 0, 1, 1, false)]
         public void IsValidMove(int x1, int y1, int x2, int y2, bool expected)
