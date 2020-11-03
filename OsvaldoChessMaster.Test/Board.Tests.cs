@@ -39,6 +39,12 @@
             Assert.AreEqual(expected, result);
         }
 
+        [TestCase(0, 0, 9, 9, false)]
+        [TestCase(-1, 0, 1, -1, false)]
+        [TestCase(0, 0, 1, 8, false)]
+        [TestCase(0, 0, 1, 8, false)]
+        [TestCase(0, 0, 1, 8, false)]
+        [TestCase(0, 8, 1, 8, false)]
         [TestCase(4, 8, 1, 8, false)]
         [TestCase(2, 8, 1, 6, true)]
         [TestCase(2, 8, 8, 8, false)]
@@ -57,6 +63,39 @@
             // Assert
             Assert.AreEqual(expected, result);
         }
+
+        [TestCase(0, 0, 9, 9)]
+        [TestCase(-1, 0, 1, -1)]
+        [TestCase(0, 0, 1, 8)]
+        [TestCase(0, 0, 1, 8)]
+        [TestCase(0, 0, 1, 8)]
+        [TestCase(0, 8, 1, 8)]
+        [TestCase(4, 8, 1, 8)]
+        [TestCase(2, 8, 1, 6)]
+        [TestCase(2, 8, 8, 8)]
+        [TestCase(2, 8, 8, 1)]
+        [TestCase(2, 8, 1, 8)]
+        [TestCase(2, 8, 1, 1)]
+        public void FinallyMoveReverterTest(int x1, int y1, int x2, int y2)
+        {
+            // Arrange
+            var board = new Board(true);
+            var expected = board.ChessBoard;            
+            PieceBase[,] BackupBoard = board.CloneChessBoard();
+            var result = BackupBoard; 
+            // Act
+            board.TurnChange();
+            if (board.FinallyMove(x1, y1, x2, y2))
+            {                
+                board.TurnChange();
+               
+            }            
+            board.ChessBoard = BackupBoard; //vualve al board clonado
+            
+            // Assert
+            Assert.AreEqual(expected, result);
+        }
+
 
         [TestCase(4, 8, 1, 8, false)]
         [TestCase(4, 8, 2, 6, false)]

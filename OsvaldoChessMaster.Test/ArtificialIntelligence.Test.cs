@@ -12,20 +12,45 @@ namespace OsvaldoChessMaster.Test
     {
         private const int Size = 9;
 
-        [TestCase(0, 0, 1, 0, false)]
-        [TestCase(0, 3, 4, 5, false)]
-        [TestCase(2, 5, 6, 8, true)]
-        public void IsInRange(int x1, int y1, int x2, int y2, bool expected)
-        {
+        [Test]
+        //public void AllPosiblePlaysTest()
+        //{
+        //    // Arrange
+        //    var board = new Board(true);
+        //    var AI = new ArtificialIntelligence(board);
+
+        //    // Act
+        //    List<Move> AllMovesExpected = new List<Move>();
+        //    var result = AI.AllPosiblePlays(board);
+
+        //    // Assert
+        //    Assert.AreEqual(AllMovesExpected, result);
+        //}
+        [TestCase(0, 9, 9, 10, 10)]
+        [TestCase(0, 0, 0, 0, 0)]
+        [TestCase(0, 4, 2, 4, 4)]
+        [TestCase(0, 4, 2, 4, 8)]
+        [TestCase(0, 4, 4, 4, 3)]
+        [TestCase(0, 5, 2, 5, 4)]
+        [TestCase(0, 2, 1, 3, 3)]
+        [TestCase(-5, 2, 8, 3, 6)]
+        [TestCase(0, 2, 8, 2, 4)]
+        [TestCase(0, 4, 8, 1, 8)]
+
+        public void EvaluateBoardTest(int EvaluateExpected, int x1, int y1, int x2, int y2) 
+        { 
             // Arrange
             var board = new Board(true);
+            var AI = new ArtificialIntelligence(board);
 
-            // Act
-            var result = board.IsInRange(x1, y1, x2, y2);
+            // Act        
+            board.TurnChange();
+            board.FinallyMove(x1, y1, x2, y2);
+            var result = AI.EvaluateBoard(board);
+         
 
-            // Assert
-            Assert.AreEqual(expected, result);
+        // Assert
+        Assert.AreEqual(EvaluateExpected, result);
         }
-        
-    }
+}
 }

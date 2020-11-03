@@ -22,8 +22,8 @@ namespace ocm
 
             board.FinallyMove(5, 2, 5, 4); //blancas
             PrintBoard(board);
-
-            artificInt.AllPosiblePlays(board);
+            
+            Console.WriteLine("almoves =" + artificInt.AllPosiblePiecePlays(board, BackupBoard, 2, 8, AllMoves, 4));
 
             //board.FinallyMove(artificInt.BestComputerMoveDepth4(board).x1, artificInt.BestComputerMoveDepth4(board).y1, artificInt.BestComputerMoveDepth4(board).x2, artificInt.BestComputerMoveDepth4(board).y2);
             PrintBoard(board);

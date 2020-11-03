@@ -31,11 +31,11 @@ namespace OsvaldoChessMaster
 
             PieceBase[,] BackupBoard = board.CloneChessBoard();
 
-            //for (int i = 1; i < 9; i++)
-            for (int i = 2; i < 3; i++)
+            for (int i = 1; i < 9; i++)
+            //for (int i = 2; i < 3; i++)
             {
-                for (int j = 8; j < 9; j++)
-                //for (int j = 1; j < 9; j++) 
+                //for (int j = 8; j < 9; j++)
+                for (int j = 1; j < 9; j++) 
                 {
                     var piece1 = board.GetPiece(i, j);
 
@@ -56,15 +56,15 @@ namespace OsvaldoChessMaster
                 for (int l = 1; l < 9; l++)
                 {
                     //Console.WriteLine("ijkl" + i+j+k+l + board.FinallyMove(i, j, k, l));                    
-                    PieceBase auxPiece = board.GetPiece(k, l);
+                    //PieceBase auxPiece = board.GetPiece(k, l);
                     //PrintBoard(board);
-                    //Console.WriteLine("arriba ante de finally");
+                    //Console.WriteLine("arriba antes de finally");
                     if (board.FinallyMove(i, j, k, l))
                     {
                         Console.WriteLine("ijkl " +i+j+k+l);
                         // solo lo guardo si no empeora la situacion (cuanto ams negativo mejor para la pc
                         double Eval = EvaluateBoard(board);
-                        //Console.WriteLine("Evaluate " + EvaluateBoard(board) + "actualValue " + actualValue);
+                        
                         if (Eval <= actualValue)
                         {
                             //actualValue = EvaluateBoard(board);
@@ -242,70 +242,85 @@ namespace OsvaldoChessMaster
         }
 
         public double EvaluateBoard(Board board)
-        {
+        {            
             double sum = 0;
 
-            for (int i = 1; i < 9; i++)            
+            for (int i = 1; i < 9; i++)
             {
-                for (int j = 1; j < 9; j++)                
-                    {
+                for (int j = 1; j < 9; j++)
+                {
                     var piece1 = board.GetPiece(i, j);
 
-                    if (piece1.Color == board.player1) //piezas del jugador suman y de pc restan
+
+                    switch (piece1.GetType().Name)
                     {
-                        switch (piece1.GetType().Name)
-                        {
-                            case nameof(Pawn):
+                        case nameof(Pawn):
+                            if (piece1.Color == board.player1)
+                            {
                                 sum += 10 + pawnPositionValues[i, j];
-                                break;
-                            case nameof(Knight):
-                                sum += 30 + knightPositionValues[i, j];
-                                break;
-                            case nameof(Bishop):
-                                sum += 30 + bishopPositionValues[i, j];
-                                break;
-                            case nameof(Rook):
-                                sum += 50 + rookPositionValues[i, j];
-                                break;
-                            case nameof(Queen):
-                                sum += 90 + queenPositionValues[i, j];
-                                break;
-                            case nameof(King):
-                                sum += 900 + kingPositionValues[i, j];
-                                break;
-
-                        }
-                    }
-                    else
-                    {
-                        switch (piece1.GetType().Name)
-                        {
-                            case nameof(Pawn):
+                            }
+                            else
+                            {
                                 sum -= 10 + pawnPositionValues[i, 9 - j];
-                                break;
-                            case nameof(Knight):
+                            }
+                            break;
+                        case nameof(Knight):
+                            if (piece1.Color == board.player1)
+                            {
+                                sum += 30 + knightPositionValues[i, j];
+                            }
+                            else
+                            {
                                 sum -= 30 + knightPositionValues[i, 9 - j];
-                                break;
-                            case nameof(Bishop):
+                            }
+                            break;
+                        case nameof(Bishop):
+                            if (piece1.Color == board.player1)
+                            {
+                                sum += 30 + bishopPositionValues[i, j];
+                            }
+                            else
+                            {
                                 sum -= 30 + bishopPositionValues[i, 9 - j];
-                                break;
-                            case nameof(Rook):
+                            }
+                            break;
+                        case nameof(Rook):
+                            if (piece1.Color == board.player1)
+                            {
+                                sum += 50 + rookPositionValues[i, j];
+                            }
+                            else
+                            {
                                 sum -= 50 + rookPositionValues[i, 9 - j];
-                                break;
-                            case nameof(Queen):
+                            }
+                            break;
+                        case nameof(Queen):
+                            if (piece1.Color == board.player1)
+                            {
+                                sum += 90 + queenPositionValues[i, j];
+                            }
+                            else
+                            {
                                 sum -= 90 + queenPositionValues[i, 9 - j];
-                                break;
-                            case nameof(King):
+                            }
+                            break;
+                        case nameof(King):
+                            if (piece1.Color == board.player1)
+                            {
+                                sum += 900 + kingPositionValues[i, j];
+                            }
+                            else
+                            {
                                 sum -= 900 + kingPositionValues[i, 9 - j];
-                                break;
-                        }
-
+                            }
+                            break;
                     }
                 }
             }
-
             return sum;
         }
+
+    
 
         public double[,] PawnPositionValues()
         {
