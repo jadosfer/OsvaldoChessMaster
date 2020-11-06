@@ -5,11 +5,16 @@
     public class Queen : PieceBase
     {
         public override bool CanJump => false;
-
         public Queen() { }
         public Queen(bool color, int PositionX, int PositionY)
             : base(color, PositionX, PositionY) { }
 
+        /// <summary>
+        /// true si la pieza puede moverse a x2,y2 determinado por sus condiciones propias, desconoce obstaculos de otras piezas como quedar en jaque o casillas ocupadas
+        /// </summary>
+        /// <param name="x2"></param>
+        /// <param name="y2"></param>
+        /// <returns></returns>
         public override bool IsValidMove(int x2, int y2)
         {
             // movimiento en el mismo lugar

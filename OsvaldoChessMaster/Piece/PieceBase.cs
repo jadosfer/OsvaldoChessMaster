@@ -7,6 +7,8 @@ namespace OsvaldoChessMaster.Piece
     {
         public abstract bool CanJump { get; }        
         public virtual bool CanCastling { get; set; }
+        public virtual bool CapturableByTheWay { get; set; }
+        public virtual int turnNumberCapturableByTheWay { get; set; }
         public PieceStatus Position{ get; set; }
 
     
@@ -21,8 +23,7 @@ namespace OsvaldoChessMaster.Piece
         }
 
         public abstract bool IsValidMove(int x2, int y2);
-        public virtual bool GetCapturableByTheWay() => true;
-        public virtual void SetCapturableByTheWay(bool CapturableByTheWay, int turnNumber) { }
+        
         public virtual int GetturnNumberCapturableByTheWay() => 0;
 
         public bool Equals([AllowNull] PieceBase other)
@@ -45,6 +46,9 @@ namespace OsvaldoChessMaster.Piece
             if (other.Color != this.Color)
                 return false;
 
+            if (other.Position != this.Position)
+                return false;
+
             return true;
         }
 
@@ -55,12 +59,11 @@ namespace OsvaldoChessMaster.Piece
         {
             var clone = new T()
             {
-                CanCastling = this.CanCastling,
-                Position = this.Position,
+                CanCastling = this.CanCastling,                
                 LongCastling = this.LongCastling,
                 ShortCastling = this.ShortCastling,
-                Color = this.Color
-
+                Color = this.Color,
+                Position = new PieceStatus(this.Position.PositionX, this.Position.PositionY)
 
 
             };

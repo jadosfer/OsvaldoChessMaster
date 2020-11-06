@@ -33,8 +33,8 @@ namespace OsvaldoChessMaster.Test
         [TestCase(0, 4, 4, 4, 3)]
         [TestCase(0, 5, 2, 5, 4)]
         [TestCase(0, 2, 1, 3, 3)]
-        [TestCase(-5, 2, 8, 3, 6)]
-        [TestCase(0, 2, 8, 2, 4)]
+        [TestCase(-5, 1, 7, 2, 5)]
+        [TestCase(-4, 3, 6, 3, 4)]
         [TestCase(0, 4, 8, 1, 8)]
 
         public void EvaluateBoardTest(int EvaluateExpected, int x1, int y1, int x2, int y2) 
