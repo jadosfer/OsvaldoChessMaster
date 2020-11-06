@@ -18,43 +18,37 @@ namespace ocm
             ArtificialIntelligence artificInt = new ArtificialIntelligence(board);
 
             Move[,] MovesArray = new Move[2, 2];
-            
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            artificInt.BestResponse(board);
-            stopwatch.Stop();
-            Console.WriteLine("Elapsed Time is {0} ms", stopwatch.ElapsedMilliseconds);
 
-            //board.FinallyMove(4, 1, 4, 3); //blancas            
-            //PrintBoard(board);
-            //board.FinallyMove(artificInt.BestComputerMoveDepth4(board).x1, artificInt.BestComputerMoveDepth4(board).y1, artificInt.BestComputerMoveDepth4(board).x2, artificInt.BestComputerMoveDepth4(board).y2);            
+
+            board.FinallyMove(4, 1, 4, 3); //blancas            
+            PrintBoard(board);
+            //board.FinallyMove(artificInt.BestComputerMoveDepth4(board).x1, artificInt.BestComputerMoveDepth4(board).y1, artificInt.BestComputerMoveDepth4(board).x2, artificInt.BestComputerMoveDepth4(board).y2);
             //PrintBoard(board);
             //board.FinallyMove(5, 2, 5, 4); //blancas
             //PrintBoard(board);
             //board.FinallyMove(artificInt.BestComputerMoveDepth4(board).x1, artificInt.BestComputerMoveDepth4(board).y1, artificInt.BestComputerMoveDepth4(board).x2, artificInt.BestComputerMoveDepth4(board).y2);
             //PrintBoard(board);
 
-
-            //board.FinallyMove(4, 6, 4, 4);
-            //PrintBoard(board);
-            //board.FinallyMove(5, 0, 2, 3); //blancas
-            //PrintBoard(board);
-            //board.FinallyMove(5, 6, 5, 5);
-            //PrintBoard(board);
-            //board.FinallyMove(0, 1, 0, 2); //blancas
-            //PrintBoard(board);
-            //board.FinallyMove(6, 7, 7, 5);
-            //PrintBoard(board);
-            //board.FinallyMove(6, 0, 7, 2); //blancas
-            //PrintBoard(board);
-            //board.FinallyMove(5, 7, 0, 2);
-            //PrintBoard(board);
-            //board.FinallyMove(4, 0, 6, 0); //blancas
-            //PrintBoard(board);
-            //board.FinallyMove(4, 7, 6, 7); // enroque no permitido
-            //PrintBoard(board);
-            //board.FinallyMove(3, 6, 3, 4);
-            //PrintBoard(board);
+            board.FinallyMove(4, 6, 4, 4);
+            PrintBoard(board);
+            board.FinallyMove(5, 0, 2, 3); //blancas
+            PrintBoard(board);
+            board.FinallyMove(5, 6, 5, 5);
+            PrintBoard(board);
+            board.FinallyMove(0, 1, 0, 2); //blancas
+            PrintBoard(board);
+            board.FinallyMove(6, 7, 7, 5);
+            PrintBoard(board);
+            board.FinallyMove(6, 0, 7, 2); //blancas
+            PrintBoard(board);
+            board.FinallyMove(5, 7, 0, 2);
+            PrintBoard(board);
+            board.FinallyMove(4, 0, 6, 0); //blancas
+            PrintBoard(board);
+            board.FinallyMove(4, 7, 6, 7); // enroque no permitido
+            PrintBoard(board);
+            board.FinallyMove(3, 6, 3, 4);
+            PrintBoard(board);
 
 
             //board.FinallyMove(1, 3, 1, 4); //blancas
@@ -77,6 +71,12 @@ namespace ocm
             //PrintBoard(board);
             //board.FinallyMove(5, 8, 7, 8); // enroque no permitido
             //PrintBoard(board);
+
+            //Stopwatch stopwatch = new Stopwatch();
+            //stopwatch.Start();
+            //artificInt.BestResponse(board);
+            //stopwatch.Stop();
+            //Console.WriteLine("Elapsed Time is {0} ms", stopwatch.ElapsedMilliseconds);
         }
 
         public static void PrintBoard(Board board)

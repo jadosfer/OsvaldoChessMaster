@@ -12,5 +12,6 @@ namespace OsvaldoChessMaster
         public const int EmptyPieceEndLine = 6;
         public const int UpperFile = 7;
         public const int LowerFile = 0;
+        public const int ColorPieces = 16;
     }
 }

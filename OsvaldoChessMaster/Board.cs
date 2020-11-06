@@ -15,6 +15,8 @@
         public bool Turn { get; set; } //turn=true es el turno del player1
 
         public PieceBase[,] ChessBoard { get; set; }
+        public PieceBase[] WhitePieces { get; set; }
+        public PieceBase[] BlackPieces { get; set; }
 
         public bool IsCheckmateFlag { get; private set; }
 
@@ -36,6 +38,8 @@
             TurnNumber = 1;
             this.player1 = player1;
             ChessBoard = new PieceBase[Constants.Size, Constants.Size];
+            WhitePieces = new PieceBase[Constants.ColorPieces];
+            BlackPieces = new PieceBase[Constants.ColorPieces];
 
             ChessBoard[0, 1] = new Pawn(player1, 0, 1);
             ChessBoard[1, 1] = new Pawn(player1, 1, 1);
@@ -75,6 +79,19 @@
 
             ChessBoard[3, 0] = new Queen(player1, 3, 0);
             ChessBoard[3, 7] = new Queen(!player1, 3, 7);
+
+            // creates 2 arrays with same color pieces
+            for (int i = Constants.ForStart; i < Constants.ColorPieces/2; i++) 
+            {
+                WhitePieces[i] = ChessBoard[i, 1];
+                BlackPieces[i] = ChessBoard[i, 6];
+            }
+            for (int i = Constants.ColorPieces / 2; i < Constants.ColorPieces; i++)
+            {
+                WhitePieces[i] = ChessBoard[i- Constants.Size, 0];
+                BlackPieces[i] = ChessBoard[i- Constants.Size, 7];
+            }
+
 
             for (int i = Constants.ForStart; i < Constants.Size; i++)
             {
@@ -145,10 +162,10 @@
             {
                 var piece1 = GetPiece(x1, y1);
 
-                if (!IsInRange(x1, y1, x2, y2) || !IsPawn(piece1))
-                {
-                    return false;
-                }
+                //if (!IsInRange(x1, y1, x2, y2) || !IsPawn(piece1))
+                //{
+                //    return false;
+                //}
 
                 // El peon sube
                 if (player1 == Turn && y2 > y1 && piece1.IsValidMove(x2, y2))
@@ -503,17 +520,18 @@
             try
             {
                 var piece1 = GetPiece(x1, y1);
+                                
                 if (!IsInRange(x1, y1, x2, y2) || !IsColorTurn(piece1))
                 {
                     return false;
                 }
-
 
                 var piece2 = GetPiece(x2, y2);
                 if (piece1.Color == piece2.Color && piece2.GetType() != typeof(EmptyPiece))
                 {
                     return false;
                 }
+
 
                 if (piece1.CanJump && piece1.IsValidMove(x2, y2))
                 {
@@ -731,9 +749,9 @@
         /// <param name="y"></param>
         /// <param name="targetColor"></param> bando bajo posible jaque
         /// <returns></returns>
-
         public bool IsSquareCheck(int x1, int y1, bool targetColor) //Color es el color del rey (el opuesto del atacante)
         {
+
             for (int i = Constants.ForStart; i < Constants.Size; i++)
             {
                 for (int j = Constants.ForStart; j < Constants.Size; j++)
@@ -742,13 +760,10 @@
                     {
                         return true;
                     }
-
-
                 }
             }
             return false;
         }
-
         public bool IsSquareCheck(int x1, int y1, int x2, int y2, bool targetColor) //Color es el color del rey (el opuesto del atacante)
         {
 
@@ -814,22 +829,18 @@
         /// </summary>
         /// <param name="Color"></param> color del rey buscado
         /// <returns></returns>
+        
+
         public int XKing(bool Color) //Color es el color del Rey que busca casilla por casilla
         {
-            int XKing = 0;
-            for (int i = Constants.ForStart; i < Constants.Size; i++)
+            if (Color)
             {
-                for (int j = Constants.ForStart; j < Constants.Size; j++)
-                {
-                    var piece1 = GetPiece(i, j);
-
-                    if (piece1.GetType() == typeof(King) && piece1.Color == Color)
-                    {
-                        XKing = i;
-                    }
-                }
+                return WhitePieces[12].Position.PositionX;
             }
-            return XKing;
+            else 
+            {
+                return BlackPieces[12].Position.PositionX; 
+            }
         }
         /// <summary>
         /// busca en todo el tablero la cordenada y del rey del color pedido
@@ -838,22 +849,14 @@
         /// <returns></returns>
         public int YKing(bool Color) //Color es el color del Rey que busca casilla por casilla
         {
-            int YKing = 0;
-
-            for (int i = Constants.ForStart; i < Constants.Size; i++)
+            if (Color)
             {
-                for (int j = Constants.ForStart; j < Constants.Size; j++)
-                {
-                    var piece1 = GetPiece(i, j);
-
-                    if (piece1.GetType() == typeof(King) && piece1.Color == Color)
-                    {
-                        YKing = j;
-                    }
-                }
+                return WhitePieces[12].Position.PositionY;
             }
-
-            return YKing;
+            else
+            {
+                return BlackPieces[12].Position.PositionY;
+            }
         }
         /// <summary>
         /// Chequea si hay jaque mate
@@ -904,12 +907,12 @@
         /// <returns></returns>
         public bool CanAllyBlock(int Xking, int Yking, bool KingColor)
         {
-            for (int i = Constants.ForStart; i < Constants.Size; i++)
+            for (int i = Constants.ForStart; i < Constants.ColorPieces; i++)
             {
-                for (int j = Constants.ForStart; j < Constants.Size; j++)
-                {
-                    var pieceA = GetPiece(i, j);
-
+                if (KingColor) 
+                {                    
+                    var pieceA = GetPiece(WhitePieces[i].Position.PositionX, WhitePieces[i].Position.PositionY);
+                    // el if es importante porque quizas fue comida esa pieza y ahí ahora hay otra
                     if (pieceA.Color == KingColor)
                     {
                         for (int k = Constants.ForStart; k < Constants.Size; k++)
@@ -917,22 +920,45 @@
                             for (int l = Constants.ForStart; l < Constants.Size; l++)
                             {
                                 var auxPiece = GetPiece(k, l);
-                                MovePieceAndPutEmpty(i, j, k, l);
+                                MovePieceAndPutEmpty(WhitePieces[i].Position.PositionX, WhitePieces[i].Position.PositionY, k, l);
 
                                 if (!IsSquareCheck(Xking, Yking, KingColor))
                                 {
-                                    ChessBoard[i, j] = pieceA;
+                                    ChessBoard[WhitePieces[i].Position.PositionX, WhitePieces[i].Position.PositionY] = pieceA;
                                     ChessBoard[k, l] = auxPiece;
                                     return true;
                                 }
-                                ChessBoard[i, j] = pieceA;
+                                ChessBoard[WhitePieces[i].Position.PositionX, WhitePieces[i].Position.PositionY] = pieceA;
                                 ChessBoard[k, l] = auxPiece;
                             }
                         }
-                    }
+                    }                    
                 }
-            }
+                else
+                {
+                    var pieceA = GetPiece(BlackPieces[i].Position.PositionX, BlackPieces[i].Position.PositionY);
+                    if (pieceA.Color == KingColor)
+                    {
+                        for (int k = Constants.ForStart; k < Constants.Size; k++)
+                        {
+                            for (int l = Constants.ForStart; l < Constants.Size; l++)
+                            {
+                                var auxPiece = GetPiece(k, l);
+                                MovePieceAndPutEmpty(BlackPieces[i].Position.PositionX, BlackPieces[i].Position.PositionY, k, l);
 
+                                if (!IsSquareCheck(Xking, Yking, KingColor))
+                                {
+                                    ChessBoard[BlackPieces[i].Position.PositionX, BlackPieces[i].Position.PositionY] = pieceA;
+                                    ChessBoard[k, l] = auxPiece;
+                                    return true;
+                                }
+                                ChessBoard[BlackPieces[i].Position.PositionX, BlackPieces[i].Position.PositionY] = pieceA;
+                                ChessBoard[k, l] = auxPiece;
+                            }
+                        }
+                    }                  
+                }                
+            }
             return false;
         }
 
@@ -942,22 +968,42 @@
         /// <param name="KingColor"></param>
         /// <returns></returns>
         public bool CanOtherPieceMove(bool KingColor)
+        
         {
-            for (int i = Constants.ForStart; i < Constants.Size; i++)
+            for (int i = Constants.ForStart; i<Constants.ColorPieces; i++)
             {
-                for (int j = Constants.ForStart; j < Constants.Size; j++)
-                {
-                    var piece1 = GetPiece(i, j);
-                    if (piece1.GetType() != typeof(King) && piece1.Color == KingColor)
+                if (KingColor) 
+                {                    
+                    var piece1 = GetPiece(WhitePieces[i].Position.PositionX, WhitePieces[i].Position.PositionY);
+                    // el if es importante porque quizas fue comida esa pieza y ahí ahora hay otra
+                    if (piece1.Color == KingColor)
                     {
-                        if (CanPieceMoveOrDraw(i, j))
+                        if (piece1.GetType() != typeof(King) && piece1.Color == KingColor)
                         {
-                            return true;
+                            if (CanPieceMoveOrDraw(WhitePieces[i].Position.PositionX, WhitePieces[i].Position.PositionY))
+                            {
+                                return true;
+                            }
+                        }
+}                    
+                    }
+                else
+                {
+                    var piece1 = GetPiece(BlackPieces[i].Position.PositionX, BlackPieces[i].Position.PositionY);
+                    // el if es importante porque quizas fue comida esa pieza y ahí ahora hay otra
+                    if (piece1.Color == KingColor)
+                    {
+                        if (piece1.GetType() != typeof(King) && piece1.Color == KingColor)
+                        {
+                            if (CanPieceMoveOrDraw(BlackPieces[i].Position.PositionX, BlackPieces[i].Position.PositionY))
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
+                            
             }
-
             return false;
         }
 

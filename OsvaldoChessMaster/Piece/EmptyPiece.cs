@@ -3,7 +3,7 @@
     public class EmptyPiece : PieceBase
     {
         public override bool CanJump => false;
-
+        public override int Value => 0;
         public EmptyPiece() { }
         public EmptyPiece(bool color, int PositionX, int PositionY)
             : base(color, PositionX, PositionY) { }
