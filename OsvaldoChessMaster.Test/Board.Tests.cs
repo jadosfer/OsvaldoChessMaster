@@ -55,6 +55,9 @@
         {
             // Arrange
             var board = new Board(true);
+            board.FinallyMove(4, 1, 4, 3); //blancas 
+            board.FinallyMove(4, 6, 4, 4);
+
 
             // Act
             board.TurnChange();
@@ -112,7 +115,7 @@
 
 
         [Test]
-        public void CloneChessBoard()
+        public void CloneChessBoardTest()
         {
             // Arrange
             var board = new Board(true);
@@ -121,14 +124,30 @@
             // Act
             var resultBoard = board.CloneChessBoard();
             board.ChessBoard[0, 0] = null;
+            board.ChessBoard[0, 0] = new Pawn(true, 0, 0);
 
             // Assert
-            Assert.IsTrue(CompareChessBoards(GetExpectedChessBoard(), resultBoard));
-            Assert.IsFalse(CompareChessBoards(resultBoard, board.ChessBoard));
-            Assert.AreEqual(null, board.ChessBoard[0, 0]);
+            Assert.IsTrue(CompareChessBoards(GetExpectedChessBoard(), board.ChessBoard));
+            //Assert.IsFalse(CompareChessBoards(resultBoard, GetExpectedChessBoard()));
+            //Assert.AreNotEqual(null, GetExpectedChessBoard());
+        }
+        [Test]
+        public void CloneChessBoardTest3()
+        {
+            // Arrange
+            var board1 = GetExpectedChessBoard();
+            var board2 = GetExpectedChessBoard();
+
+            // Act
+            board2[0, 0] = null;
+            board2[0, 0] = new Pawn(true, 0, 0);
+
+            // Assert
+            Assert.IsTrue(CompareChessBoards(board1, board2));
+            
         }
 
-        public void CloneChessBoard2()
+        public void CloneChessBoardTest2()
         {
             // Arrange
             var board = new Board(true);
@@ -165,8 +184,6 @@
             var chessBoard = new PieceBase[Size, Size];
             chessBoard[0, 0] = new Pawn(true, 0, 0);
             chessBoard[Size - 1, Size - 1] = new Rook(false, Size - 1, Size - 1);
-
-
 
             return chessBoard;
         }

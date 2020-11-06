@@ -5,6 +5,7 @@
     public class Bishop : PieceBase
     {
         public override bool CanJump => false;
+        public override int Value => 30;
         public Bishop() { }
 
         public Bishop(bool color, int PositionX, int PositionY)

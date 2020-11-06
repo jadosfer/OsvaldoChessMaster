@@ -2,6 +2,7 @@
 using OsvaldoChessMaster;
 using OsvaldoChessMaster.Piece;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ocm
 {
@@ -17,70 +18,45 @@ namespace ocm
             ArtificialIntelligence artificInt = new ArtificialIntelligence(board);
 
             Move[,] MovesArray = new Move[2, 2];
-
-            MovesArray[0, 0] = new Move();
-            MovesArray[0, 1] = new Move();
-            MovesArray[1, 0] = new Move();
-            MovesArray[1, 1] = new Move();
-
-            MovesArray[0, 0].x1 = 1;
-            MovesArray[0, 0].y1 = 1;
-            MovesArray[0, 0].x2 = 1;
-            MovesArray[0, 0].y2 = 2;
-
-            MovesArray[0, 1].x1 = 1;
-            MovesArray[0, 1].y1 = 1;
-            MovesArray[0, 1].x2 = 1;
-            MovesArray[0, 1].y2 = 3;
-
-            MovesArray[1, 0].x1 = 1;
-            MovesArray[1, 0].y1 = 1;
-            MovesArray[1, 0].x2 = 1;
-            MovesArray[1, 0].y2 = 4;
-
-            MovesArray[1, 1].x1 = 1;
-            MovesArray[1, 1].y1 = 1;
-            MovesArray[1, 1].x2 = 1;
-            MovesArray[1, 1].y2 = 5;
-
-            foreach (Move move in MovesArray)
-            {
-                Console.WriteLine(move.y2);
-            }
-
+            
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            artificInt.BestResponse(board);
+            stopwatch.Stop();
+            Console.WriteLine("Elapsed Time is {0} ms", stopwatch.ElapsedMilliseconds);
 
             //board.FinallyMove(4, 1, 4, 3); //blancas            
-            ////PrintBoard(board);
-            //board.FinallyMove(artificInt.BestComputerMoveDepth4(board).x1, artificInt.BestComputerMoveDepth4(board).y1, artificInt.BestComputerMoveDepth4(board).x2, artificInt.BestComputerMoveDepth4(board).y2);
             //PrintBoard(board);
-
-
+            //board.FinallyMove(artificInt.BestComputerMoveDepth4(board).x1, artificInt.BestComputerMoveDepth4(board).y1, artificInt.BestComputerMoveDepth4(board).x2, artificInt.BestComputerMoveDepth4(board).y2);            
+            //PrintBoard(board);
             //board.FinallyMove(5, 2, 5, 4); //blancas
             //PrintBoard(board);
             //board.FinallyMove(artificInt.BestComputerMoveDepth4(board).x1, artificInt.BestComputerMoveDepth4(board).y1, artificInt.BestComputerMoveDepth4(board).x2, artificInt.BestComputerMoveDepth4(board).y2);
             //PrintBoard(board);
 
 
-            //board.FinallyMove(5, 7, 5, 5);
+            //board.FinallyMove(4, 6, 4, 4);
             //PrintBoard(board);
-            //board.FinallyMove(6, 1, 3, 4); //blancas
+            //board.FinallyMove(5, 0, 2, 3); //blancas
             //PrintBoard(board);
-            //board.FinallyMove(6, 7, 6, 6);
+            //board.FinallyMove(5, 6, 5, 5);
             //PrintBoard(board);
-            //board.FinallyMove(1, 2, 1, 3); //blancas
+            //board.FinallyMove(0, 1, 0, 2); //blancas
             //PrintBoard(board);
-            //board.FinallyMove(7, 8, 8, 6);
+            //board.FinallyMove(6, 7, 7, 5);
             //PrintBoard(board);
-            //board.FinallyMove(7, 1, 8, 3); //blancas
+            //board.FinallyMove(6, 0, 7, 2); //blancas
             //PrintBoard(board);
-            //board.FinallyMove(6, 8, 1, 3);
+            //board.FinallyMove(5, 7, 0, 2);
             //PrintBoard(board);
-            //board.FinallyMove(2, 2, 1, 3); //blancas
+            //board.FinallyMove(4, 0, 6, 0); //blancas
             //PrintBoard(board);
-            //board.FinallyMove(5, 8, 7, 8); // enroque no permitido
+            //board.FinallyMove(4, 7, 6, 7); // enroque no permitido
             //PrintBoard(board);
-            //board.FinallyMove(4, 7, 4, 5);
+            //board.FinallyMove(3, 6, 3, 4);
             //PrintBoard(board);
+
+
             //board.FinallyMove(1, 3, 1, 4); //blancas
             //PrintBoard(board);
             //board.FinallyMove(1, 7, 1, 6);
@@ -93,7 +69,6 @@ namespace ocm
             //PrintBoard(board);
             //board.FinallyMove(8, 8, 7, 8); // muevo torre
             //PrintBoard(board);
-
             //board.FinallyMove(7, 2, 7, 3); //blancas
             //PrintBoard(board);
             //board.FinallyMove(7, 8, 8, 8); // muevo torre

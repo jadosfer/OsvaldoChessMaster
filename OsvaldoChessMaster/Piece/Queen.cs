@@ -5,6 +5,7 @@
     public class Queen : PieceBase
     {
         public override bool CanJump => false;
+        public override int Value => 90;
         public Queen() { }
         public Queen(bool color, int PositionX, int PositionY)
             : base(color, PositionX, PositionY) { }

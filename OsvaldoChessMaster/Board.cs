@@ -200,7 +200,7 @@
                     }
                 }
                 //el peon baja
-                if (player1 != Turn && y2 < y1 && piece1.IsValidMove(x2, y2)) 
+                if (player1 != Turn && y2 < y1 && piece1.IsValidMove(x2, y2))
                 {
 
                     if (IsPawnCapturing(x1, x2))
@@ -292,6 +292,7 @@
         /// <returns></returns>
         public bool FinallyMove(int x1, int y1, int x2, int y2)
         {
+            
             if (CanMovePiece(x1, y1, x2, y2, false)) //false porque no está testeando, sino que hay orden de mover
             {
                 //baja 3 flags
@@ -303,7 +304,7 @@
                 var piece1 = GetPiece(x1, y1);
                 PieceBase auxEmptyPiece = GetPiece(x2, y2);
                 ChessBoard[x2, y2] = piece1; //muevo piece1
-                
+
                 if (auxEmptyPiece.GetType() == typeof(EmptyPiece))
                 {
                     ChessBoard[x1, y1] = auxEmptyPiece; //pongo pieza vacia
@@ -339,7 +340,7 @@
                 //coordenadas del rey del player que no mueve
                 int XKING = XKing(!piece1.Color);
                 int YKING = YKing(!piece1.Color);
-
+                
                 if (IsCheckmate(XKING, YKING, !piece1.Color))  // jaque mate
                 {
                     //Console.WriteLine("CHECKMATE: JAQUE MATE!!!!!!!!!!!!   --------fin de juego----------");
@@ -347,17 +348,17 @@
                     return true;
                 }
                 // Ahogado
-                if (!IsSquareCheck(XKING, YKING, !piece1.Color) && IsAllSquaresAroundCheckorBlocked(XKING, YKING, !piece1.Color) && !CanOtherPieceMove(!piece1.Color))
+                else
                 {
-                    //Console.WriteLine("DRAW: AHOGADO!!!!!!!!!!!!  TABLES: TABLAS  -------fin de juego------");
-                    return false;
-                }
-                // Jaque            
-                if (IsSquareCheck(XKING, YKING, !piece1.Color))
-                {
-                    IsCheckFlag = true;
-                    //Console.WriteLine("x,y " + XKING + YKING + " JAQUE AL REY!!!!!!!!!!!!");
-                }
+                    TurnChange();
+                    if (IsAllSquaresAroundCheckorBlocked(XKING, YKING, !piece1.Color) && !CanOtherPieceMove(!piece1.Color))
+                    {
+                        TurnChange();
+                        //Console.WriteLine("DRAW: AHOGADO!!!!!!!!!!!!  TABLES: TABLAS  -------fin de juego------");
+                        return false;
+                    }
+                    TurnChange();
+                }                
 
                 if (Turn == player1)
                 {
@@ -520,7 +521,7 @@
                 }
 
                 // esto y el if son para ver si quedas en jaque
-                MovePieceAndPutEmpty(x1, y1, x2, y2);                 
+                MovePieceAndPutEmpty(x1, y1, x2, y2);
 
                 if (IsSquareCheck(XKing(piece1.Color), YKing(piece1.Color), piece1.Color))
                 {
@@ -562,8 +563,8 @@
                         return false;
                     }
 
-                    // enroque largo                                                                                 mov horiz   ---arriba o abajo---    -----------casilleros vacios entre rey y torre?-------------    fue movido el rey antes?    -------------estan jaqueadas las casillas entre torre y rey???-----------------------------------------------                            
-                    if (piece1.GetType() == typeof(King) && x1 == 4 && x2 == 2 && y1 == y2 && (y1 == Constants.LowerFile || y1 == Constants.UpperFile) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && IsEmpty(x2 + 1, y2) && piece1.CanCastling && !IsSquareCheck(1, y1, piece1.Color) && !IsSquareCheck(2, y1, piece1.Color) && !IsSquareCheck(3, y1, piece1.Color))
+                    // enroque largo                                                                                 mov horiz   ---arriba o abajo---    -----------casilleros vacios entre rey y torre?-------------    fue movido el rey antes?    -------------estan jaqueadas las casillas entre torre y rey??? x2 = 2 (a donde va el rey ya se que no, porque  lo chequeo antes)
+                    if (piece1.GetType() == typeof(King) && x1 == 4 && x2 == 2 && y1 == y2 && (y1 == Constants.LowerFile || y1 == Constants.UpperFile) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && IsEmpty(x2 + 1, y2) && piece1.CanCastling && !IsSquareCheck(1, y1, 3, y1, piece1.Color))
                     {
                         piece2 = GetPiece(x2 - 2, y2);
                         if (piece2.CanCastling) //me fijo se se habia movido la torre antes
@@ -574,39 +575,28 @@
                                 piece1.LongCastling = true; // esto es para escribir la jugada                             
                             }
 
-                            int XKING = XKing(piece1.Color); //coordenadas del rey del player que mueve
-                            int YKING = YKing(piece1.Color);
-                            if (IsSquareCheck(XKING, YKING, piece1.Color))
+                            if (!testing)
                             {
-                                if (!testing)
-                                {
-                                    //Console.WriteLine("Movimiento Invalido, SU REY QUEDA EN JAQUE!!!!!!!!!!!!");
-                                }
-                                return false;
-                            }
-                            else
-                            {
-                                if (!testing)
-                                {
-                                    PieceBase AuxEmptyPiece = GetPiece(x2 + 1, y2);
-                                    ChessBoard[x1 + 1, y2] = GetPiece(0, y1); //pongo torre a la der del rey
-                                    GetPiece(x1 + 1, y2).Position.PositionX = x1 + 1;
-                                    GetPiece(x1 + 1, y2).Position.PositionY = y2;
+                                MovePieceAndPutEmpty(0, y1, x1 + 1, y2);
+                                //PieceBase AuxEmptyPiece = GetPiece(x2 + 1, y2);
+                                //ChessBoard[x1 + 1, y2] = GetPiece(0, y1); //pongo torre a la der del rey
+                                //GetPiece(x1 + 1, y2).Position.PositionX = x1 + 1;
+                                //GetPiece(x1 + 1, y2).Position.PositionY = y2;
 
-                                    ChessBoard[0, y1] = AuxEmptyPiece; //pone empty donde estaba la torre
-                                    GetPiece(0, y1).Position.PositionX = 0;
-                                    GetPiece(0, y1).Position.PositionY = y1;
+                                //ChessBoard[0, y1] = AuxEmptyPiece; //pone empty donde estaba la torre
+                                //GetPiece(0, y1).Position.PositionX = 0;
+                                //GetPiece(0, y1).Position.PositionY = y1;
 
-                                    IsCastlingFlag = true;
-                                }
-                                return true;
+                                IsCastlingFlag = true;
                             }
+                            return true;
+
                         }
                     }
 
                     // enroque corto
 
-                    if (piece1.GetType() == typeof(King) && x1 == 4 && x2 == 6 && y1 == y2 && (y1 == Constants.LowerFile || y1 == Constants.UpperFile) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && piece1.CanCastling && !IsSquareCheck(5, y1, piece1.Color) && !IsSquareCheck(6, y1, piece1.Color))
+                    if (piece1.GetType() == typeof(King) && x1 == 4 && x2 == 6 && y1 == y2 && (y1 == Constants.LowerFile || y1 == Constants.UpperFile) && IsEmpty(x2 - 1, y2) && IsEmpty(x2, y2) && piece1.CanCastling && !IsSquareCheck(5, y1, piece1.Color)) // la posicion x2=6 es donde va el rey y ya se que no va a haber jaque(ya chequeado arriba)
                     {
                         piece2 = GetPiece(x2 + 1, y2);
                         if (piece2.CanCastling) //me fijo se se habia movido la torre antes
@@ -631,10 +621,10 @@
                             {
                                 if (!testing)
                                 {
-                                    PieceBase AuxEmptyPiece = GetPiece(x2 - 1, y2);
-                                    ChessBoard[x1 - 1, y2] = GetPiece(7, y1); //pongo torre a la der del rey
-                                    GetPiece(x1 - 1, y2).Position.PositionX = x1 + 1;
-                                    GetPiece(x1 - 1, y2).Position.PositionY = y2;
+                                    PieceBase AuxEmptyPiece = GetPiece(x2 + 1, y2);
+                                    ChessBoard[x1 + 1, y2] = GetPiece(7, y1); //pongo torre a la der del rey
+                                    GetPiece(x1 + 1, y2).Position.PositionX = x1 + 1;
+                                    GetPiece(x1 + 1, y2).Position.PositionY = y2;
 
                                     ChessBoard[7, y1] = AuxEmptyPiece; //pone empty donde estaba la torre
                                     GetPiece(7, y1).Position.PositionX = 7;
@@ -741,13 +731,32 @@
         /// <param name="y"></param>
         /// <param name="targetColor"></param> bando bajo posible jaque
         /// <returns></returns>
-        public bool IsSquareCheck(int x, int y, bool targetColor) //Color es el color del rey (el opuesto del atacante)
+
+        public bool IsSquareCheck(int x1, int y1, bool targetColor) //Color es el color del rey (el opuesto del atacante)
         {
             for (int i = Constants.ForStart; i < Constants.Size; i++)
             {
                 for (int j = Constants.ForStart; j < Constants.Size; j++)
                 {
-                    if (IsPieceChecking(i, j, x, y, targetColor))
+                    if (IsPieceChecking(i, j, x1, y1, targetColor))
+                    {
+                        return true;
+                    }
+
+
+                }
+            }
+            return false;
+        }
+
+        public bool IsSquareCheck(int x1, int y1, int x2, int y2, bool targetColor) //Color es el color del rey (el opuesto del atacante)
+        {
+
+            for (int i = Constants.ForStart; i < Constants.Size; i++)
+            {
+                for (int j = Constants.ForStart; j < Constants.Size; j++)
+                {
+                    if (IsPieceChecking(i, j, x1, y1, targetColor) || IsPieceChecking(i, j, x2, y2, targetColor))
                     {
                         return true;
                     }
@@ -894,7 +903,7 @@
         /// <param name="KingColor"></param>
         /// <returns></returns>
         public bool CanAllyBlock(int Xking, int Yking, bool KingColor)
-        {            
+        {
             for (int i = Constants.ForStart; i < Constants.Size; i++)
             {
                 for (int j = Constants.ForStart; j < Constants.Size; j++)
@@ -908,7 +917,7 @@
                             for (int l = Constants.ForStart; l < Constants.Size; l++)
                             {
                                 var auxPiece = GetPiece(k, l);
-                                MovePieceAndPutEmpty(i, j, k, l);                                
+                                MovePieceAndPutEmpty(i, j, k, l);
 
                                 if (!IsSquareCheck(Xking, Yking, KingColor))
                                 {
@@ -1020,7 +1029,7 @@
             return clonedChessBoard;
         }
 
-       
+
         public PieceBase[,] CloneChessBoard2()
         {
             var clonedChessBoard = new PieceBase[Constants.Size, Constants.Size];
@@ -1031,7 +1040,7 @@
                 {
                     if (this.ChessBoard[i, j] != null)
                     {
-                        
+
                         switch (this.ChessBoard[i, j].GetType().Name)
                         {
                             case nameof(Rook):
@@ -1041,12 +1050,12 @@
                                 clonedChessBoard[i, j] = new Pawn(ChessBoard[i, j].Color, i, j);
                                 break;
                             case nameof(Knight):
-                                clonedChessBoard[i, j] = new Knight(ChessBoard[i, j].Color, i, j);                                
+                                clonedChessBoard[i, j] = new Knight(ChessBoard[i, j].Color, i, j);
                                 break;
                             case nameof(Bishop):
                                 clonedChessBoard[i, j] = new Bishop(ChessBoard[i, j].Color, i, j);
                                 break;
-                            
+
                             case nameof(King):
                                 clonedChessBoard[i, j] = new King(ChessBoard[i, j].Color, i, j);
                                 break;
@@ -1057,7 +1066,7 @@
                                 clonedChessBoard[i, j] = new EmptyPiece(ChessBoard[i, j].Color, i, j);
                                 break;
                         }
-                        
+
                     }
                 }
             }

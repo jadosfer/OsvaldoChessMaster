@@ -23,6 +23,8 @@ namespace OsvaldoChessMaster
             kingPositionValues = KingPositionValues();
         }
 
+        
+
         /// <summary>
         /// devuelve un array con todas las movidas posibles que mejoran el puntaje de un estado del tablero
         /// </summary>
@@ -73,6 +75,7 @@ namespace OsvaldoChessMaster
                 for (int l = Constants.ForStart; l < Constants.Size; l++)
                 {
                     PieceBase[,] BackupBoard2 = board.CloneChessBoard();
+                    bool TurnShow = board.Turn;
                                         
                     if (board.FinallyMove(i, j, k, l))
                     {                        
@@ -123,7 +126,8 @@ namespace OsvaldoChessMaster
         /// <param name="board"></param>
         /// <returns></returns>
         public Move BestResponse(Board board)
-        {            
+        {
+            
             double actualValue = EvaluateBoard(board);
             Move response = new Move();
             Move responseNotNull = new Move();
@@ -197,20 +201,24 @@ namespace OsvaldoChessMaster
         /// <param name="board"></param>
         /// <returns></returns>
         public Move BestComputerMoveDepth4(Board board)
-        {            
+        {           
             double value = EvaluateBoard(board);
+            Console.WriteLine("calculó EvaluateBoard");
             Move bestMove = null;
-            List<Move> allMove1 = AllPosiblePlays(board);            
-
+            List<Move> allMove1 = AllPosiblePlays(board);
+            Console.WriteLine("calculó las AllPosiblePlays");
             foreach (Move move1 in allMove1)
             {
                 PieceBase[,] ChessBoardAux = board.CloneChessBoard();
                 board.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2);
                 board.FinallyMove(BestResponse(board).x1, BestResponse(board).y1, BestResponse(board).x2, BestResponse(board).y2);
-                List<Move> allMove3 = AllPosiblePlays(board);                
+                Console.WriteLine("movio y calculo la Best Response");
+                List<Move> allMove3 = AllPosiblePlays(board);
+                Console.WriteLine("calculó las AllPosiblePlays luego de mover y repsonder");
 
                 foreach (Move move3 in allMove3)
                 {
+                    bool TurnShow2 = board.Turn;
                     PieceBase[,] ChessBoardAux2 = board.CloneChessBoard();
                     board.FinallyMove(move3.x1, move3.y1, move3.x2, move3.y2);
                     board.FinallyMove(BestResponse(board).x1, BestResponse(board).y1, BestResponse(board).x2, BestResponse(board).y2);

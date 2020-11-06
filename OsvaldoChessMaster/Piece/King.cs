@@ -5,6 +5,7 @@
     public class King : PieceBase
     {
         public override bool CanJump => false;
+        public override int Value => 900;
         public override bool CanCastling { get; set; }
 
         public King() { }

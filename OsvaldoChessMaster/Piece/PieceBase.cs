@@ -5,7 +5,8 @@ namespace OsvaldoChessMaster.Piece
 {
     public abstract class PieceBase : ICloneable, IEquatable<PieceBase>
     {
-        public abstract bool CanJump { get; }        
+        public abstract bool CanJump { get; }
+        public abstract int Value{ get; }
         public virtual bool CanCastling { get; set; }
         public virtual bool CapturableByTheWay { get; set; }
         public virtual int turnNumberCapturableByTheWay { get; set; }
@@ -46,7 +47,9 @@ namespace OsvaldoChessMaster.Piece
             if (other.Color != this.Color)
                 return false;
 
-            if (other.Position != this.Position)
+            if (other.Position.PositionX != this.Position.PositionX)
+                return false;
+            if (other.Position.PositionY != this.Position.PositionY)
                 return false;
 
             return true;

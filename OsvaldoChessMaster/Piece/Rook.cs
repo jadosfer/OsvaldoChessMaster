@@ -3,6 +3,7 @@
     public class Rook : PieceBase
     {
         public override bool CanJump => false;
+        public override int Value => 50;
 
         public Rook() { }
 

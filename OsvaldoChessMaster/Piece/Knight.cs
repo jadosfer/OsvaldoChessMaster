@@ -5,6 +5,7 @@
     public class Knight : PieceBase
     {
         public override bool CanJump => true;
+        public override int Value => 30;
         public Knight() { }
         public Knight(bool color, int PositionX, int PositionY)
             : base(color, PositionX, PositionY) { }

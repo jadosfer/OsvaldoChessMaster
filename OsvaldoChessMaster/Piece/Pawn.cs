@@ -5,6 +5,7 @@
     public class Pawn : PieceBase
     {
         public override bool CanJump => false;
+        public override int Value => 10;
         public override bool CapturableByTheWay { get; set; }
         public override int turnNumberCapturableByTheWay { get; set; }
 
