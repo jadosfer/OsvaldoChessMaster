@@ -27,7 +27,7 @@
             var rook = new Rook(true, 0, 0);
 
             // Act
-            var result = rook.IsValidMove(x2, y2);
+            var result = rook.IsValidMove(0, 0, x2, y2);
 
             // Assert
             Assert.AreEqual(expected, result);

@@ -27,7 +27,7 @@
             var king = new King(true, 0, 0);
 
             // Act
-            var result = king.IsValidMove(x2, y2);
+            var result = king.IsValidMove(0, 0, x2, y2);
 
             // Assert
             Assert.AreEqual(expected, result);

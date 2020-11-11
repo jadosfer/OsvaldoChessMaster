@@ -1,6 +1,7 @@
 ﻿namespace OsvaldoChessMaster.Piece
 {
     using System;
+    using System.Collections.Generic;
 
     public class King : PieceBase
     {
@@ -22,14 +23,14 @@
         /// <param name="x2"></param>
         /// <param name="y2"></param>
         /// <returns></returns>
-        public override bool IsValidMove(int x2, int y2)
+        public override bool IsValidMove(int x1, int y1, int x2, int y2)
         {
             // movimiento en el mismo lugar
-            if (Position.PositionX == x2 && Position.PositionY == y2)
+            if (x1 == x2 && y1 == y2)
                 return false;
 
-            if (Math.Sqrt((y2 - Position.PositionY) * (y2 - Position.PositionY) + 
-                (x2 - Position.PositionX) * (x2 - Position.PositionX)) < 2)
+            if (Math.Sqrt((y2 - y1) * (y2 - y1) + 
+                (x2 - x1) * (x2 - x1)) < 2)
             {
                 return true;
             }
@@ -37,11 +38,78 @@
             return false;
         }
 
+        public override HashSet<Position> ValidMoves(Board Board)
+        {
+            HashSet<Position> kingMoves = new HashSet<Position>();
+
+            Position kingPos1 = new Position();
+            kingPos1.x1 = this.Position.PositionX + 1;
+            kingPos1.y1 = this.Position.PositionY;
+            if (kingPos1.x1 >= Constants.ForStart && kingPos1.x1 < Constants.Size && kingPos1.y1 >= Constants.ForStart && kingPos1.y1 < Constants.Size)
+            {
+                kingMoves.Add(kingPos1);
+            }
+            Position kingPos2 = new Position();
+            kingPos2.x1 = this.Position.PositionX - 1;
+            kingPos2.y1 = this.Position.PositionY;
+            if (kingPos2.x1 >= Constants.ForStart && kingPos2.x1 < Constants.Size && kingPos2.y1 >= Constants.ForStart && kingPos2.y1 < Constants.Size)
+            {
+                kingMoves.Add(kingPos1);
+            }
+            Position kingPos3 = new Position();
+            kingPos3.x1 = this.Position.PositionX + 1;
+            kingPos3.y1 = this.Position.PositionY + 1;
+            if (kingPos3.x1 >= Constants.ForStart && kingPos3.x1 < Constants.Size && kingPos3.y1 >= Constants.ForStart && kingPos3.y1 < Constants.Size)
+            {
+                kingMoves.Add(kingPos1);
+            }
+            Position kingPos4 = new Position();
+            kingPos4.x1 = this.Position.PositionX - 1;
+            kingPos4.y1 = this.Position.PositionY + 1;
+            if (kingPos4.x1 >= Constants.ForStart && kingPos4.x1 < Constants.Size && kingPos4.y1 >= Constants.ForStart && kingPos4.y1 < Constants.Size)
+            {
+                kingMoves.Add(kingPos1);
+            }
+            Position kingPos5 = new Position();
+            kingPos5.x1 = this.Position.PositionX + 1;
+            kingPos5.y1 = this.Position.PositionY - 1;
+            if (kingPos5.x1 >= Constants.ForStart && kingPos5.x1 < Constants.Size && kingPos5.y1 >= Constants.ForStart && kingPos5.y1 < Constants.Size)
+            {
+                kingMoves.Add(kingPos1);
+            }
+            Position kingPos6 = new Position();
+            kingPos6.x1 = this.Position.PositionX - 1;
+            kingPos6.y1 = this.Position.PositionY - 1;
+            if (kingPos6.x1 >= Constants.ForStart && kingPos6.x1 < Constants.Size && kingPos6.y1 >= Constants.ForStart && kingPos6.y1 < Constants.Size)
+            {
+                kingMoves.Add(kingPos1);
+            }
+            Position kingPos7 = new Position();
+            kingPos7.x1 = this.Position.PositionX;
+            kingPos7.y1 = this.Position.PositionY + 1;
+            if (kingPos7.x1 >= Constants.ForStart && kingPos7.x1 < Constants.Size && kingPos7.y1 >= Constants.ForStart && kingPos7.y1 < Constants.Size)
+            {
+                kingMoves.Add(kingPos1);
+            }
+            Position kingPos8 = new Position();
+            kingPos8.x1 = this.Position.PositionX;
+            kingPos8.y1 = this.Position.PositionY - 1;
+            if (kingPos8.x1 >= Constants.ForStart && kingPos8.x1 < Constants.Size && kingPos8.y1 >= Constants.ForStart && kingPos8.y1 < Constants.Size)
+            {
+                kingMoves.Add(kingPos1);
+            }
+
+            return kingMoves;
+        }
+
+
+
+
         public override string ToString()
         {
             var color = this.Color ? "w" : "b";
 
-            return $"{color}__KING__";
+            return $"{color} KING ";
         }
         public override object Clone()
         {

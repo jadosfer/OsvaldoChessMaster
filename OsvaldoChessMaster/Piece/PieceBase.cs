@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
+
 
 namespace OsvaldoChessMaster.Piece
 {
     public abstract class PieceBase : ICloneable, IEquatable<PieceBase>
     {
+        
         public abstract bool CanJump { get; }
         public abstract int Value{ get; }
         public virtual bool CanCastling { get; set; }
         public virtual bool CapturableByTheWay { get; set; }
         public virtual int turnNumberCapturableByTheWay { get; set; }
-        public PieceStatus Position{ get; set; }
+        public PieceStatus Position { get; set; }
 
-    
+
         public bool LongCastling { get; set; }
         public bool ShortCastling { get; set; }
         public bool Color { get; set; }
@@ -23,8 +26,11 @@ namespace OsvaldoChessMaster.Piece
             this.Color = color;            
         }
 
-        public abstract bool IsValidMove(int x2, int y2);
+        public abstract bool IsValidMove(int x1, int y1, int x2, int y2);
+
+        public abstract HashSet<Position> ValidMoves(Board board);        
         
+
         public virtual int GetturnNumberCapturableByTheWay() => 0;
 
         public bool Equals([AllowNull] PieceBase other)

@@ -36,6 +36,7 @@ namespace OsvaldoChessMaster.Test
         [TestCase(-5, 1, 7, 2, 5)]
         [TestCase(-4, 3, 6, 3, 4)]
         [TestCase(0, 4, 8, 1, 8)]
+        [TestCase(0, 0, 6, 0, 5)]
 
         public void EvaluateBoardTest(int EvaluateExpected, int x1, int y1, int x2, int y2) 
         { 
@@ -52,5 +53,30 @@ namespace OsvaldoChessMaster.Test
         // Assert
         Assert.AreEqual(EvaluateExpected, result);
         }
-}
+
+        [TestCase(6, 0, 5, 2)]
+        [TestCase(1, 0, 7, 1)]
+
+
+        public void BestResponseTest(int x1, int y1, int x2, int y2)
+        {
+            // Arrange
+            var board = new Board(true);
+            var AI = new ArtificialIntelligence(board);
+            Move expected = new Move();
+            expected.x1 = x1;
+            expected.y1 = y1;
+            expected.x2 = x2;
+            expected.y2 = x2;
+
+            // Act       
+
+            //board.FinallyMove(x1, y1, x2, y2);
+            Move result = AI.BestResponse(board);
+
+
+            // Assert
+            Assert.AreEqual(expected, result);
+        }
+    }
 }

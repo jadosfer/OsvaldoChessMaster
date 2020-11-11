@@ -5,7 +5,7 @@ using OsvaldoChessMaster.Piece;
 namespace OsvaldoChessMaster
 {
     public class ArtificialIntelligence
-    {       
+    {
         public double[,] pawnPositionValues = new double[Constants.Size, Constants.Size];
         public double[,] knightPositionValues = new double[Constants.Size, Constants.Size];
         public double[,] bishopPositionValues = new double[Constants.Size, Constants.Size];
@@ -23,7 +23,7 @@ namespace OsvaldoChessMaster
             kingPositionValues = KingPositionValues();
         }
 
-        
+
 
         /// <summary>
         /// devuelve un array con todas las movidas posibles que mejoran el puntaje de un estado del tablero
@@ -33,93 +33,58 @@ namespace OsvaldoChessMaster
         public List<Move> AllPosiblePlays(Board board)
         {
             double actualValue = EvaluateBoard(board);
+            List<Move> AllMoves = new List<Move>();
 
-            List<Move> AllMoves = new List<Move>();   
-            
-
-            for (int i = Constants.ForStart; i < Constants.Size; i++)            
-            {                
-                for (int j = Constants.ForStart; j < Constants.Size; j++) 
-                {
-                    var piece1 = board.GetPiece(i, j);
-
-                    if (piece1.Color == !board.player1) // o sino si es == computerColor
-                    {
-                        AllMoves = AllPosiblePiecePlays(board, i, j, AllMoves, actualValue);
-                    }
-                }
-            }                        
+            HashSet<PieceBase> BackupWhitePieces = board.CloneWhitePieces();
+            HashSet<PieceBase> BackupBlackPieces = board.CloneBlackPieces();
+            var hashSet = board.Turn ? BackupWhitePieces : BackupBlackPieces;
+            foreach (PieceBase piece in hashSet)
+            {
+                bool TurnShow = board.Turn;
+                AllMoves = AllPosiblePiecePlays(board, piece, AllMoves, actualValue);
+            }
             if (AllMoves != null)
             {
                 return AllMoves;
             }
+            Console.WriteLine("Algo raro, falla AllPosiblePlays");
             AllMoves.Add(BestResponse(board));
-            return AllMoves;
 
+            return AllMoves;
         }
 
-        /// <summary>
-        /// devuelve un array con todas las movidas posibles que tiene una pieza ubicada en i,j que mejoran el puntaje de un estado del tablero
-        /// </summary>
-        /// <param name="board"></param>
-        /// <param name="i"></param> coordenada x de la pieza
-        /// <param name="j"></param> coordenada y de la pieza
-        /// <param name="AllMoves"></param>
-        /// <param name="actualValue"></param>
-        /// <returns></returns>
-        public List<Move> AllPosiblePiecePlays(Board board, int i, int j, List<Move> AllMoves, double actualValue)
-        {            
+        public List<Move> AllPosiblePiecePlays(Board board, PieceBase piece, List<Move> AllMoves, double actualValue)
+        {
+            bool TurnShow = board.Turn;
+            int x = piece.Position.PositionX;
+            int y = piece.Position.PositionY;
 
             for (int k = Constants.ForStart; k < Constants.Size; k++)
             {
                 for (int l = Constants.ForStart; l < Constants.Size; l++)
                 {
-                    PieceBase[,] BackupBoard2 = board.CloneChessBoard();
-                    bool TurnShow = board.Turn;
-                                        
-                    if (board.FinallyMove(i, j, k, l))
-                    {                        
+                    TurnShow = board.Turn;
+                    var pieceAux = board.ChessBoard[k, l];
+
+                    if (board.FinallyMove(x, y, k, l))
+                    {
                         // solo lo guardo si no empeora la situacion (cuanto ams negativo mejor para la pc
                         double Eval = EvaluateBoard(board);
-                        
+
                         if (Eval <= actualValue)
                         {
                             //actualValue = EvaluateBoard(board);
-                            AllMoves.Add(new Move { x1 = i, y1 = j, x2 = k, y2 = l });
+                            AllMoves.Add(new Move { x1 = x, y1 = y, x2 = k, y2 = l });
                         }
                         // back to previous turn
-                        board.ChessBoard = BackupBoard2; //vuelve al board clonado                      
-                        board.TurnChange();                        
-                    }                    
+                        board.UndoMove(x, y, k, l, pieceAux);
+                    }
                 }
-            }                        
-            return AllMoves;           
-        }       
-
-
-        /// <summary>
-        /// recibe una lista de movidas y devuelve otra lista de movidas que son la mejor respuesta para cada una de las movidas que recibió.
-        /// </summary>
-        /// <param name="board"></param>
-        /// <param name="previousMoves"></param>
-        /// <returns></returns>
-        public List<Move> BestResponses(Board board, List<Move> previousMoves)
-        {
-            List<Move> responses = new List<Move>();            
-
-            foreach (Move previousMove in previousMoves)
-            {
-                PieceBase[,] ChessBoardAux = board.CloneChessBoard();
-                board.FinallyMove(previousMove.x1, previousMove.y1, previousMove.x2, previousMove.y2);
-                responses.Add(BestResponse(board));
-                // back to previous board
-                board.ChessBoard = ChessBoardAux;
-                // back to previous turn
-                board.TurnChange();
             }
-
-            return responses;
+            return AllMoves;
         }
+
+
         /// <summary>
         /// devuelve la movida que mas aumenta el puntaje de un estado del tablero (o si es negativo que lo hace menos negativo) Es un metodo para simular la movida del humano
         /// </summary>
@@ -127,71 +92,72 @@ namespace OsvaldoChessMaster
         /// <returns></returns>
         public Move BestResponse(Board board)
         {
-            
+
             double actualValue = EvaluateBoard(board);
             Move response = new Move();
             Move responseNotNull = new Move();
 
-            for (int i = Constants.ForStart; i < Constants.Size; i++)
+            HashSet<PieceBase> BackupWhitePieces = board.CloneWhitePieces();
+            HashSet<PieceBase> BackupBlackPieces = board.CloneBlackPieces();
+            var hashSet = board.Turn ? BackupWhitePieces : BackupBlackPieces;
+            foreach (PieceBase piece in hashSet)
             {
-                for (int j = Constants.ForStart; j < Constants.Size; j++)
-                {                    
-                    var piece1 = board.GetPiece(i, j);
+                int i = piece.Position.PositionX;
+                int j = piece.Position.PositionY;
+               
+                //foreach (var keyValuePair in PiecesValidAbstractMoves.PieceValidMoves(i, j, piece, board))
+                //{
+                //    if (keyValuePair.Key == piece.GetType().Name.ToString())
+                //    {
+                //        foreach(Position positionMove in keyValuePair.Value)
+                //        {
+                //            var auxPieceRevertFinally = board.GetPiece(i + positionMove.x1, j + positionMove.y1);
+                //            if (board.FinallyMove(i, j, i + positionMove.x1, j + positionMove.y1))
+                //            {
+                //                responseNotNull.x1 = i;
+                //                responseNotNull.y1 = j;
+                //                responseNotNull.x2 = i + positionMove.x1;
+                //                responseNotNull.y2 = j + positionMove.y1;
 
-                    if (piece1.Color == board.Turn && piece1.GetType() != typeof(EmptyPiece))
-                    {
-                        for (int k = Constants.ForStart; k < Constants.Size; k++)
-                        {
-                            for (int l = Constants.ForStart; l < Constants.Size; l++)
-                            {
-                                var ChessBoardAux = board.CloneChessBoard();
-                                if (board.FinallyMove(i, j, k, l))
-                                {                                    
-                                    responseNotNull.x1 = i;
-                                    responseNotNull.y1 = j;
-                                    responseNotNull.x2 = k;
-                                    responseNotNull.y2 = l;
+                //                // si mueve el de abajo
+                //                if (board.player1 != board.Turn) // va != porque el finally me lo acaba de cambiar a turn
+                //                {   // guardo la mejor movida
+                //                    double Eval = EvaluateBoard(board);
+                //                    if (Eval >= actualValue)
+                //                    {
+                //                        actualValue = Eval;
+                //                        response.x1 = i;
+                //                        response.y1 = j;
+                //                        response.x2 = positionMove.x1;
+                //                        response.y2 = positionMove.y1;
+                //                    }
+                //                }
+                //                else
+                //                {   // mueve el de arriba
+                //                    if (EvaluateBoard(board) <= actualValue)
+                //                    {
+                //                        actualValue = EvaluateBoard(board);
+                //                        response.x1 = i;
+                //                        response.y1 = j;
+                //                        response.x2 = positionMove.x1;
+                //                        response.y2 = positionMove.y1;
+                //                    }
+                //                }
 
-                                    // si mueve el de abajo
-                                    if (board.player1 != board.Turn) // va != porque el finally me lo acaba de cambiar a turn
-                                    {   // guardo la mejor movida
-                                        if (EvaluateBoard(board) >= actualValue)
-                                        {
-                                            actualValue = EvaluateBoard(board);
-                                            response.x1 = i;
-                                            response.y1 = j;
-                                            response.x2 = k;
-                                            response.y2 = l;
-                                        }
-                                    }
-                                    else
-                                    {   // mueve el de arriba
-                                        if (EvaluateBoard(board) <= actualValue)
-                                        {
-                                            actualValue = EvaluateBoard(board);
-                                            response.x1 = i;
-                                            response.y1 = j;
-                                            response.x2 = k;
-                                            response.y2 = l;
-                                        }
-                                    }                                   
-
-                                    // back to previous board
-                                    board.ChessBoard = ChessBoardAux;                                   
-                                    
-                                    // back to previous turn                                    
-                                    board.TurnChange();                                    
-                                }
-                            }
-                        }
-                    }
-                }
+                //                // back to previous board
+                //                board.UndoMove(i, j, positionMove.x1, positionMove.y1, auxPieceRevertFinally);
+                //            }
+                //        }
+                //    }
+                //}
             }
+
             if (response != null)
             {
                 return response;
             }
-            return responseNotNull; 
+            Console.WriteLine("Algo raro, falla bestResponse");
+            return responseNotNull;
 
         }
 
@@ -201,7 +167,8 @@ namespace OsvaldoChessMaster
         /// <param name="board"></param>
         /// <returns></returns>
         public Move BestComputerMoveDepth4(Board board)
-        {           
+        {
+            Board boardPrueba = board;
             double value = EvaluateBoard(board);
             Console.WriteLine("calculó EvaluateBoard");
             Move bestMove = null;
@@ -210,7 +177,12 @@ namespace OsvaldoChessMaster
             foreach (Move move1 in allMove1)
             {
                 PieceBase[,] ChessBoardAux = board.CloneChessBoard();
+                HashSet<PieceBase> BackupWhitePieces = board.CloneWhitePieces();
+                HashSet<PieceBase> BackupBlackPieces = board.CloneBlackPieces();
+
                 board.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2);
+                Move SoloParaVerBorrar = BestResponse(board);
+                Move SoloParaVerBorrar2 = BestResponse(board);
                 board.FinallyMove(BestResponse(board).x1, BestResponse(board).y1, BestResponse(board).x2, BestResponse(board).y2);
                 Console.WriteLine("movio y calculo la Best Response");
                 List<Move> allMove3 = AllPosiblePlays(board);
@@ -220,23 +192,31 @@ namespace OsvaldoChessMaster
                 {
                     bool TurnShow2 = board.Turn;
                     PieceBase[,] ChessBoardAux2 = board.CloneChessBoard();
+                    HashSet<PieceBase> BackupWhitePieces2 = board.CloneWhitePieces();
+                    HashSet<PieceBase> BackupBlackPieces2 = board.CloneBlackPieces();
+
                     board.FinallyMove(move3.x1, move3.y1, move3.x2, move3.y2);
                     board.FinallyMove(BestResponse(board).x1, BestResponse(board).y1, BestResponse(board).x2, BestResponse(board).y2);
                     double Eval = EvaluateBoard(board);
-                    if (Eval < value)
+                    if (Eval <= value)
                     {
                         value = EvaluateBoard(board);
                         bestMove = move1; //me quedo con la move1 que produce la menor bestresponse
                     }
                     // back to previous board
                     board.ChessBoard = ChessBoardAux2;
+                    board.WhitePieces = BackupWhitePieces2;
+                    board.BlackPieces = BackupBlackPieces2;
                 }
                 board.ChessBoard = ChessBoardAux;
+                board.WhitePieces = BackupWhitePieces;
+                board.BlackPieces = BackupBlackPieces;
             }
             if (bestMove != null)
             {
                 return bestMove;
             }
+            Console.WriteLine("Algo raro, falla BestComputerMoveDepth4");
             return BestResponse(board);
         }
 
@@ -246,80 +226,69 @@ namespace OsvaldoChessMaster
         /// <param name="board"></param>
         /// <returns></returns>
         public double EvaluateBoard(Board board)
-        {            
+        {
             double sum = 0;
-
-            for (int i = Constants.ForStart; i < Constants.Size; i++)
+            //var hashSet = KingColor ? WhitePieces : BlackPieces;
+            foreach (var piece in board.WhitePieces)
             {
-                for (int j = Constants.ForStart; j < Constants.Size; j++)
+                int i = piece.Position.PositionX;
+                int j = piece.Position.PositionY;
+
+                if (piece != null)
                 {
-                    var piece1 = board.GetPiece(i, j);
-
-
-                    switch (piece1.GetType().Name)
+                    switch (piece.GetType().Name)
                     {
                         case nameof(Pawn):
-                            if (piece1.Color == board.player1)
-                            {
-                                sum += 10 + pawnPositionValues[i, j];
-                            }
-                            else
-                            {
-                                sum -= 10 + pawnPositionValues[i, 7 - j];
-                            }
+                            sum += 10 + pawnPositionValues[i, j];
                             break;
                         case nameof(Knight):
-                            if (piece1.Color == board.player1)
-                            {
-                                sum += 30 + knightPositionValues[i, j];
-                            }
-                            else
-                            {
-                                sum -= 30 + knightPositionValues[i, 7 - j];
-                            }
+                            sum += 30 + knightPositionValues[i, j];
                             break;
                         case nameof(Bishop):
-                            if (piece1.Color == board.player1)
-                            {
-                                sum += 30 + bishopPositionValues[i, j];
-                            }
-                            else
-                            {
-                                sum -= 30 + bishopPositionValues[i, 7 - j];
-                            }
+                            sum += 30 + bishopPositionValues[i, j];
                             break;
                         case nameof(Rook):
-                            if (piece1.Color == board.player1)
-                            {
-                                sum += 50 + rookPositionValues[i, j];
-                            }
-                            else
-                            {
-                                sum -= 50 + rookPositionValues[i, 7 - j];
-                            }
+                            sum += 50 + rookPositionValues[i, j];
                             break;
                         case nameof(Queen):
-                            if (piece1.Color == board.player1)
-                            {
-                                sum += 90 + queenPositionValues[i, j];
-                            }
-                            else
-                            {
-                                sum -= 90 + queenPositionValues[i, 7 - j];
-                            }
+                            sum += 90 + queenPositionValues[i, j];
                             break;
                         case nameof(King):
-                            if (piece1.Color == board.player1)
-                            {
-                                sum += 900 + kingPositionValues[i, j];
-                            }
-                            else
-                            {
-                                sum -= 900 + kingPositionValues[i, 7 - j];
-                            }
+                            sum += 900 + kingPositionValues[i, j];
                             break;
                     }
                 }
+            }
+            foreach (var piece in board.BlackPieces)
+            {
+                int i = piece.Position.PositionX;
+                int j = piece.Position.PositionY;
+
+                if (piece != null)
+                {
+                    switch (piece.GetType().Name)
+                    {
+                        case nameof(Pawn):
+                            sum -= 10 + pawnPositionValues[i, 7 - j];
+                            break;
+                        case nameof(Knight):
+                            sum -= 30 + knightPositionValues[i, 7 - j];
+                            break;
+                        case nameof(Bishop):
+                            sum -= 30 + bishopPositionValues[i, 7 - j];
+                            break;
+                        case nameof(Rook):
+                            sum -= 50 + rookPositionValues[i, 7 - j];
+                            break;
+                        case nameof(Queen):
+                            sum -= 90 + queenPositionValues[i, 7 - j];
+                            break;
+                        case nameof(King):
+                            sum -= 900 + kingPositionValues[i, 7 - j];
+                            break;
+                    }
+                }
+
             }
             return sum;
         }
@@ -327,14 +296,14 @@ namespace OsvaldoChessMaster
 
 
 
-    
+
         /// <summary>
         /// se usa en el constructor, crea el array de puntajes segun posicion del pawn
         /// </summary>
         /// <returns></returns>
         public double[,] PawnPositionValues()
         {
-            double[] ValuesFile1 = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+            double[] ValuesFile1 = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
             double[] ValuesFile2 = { 0.5, 1.0, 1.0, -2.0, -2.0, 1.0, 1.0, 0.5 };
             double[] ValuesFile3 = { 0.5, -0.5, -1.0, 0.0, 0.0, -1.0, -0.5, 0.5 };
             double[] ValuesFile4 = { 0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0 };
@@ -371,10 +340,10 @@ namespace OsvaldoChessMaster
             double[] ValuesFile6 = { -3.0, 0.0, 1.0, 1.5, 1.5, 1.0, 0.0, -3.0 };
             double[] ValuesFile7 = { -4.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -4.0 };
             double[] ValuesFile8 = { -5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0 };
-            
+
 
             for (int i = Constants.ForStart; i < Constants.Size; i++)
-            {                
+            {
                 knightPositionValues[i, 0] = ValuesFile1[i];
                 knightPositionValues[i, 1] = ValuesFile2[i];
                 knightPositionValues[i, 2] = ValuesFile3[i];
@@ -401,9 +370,9 @@ namespace OsvaldoChessMaster
             double[] ValuesFile6 = { -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0 };
             double[] ValuesFile7 = { -1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, -1.0 };
             double[] ValuesFile8 = { -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0 };
-            
+
             for (int i = Constants.ForStart; i < Constants.Size; i++)
-            {                
+            {
                 bishopPositionValues[i, 0] = ValuesFile1[i];
                 bishopPositionValues[i, 1] = ValuesFile2[i];
                 bishopPositionValues[i, 2] = ValuesFile3[i];
@@ -433,7 +402,7 @@ namespace OsvaldoChessMaster
             double[] ValuesFile8 = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
             for (int i = Constants.ForStart; i < Constants.Size; i++)
-            {                
+            {
                 rookPositionValues[i, 0] = ValuesFile1[i];
                 rookPositionValues[i, 1] = ValuesFile2[i];
                 rookPositionValues[i, 2] = ValuesFile3[i];
@@ -461,9 +430,9 @@ namespace OsvaldoChessMaster
             double[] ValuesFile6 = { -1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0 };
             double[] ValuesFile7 = { -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0 };
             double[] ValuesFile8 = { -2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0 };
-            
+
             for (int i = Constants.ForStart; i < Constants.Size; i++)
-            {               
+            {
                 queenPositionValues[i, 0] = ValuesFile1[i];
                 queenPositionValues[i, 1] = ValuesFile2[i];
                 queenPositionValues[i, 2] = ValuesFile3[i];
@@ -491,9 +460,9 @@ namespace OsvaldoChessMaster
             double[] ValuesFile6 = { -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0 };
             double[] ValuesFile7 = { -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0 };
             double[] ValuesFile8 = { -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0 };
-            
+
             for (int i = Constants.ForStart; i < Constants.Size; i++)
-            {                
+            {
                 kingPositionValues[i, 0] = ValuesFile1[i];
                 kingPositionValues[i, 1] = ValuesFile2[i];
                 kingPositionValues[i, 2] = ValuesFile3[i];
@@ -505,6 +474,6 @@ namespace OsvaldoChessMaster
             }
 
             return kingPositionValues;
-        }        
+        }
     }
 }
