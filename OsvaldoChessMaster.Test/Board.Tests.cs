@@ -41,25 +41,25 @@
             Assert.AreEqual(expected, result);
         }
 
-        [TestCase(4, 6, 4, 4, true, false)]
-        [TestCase(2, 6, 1, 5, true, false)]
-        [TestCase(1, 7, 2, 5, true, false)]
-        [TestCase(1, 1, 1, 3, true, true)]
-        [TestCase(1, 1, 1, 2, true, true)]
-        [TestCase(4, 1, 4, 3, true, true)]
-        public void CanMovePawnTest(int x1, int y1, int x2, int y2, bool player1, bool expected)
-        {
-            // Arrange
-            var board = new Board(true);
-            //var pawn = new Pawn(true, x1, y1);
+        //[TestCase(4, 6, 4, 4, true, false)]
+        //[TestCase(2, 6, 1, 5, true, false)]
+        //[TestCase(1, 7, 2, 5, true, false)]
+        //[TestCase(1, 1, 1, 3, true, true)]
+        //[TestCase(1, 1, 1, 2, true, true)]
+        //[TestCase(4, 1, 4, 3, true, true)]
+        //public void CanMovePawnTest(int x1, int y1, int x2, int y2, bool testing, bool expected)
+        //{
+        //    // Arrange
+        //    var board = new Board(true);
+        //    //var pawn = new Pawn(true, x1, y1);
 
-            // Act
-            //board.TurnChange();
-            var result = board.CanMovePawn(x1, y1, x2, y2, player1);
+        //    // Act
+        //    //board.TurnChange();
+        //    var result = board.CanMovePawn(x1, y1, x2, y2, testing);
 
-            // Assert
-            Assert.AreEqual(expected, result);
-        }
+        //    // Assert
+        //    Assert.AreEqual(expected, result);
+        //}
 
 
         [TestCase(0, 4, 0, 6, false)]
@@ -124,6 +124,9 @@
         [TestCase(1, 0, 0, 2)]
         [TestCase(1, 0, 2, 2)]
         [TestCase(3, 0, 5, 2)]
+        [TestCase(3, 0, 3, 5)]
+        [TestCase(3, 0, 3, 6)]
+        [TestCase(3, 0, 3, 7)]
 
         public void UndoMoveTest(int x1, int y1, int x2, int y2)
         {
@@ -136,15 +139,25 @@
             board.FinallyMove(4, 1, 4, 3);
             board.FinallyMove(4, 6, 4, 4);
             var expected = board.CloneChessBoard();
+            var expected2 = board.CloneWhitePieces();
+            var expected3 = board.CloneBlackPieces();
             PieceBase auxPiece = board.ChessBoard[x2, y2];
-            //board.FinallyMove(x1, y1, x2, y2);
+            if (board.FinallyMove(x1, y1, x2, y2))
+            {
+                board.UndoMove(x1, y1, x2, y2, auxPiece);
+            }            
             
-            board.UndoMove(x1, y1, x2, y2, auxPiece);
 
             var result = board.ChessBoard;
+            var result2 = board.WhitePieces;
+            var result3 = board.BlackPieces;
+
             // Assert
             Assert.AreEqual(expected, result);
+            Assert.AreEqual(expected2, result2);
+            Assert.AreEqual(expected3, result3);
         }
+
 
 
         [TestCase(0, 6, 0, 1, true)]

@@ -162,7 +162,7 @@
             Position rookPos16 = new Position();
             rookPos16.x1 = this.Position.PositionX;
             rookPos16.y1 = this.Position.PositionY + 2;
-            if (rookPos16.x1 >= Constants.ForStart && rookPos16.x1 < Constants.Size && rookPos16.y1 >= Constants.ForStart && rookPos2.y1 < Constants.Size)
+            if (rookPos16.x1 >= Constants.ForStart && rookPos16.x1 < Constants.Size && rookPos16.y1 >= Constants.ForStart && rookPos16.y1 < Constants.Size)
             {
                 rookMoves.Add(rookPos16);
             }

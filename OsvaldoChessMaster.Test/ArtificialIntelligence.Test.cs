@@ -55,7 +55,7 @@ namespace OsvaldoChessMaster.Test
         }
 
         [TestCase(6, 0, 5, 2)]
-        [TestCase(1, 0, 7, 1)]
+        //[TestCase(1, 0, 7, 1)]
 
 
         public void BestResponseTest(int x1, int y1, int x2, int y2)
@@ -63,11 +63,14 @@ namespace OsvaldoChessMaster.Test
             // Arrange
             var board = new Board(true);
             var AI = new ArtificialIntelligence(board);
+            HashSet<PieceBase> clonedBlackPieces = board.CloneBlackPieces();
+            HashSet<PieceBase> clonedWhitePieces = board.CloneWhitePieces();
+
             Move expected = new Move();
-            expected.x1 = x1;
-            expected.y1 = y1;
+            expected.x1 = x1;            
             expected.x2 = x2;
-            expected.y2 = x2;
+            expected.y1 = y1;
+            expected.y2 = y2;
 
             // Act       
 
@@ -76,7 +79,13 @@ namespace OsvaldoChessMaster.Test
 
 
             // Assert
-            Assert.AreEqual(expected, result);
+            Assert.AreEqual(result.x1, expected.x1);// no se por qué no toma como iguales a result y expected, pero asi separados por componentes sí.
+            Assert.AreEqual(result.y1, expected.y1);
+            Assert.AreEqual(result.x2, expected.x2);
+            Assert.AreEqual(result.y2, expected.y2);
+            Assert.AreEqual(clonedBlackPieces, board.BlackPieces);
+            Assert.AreEqual(clonedWhitePieces, board.WhitePieces);
+            
         }
     }
 }

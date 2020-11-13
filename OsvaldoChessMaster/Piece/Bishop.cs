@@ -153,7 +153,7 @@
             Position bishopPos16 = new Position();
             bishopPos16.x1 = this.Position.PositionX + 2;
             bishopPos16.y1 = this.Position.PositionY - 2;
-            if (bishopPos16.x1 >= Constants.ForStart && bishopPos16.x1 < Constants.Size && bishopPos16.y1 >= Constants.ForStart && bishopPos2.y1 < Constants.Size)
+            if (bishopPos16.x1 >= Constants.ForStart && bishopPos16.x1 < Constants.Size && bishopPos16.y1 >= Constants.ForStart && bishopPos16.y1 < Constants.Size)
             {
                 bishopMoves.Add(bishopPos16);
             }

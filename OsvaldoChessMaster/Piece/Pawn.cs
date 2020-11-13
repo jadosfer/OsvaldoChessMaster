@@ -56,78 +56,118 @@
                     Position pawnPos1 = new Position();
                     pawnPos1.x1 = this.Position.PositionX - 1;
                     pawnPos1.y1 = this.Position.PositionY + 1;
-                    pawnMoves.Add(pawnPos1);
+                    if (pawnPos1.x1 >= Constants.ForStart && pawnPos1.x1 < Constants.Size && pawnPos1.y1 >= Constants.ForStart && pawnPos1.y1 < Constants.Size)
+                    {
+                        pawnMoves.Add(pawnPos1);
+                    }                    
                     Position pawnPos2 = new Position();
                     pawnPos2.x1 = this.Position.PositionX + 1;
                     pawnPos2.y1 = this.Position.PositionY + 1;
-                    pawnMoves.Add(pawnPos2);
+                    if (pawnPos2.x1 >= Constants.ForStart && pawnPos2.x1 < Constants.Size && pawnPos2.y1 >= Constants.ForStart && pawnPos2.y1 < Constants.Size)
+                    {
+                        pawnMoves.Add(pawnPos2);
+                    }                    
                     Position pawnPos3 = new Position();
                     pawnPos3.x1 = this.Position.PositionX;
                     pawnPos3.y1 = this.Position.PositionY + 1;
-                    pawnMoves.Add(pawnPos3);
+                    if (pawnPos3.x1 >= Constants.ForStart && pawnPos3.x1 < Constants.Size && pawnPos3.y1 >= Constants.ForStart && pawnPos3.y1 < Constants.Size)
+                    {
+                        pawnMoves.Add(pawnPos3);
+                    }                    
                     Position pawnPos4 = new Position();
                     pawnPos4.x1 = this.Position.PositionX;
                     pawnPos4.y1 = this.Position.PositionY + 2;
-                    pawnMoves.Add(pawnPos4);
+                    if (pawnPos4.x1 >= Constants.ForStart && pawnPos4.x1 < Constants.Size && pawnPos4.y1 >= Constants.ForStart && pawnPos4.y1 < Constants.Size)
+                    {
+                        pawnMoves.Add(pawnPos4);
+                    }                    
                 }
                 else
                 {
                     Position pawnPos1 = new Position();
                     pawnPos1.x1 = this.Position.PositionX - 1;
                     pawnPos1.y1 = this.Position.PositionY + 1;
-                    pawnMoves.Add(pawnPos1);
+                    if (pawnPos1.x1 >= Constants.ForStart && pawnPos1.x1 < Constants.Size && pawnPos1.y1 >= Constants.ForStart && pawnPos1.y1 < Constants.Size)
+                    {
+                        pawnMoves.Add(pawnPos1);
+                    }                    
                     Position pawnPos2 = new Position();
                     pawnPos2.x1 = this.Position.PositionX + 1;
                     pawnPos2.y1 = this.Position.PositionY + 1;
-                    pawnMoves.Add(pawnPos2);
+                    if (pawnPos2.x1 >= Constants.ForStart && pawnPos2.x1 < Constants.Size && pawnPos2.y1 >= Constants.ForStart && pawnPos2.y1 < Constants.Size)
+                    {
+                        pawnMoves.Add(pawnPos2);
+                    }                    
                     Position pawnPos3 = new Position();
                     pawnPos3.x1 = this.Position.PositionX;
                     pawnPos3.y1 = this.Position.PositionY + 1;
-                    pawnMoves.Add(pawnPos3);
+                    if (pawnPos3.x1 >= Constants.ForStart && pawnPos3.x1 < Constants.Size && pawnPos3.y1 >= Constants.ForStart && pawnPos3.y1 < Constants.Size)
+                    {
+                        pawnMoves.Add(pawnPos3);
+                    }                    
                 }
             }
             else
             {
-                if (this.Position.PositionY == 7)
+                if (this.Position.PositionY == 6)
                 {
                     Position pawnPos5 = new Position();
                     pawnPos5.x1 = this.Position.PositionX - 1;
                     pawnPos5.y1 = this.Position.PositionY - 1;
-                    pawnMoves.Add(pawnPos5);
+                    if (pawnPos5.x1 >= Constants.ForStart && pawnPos5.x1 < Constants.Size && pawnPos5.y1 >= Constants.ForStart && pawnPos5.y1 < Constants.Size)
+                    {
+                        pawnMoves.Add(pawnPos5);
+                    }                    
                     Position pawnPos6 = new Position();
                     pawnPos6.x1 = this.Position.PositionX + 1;
                     pawnPos6.y1 = this.Position.PositionY - 1;
-                    pawnMoves.Add(pawnPos6);
+                    if (pawnPos6.x1 >= Constants.ForStart && pawnPos6.x1 < Constants.Size && pawnPos6.y1 >= Constants.ForStart && pawnPos6.y1 < Constants.Size)
+                    {
+                        pawnMoves.Add(pawnPos6);
+                    }                    
                     Position pawnPos7 = new Position();
                     pawnPos7.x1 = this.Position.PositionX;
                     pawnPos7.y1 = this.Position.PositionY - 1;
-                    pawnMoves.Add(pawnPos7);
+                    if (pawnPos7.x1 >= Constants.ForStart && pawnPos7.x1 < Constants.Size && pawnPos7.y1 >= Constants.ForStart && pawnPos7.y1 < Constants.Size)
+                    {
+                        pawnMoves.Add(pawnPos7);
+                    }                    
                     Position pawnPos8 = new Position();
                     pawnPos8.x1 = this.Position.PositionX;
                     pawnPos8.y1 = this.Position.PositionY - 2;
-                    pawnMoves.Add(pawnPos8);
+                    if (pawnPos8.x1 >= Constants.ForStart && pawnPos8.x1 < Constants.Size && pawnPos8.y1 >= Constants.ForStart && pawnPos8.y1 < Constants.Size)
+                    {
+                        pawnMoves.Add(pawnPos8);
+                    }                    
                 }
                 else
                 {
                     Position pawnPos5 = new Position();
                     pawnPos5.x1 = this.Position.PositionX - 1;
                     pawnPos5.y1 = this.Position.PositionY - 1;
-                    pawnMoves.Add(pawnPos5);
+                    if (pawnPos5.x1 >= Constants.ForStart && pawnPos5.x1 < Constants.Size && pawnPos5.y1 >= Constants.ForStart && pawnPos5.y1 < Constants.Size)
+                    {
+                        pawnMoves.Add(pawnPos5);
+                    }                    
                     Position pawnPos6 = new Position();
                     pawnPos6.x1 = this.Position.PositionX + 1;
                     pawnPos6.y1 = this.Position.PositionY - 1;
-                    pawnMoves.Add(pawnPos6);
+                    if (pawnPos6.x1 >= Constants.ForStart && pawnPos6.x1 < Constants.Size && pawnPos6.y1 >= Constants.ForStart && pawnPos6.y1 < Constants.Size)
+                    {
+                        pawnMoves.Add(pawnPos6);
+                    }                    
                     Position pawnPos7 = new Position();
                     pawnPos7.x1 = this.Position.PositionX;
                     pawnPos7.y1 = this.Position.PositionY - 1;
-                    pawnMoves.Add(pawnPos7);
+                    if (pawnPos7.x1 >= Constants.ForStart && pawnPos7.x1 < Constants.Size && pawnPos7.y1 >= Constants.ForStart && pawnPos7.y1 < Constants.Size)
+                    {
+                        pawnMoves.Add(pawnPos7);
+                    }                    
                 }              
             }
             return pawnMoves;
         }
         
-
-
         public override string ToString()
         {
             var color = this.Color ? "w" : "b";

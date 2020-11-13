@@ -163,7 +163,7 @@
             Position queenLinePos16 = new Position();
             queenLinePos16.x1 = this.Position.PositionX;
             queenLinePos16.y1 = this.Position.PositionY + 2;
-            if (queenLinePos16.x1 >= Constants.ForStart && queenLinePos16.x1 < Constants.Size && queenLinePos16.y1 >= Constants.ForStart && queenLinePos2.y1 < Constants.Size)
+            if (queenLinePos16.x1 >= Constants.ForStart && queenLinePos16.x1 < Constants.Size && queenLinePos16.y1 >= Constants.ForStart && queenLinePos16.y1 < Constants.Size)
             {
                 queenMoves.Add(queenLinePos16);
             }

@@ -35,9 +35,9 @@ namespace OsvaldoChessMaster
             double actualValue = EvaluateBoard(board);
             List<Move> AllMoves = new List<Move>();
 
-            HashSet<PieceBase> BackupWhitePieces = board.CloneWhitePieces();
-            HashSet<PieceBase> BackupBlackPieces = board.CloneBlackPieces();
-            var hashSet = board.Turn ? BackupWhitePieces : BackupBlackPieces;
+            HashSet<PieceBase> BackupWhitePiecesAPP = board.CloneWhitePieces();
+            HashSet<PieceBase> BackupBlackPiecesAPP = board.CloneBlackPieces();
+            var hashSet = board.Turn ? BackupWhitePiecesAPP : BackupBlackPiecesAPP;
             foreach (PieceBase piece in hashSet)
             {
                 bool TurnShow = board.Turn;
@@ -59,14 +59,14 @@ namespace OsvaldoChessMaster
             int x = piece.Position.PositionX;
             int y = piece.Position.PositionY;
 
-            for (int k = Constants.ForStart; k < Constants.Size; k++)
+            foreach (Position position in piece.ValidMoves(board))                
             {
-                for (int l = Constants.ForStart; l < Constants.Size; l++)
-                {
+                //for (int l = Constants.ForStart; l < Constants.Size; l++)
+                //{
                     TurnShow = board.Turn;
-                    var pieceAux = board.ChessBoard[k, l];
+                    var pieceAux = board.ChessBoard[position.x1, position.y1];
 
-                    if (board.FinallyMove(x, y, k, l))
+                    if (board.FinallyMove(x, y, position.x1, position.y1))
                     {
                         // solo lo guardo si no empeora la situacion (cuanto ams negativo mejor para la pc
                         double Eval = EvaluateBoard(board);
@@ -74,12 +74,12 @@ namespace OsvaldoChessMaster
                         if (Eval <= actualValue)
                         {
                             //actualValue = EvaluateBoard(board);
-                            AllMoves.Add(new Move { x1 = x, y1 = y, x2 = k, y2 = l });
+                            AllMoves.Add(new Move { x1 = x, y1 = y, x2 = position.x1 , y2 = position.y1 });
                         }
                         // back to previous turn
-                        board.UndoMove(x, y, k, l, pieceAux);
+                        board.UndoMove(x, y, position.x1, position.y1, pieceAux);
                     }
-                }
+                //}
             }
             return AllMoves;
         }
@@ -104,52 +104,46 @@ namespace OsvaldoChessMaster
             {
                 int i = piece.Position.PositionX;
                 int j = piece.Position.PositionY;
-               
-                //foreach (var keyValuePair in PiecesValidAbstractMoves.PieceValidMoves(i, j, piece, board))
-                //{
-                //    if (keyValuePair.Key == piece.GetType().Name.ToString())
-                //    {
-                //        foreach(Position positionMove in keyValuePair.Value)
-                //        {
-                //            var auxPieceRevertFinally = board.GetPiece(i + positionMove.x1, j + positionMove.y1);
-                //            if (board.FinallyMove(i, j, i + positionMove.x1, j + positionMove.y1))
-                //            {
-                //                responseNotNull.x1 = i;
-                //                responseNotNull.y1 = j;
-                //                responseNotNull.x2 = i + positionMove.x1;
-                //                responseNotNull.y2 = j + positionMove.y1;
+                foreach (Position position in piece.ValidMoves(board))                
+                {
+                
+                    var auxPieceRevertFinally = board.GetPiece(position.x1,position.y1);
+                    if (board.FinallyMove(i, j, position.x1, position.y1))
+                    {
+                        responseNotNull.x1 = i;
+                        responseNotNull.y1 = j;
+                        responseNotNull.x2 = i + position.x1;
+                        responseNotNull.y2 = j + position.y1;
 
-                //                // si mueve el de abajo
-                //                if (board.player1 != board.Turn) // va != porque el finally me lo acaba de cambiar a turn
-                //                {   // guardo la mejor movida
-                //                    double Eval = EvaluateBoard(board);
-                //                    if (Eval >= actualValue)
-                //                    {
-                //                        actualValue = Eval;
-                //                        response.x1 = i;
-                //                        response.y1 = j;
-                //                        response.x2 = positionMove.x1;
-                //                        response.y2 = positionMove.y1;
-                //                    }
-                //                }
-                //                else
-                //                {   // mueve el de arriba
-                //                    if (EvaluateBoard(board) <= actualValue)
-                //                    {
-                //                        actualValue = EvaluateBoard(board);
-                //                        response.x1 = i;
-                //                        response.y1 = j;
-                //                        response.x2 = positionMove.x1;
-                //                        response.y2 = positionMove.y1;
-                //                    }
-                //                }
-
-                //                // back to previous board
-                //                board.UndoMove(i, j, positionMove.x1, positionMove.y1, auxPieceRevertFinally);
-                //            }
-                //        }
-                //    }
-                //}
+                        // si movió el de abajo
+                        if (board.player1 != board.Turn) // va != porque el finally me lo acaba de cambiar a turn
+                        {   // guardo la mejor movida
+                            double Eval = EvaluateBoard(board);
+                            if (Eval >= actualValue)
+                            {
+                                actualValue = Eval;
+                                response.x1 = i;
+                                response.y1 = j;
+                                response.x2 = position.x1;
+                                response.y2 = position.y1;
+                            }
+                        }
+                        else
+                        {   // mueve el de arriba
+                            if (EvaluateBoard(board) <= actualValue)
+                            {
+                                actualValue = EvaluateBoard(board);
+                                response.x1 = i;
+                                response.y1 = j;
+                                response.x2 = position.x1;
+                                response.y2 = position.y1;
+                            }
+                        }
+                        // back to previous board
+                        board.UndoMove(i, j, position.x1, position.y1, auxPieceRevertFinally);
+                    }
+                    
+                }
             }
 
             if (response != null)
@@ -196,7 +190,8 @@ namespace OsvaldoChessMaster
                     HashSet<PieceBase> BackupBlackPieces2 = board.CloneBlackPieces();
 
                     board.FinallyMove(move3.x1, move3.y1, move3.x2, move3.y2);
-                    board.FinallyMove(BestResponse(board).x1, BestResponse(board).y1, BestResponse(board).x2, BestResponse(board).y2);
+                    Move moveResponse = BestResponse(board); 
+                    board.FinallyMove(moveResponse.x1, moveResponse.y1, moveResponse.x2, moveResponse.y2);
                     double Eval = EvaluateBoard(board);
                     if (Eval <= value)
                     {

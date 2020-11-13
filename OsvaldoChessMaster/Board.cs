@@ -8,6 +8,8 @@
     {
         private int pointer;
         public bool player1 { get; set; }
+        public bool PromotionFlag {get; private set; }
+
         private Stack<string> stackFullPlay;
         private string movement = string.Empty; // se llena con las dos movidas y luego se reinicia
 
@@ -157,16 +159,6 @@
             return false;
         }
 
-
-        public bool IsHorse(PieceBase piece)
-        {
-            if (piece != null)
-            {
-                return piece.GetType() == typeof(Knight);
-            }
-            return false;
-        }
-
         // true si se mueve en diagonal
         public bool IsPawnCapturing(int x1, int x2) => x1 != x2;
 
@@ -179,16 +171,11 @@
         /// <param name="y2"></param>       
         /// <param name="testing"></param> si es falso quiere decir que no tiene que revertir, ya que va a quedar asi
         /// <returns></returns>
-        public bool CanMovePawn(int x1, int y1, int x2, int y2, bool testing)
+        private bool CanMovePawn(int x1, int y1, int x2, int y2, bool testing)
         {
             try
             {
-                var piece1 = GetPiece(x1, y1);
-
-                if (!IsInRange(x1, y1, x2, y2) || !IsPawn(piece1))
-                {
-                    return false;
-                }
+                var piece1 = GetPiece(x1, y1);               
 
                 // El peon sube
                 if (player1 == Turn && y2 > y1 && piece1.IsValidMove(x1, y1, x2, y2))
@@ -199,7 +186,7 @@
                         {
                             if (!testing)
                             {
-                                MovePromotion(x2, y2);
+                                PromotionFlag = true;
                             }
                             return true;
                         }
@@ -222,7 +209,7 @@
                         {
                             if (!testing)
                             {
-                                MovePromotion(x2, y2);
+                                PromotionFlag = true;
                             }
                             return true;
                         }
@@ -314,7 +301,7 @@
         {
             if (y2 == Constants.LowerFile || y2 == Constants.UpperFile)
             {
-                ChessBoard[x2, y2] = new Queen(Turn, x2, y2);
+                ChessBoard[x2, y2] = new Queen(!Turn, x2, y2); // va "!Turn" porque el ya finally lo cambió
             }
         }
 
@@ -331,7 +318,7 @@
             //int Prueba = ChessBoard[0, 6].Position.PositionY;
             HashSet<PieceBase> wp = this.WhitePieces;  // borrar!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             HashSet<PieceBase> bp = this.BlackPieces;  // borrar!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            
+
             if (CanMovePiece(x1, y1, x2, y2, false)) //false porque no está testeando, sino que hay orden de mover
             {
                 //baja 3 flags
@@ -341,6 +328,17 @@
 
                 var piece1 = GetPiece(x1, y1);
                 MovePieceAndPutEmpty(x1, y1, x2, y2);
+                if (PromotionFlag)
+                {
+                    MovePromotion(x2, y2);
+                    PromotionFlag = false;
+                }
+                
+                if (IsPieceChecking(x2, y2, XKing(Turn), YKing(Turn), Turn))
+                {
+                    IsCheckFlag = true;
+                    ScriptBoard.flag3 = true;
+                }
 
                 if (piece1.GetType() == typeof(King) && piece1.CanCastling)
                 {
@@ -365,6 +363,7 @@
                 {
                     //Console.WriteLine("CHECKMATE: JAQUE MATE!!!!!!!!!!!!   --------fin de juego----------");
                     IsCheckmateFlag = true;
+                    ScriptBoard.flag5 = true;
                     return true;
                 }
                 // Ahogado veo si despues de mover el otro queda ahogado
@@ -376,7 +375,7 @@
                 if (Turn == player1)
                 {
                     TurnNumber++; //TurnNumber se compone de dos movidas
-                }                
+                }
                 return true;
             }
             else
@@ -514,8 +513,7 @@
         public bool CanMovePiece(int x1, int y1, int x2, int y2, bool testing)
         {
             try
-            {
-                bool turnBorrar = Turn;
+            {                
                 var piece1 = GetPiece(x1, y1);
 
                 if (piece1 == null || !IsInRange(x1, y1, x2, y2) || !IsColorTurn(piece1))
@@ -529,22 +527,18 @@
                     return false;
                 }
 
-
-                if (piece1.CanJump && piece1.IsValidMove(x1, y1, x2, y2))
-                {
-                    return true;
-                }
-
                 // esto y el if son para ver si quedas en jaque  
                 Board boardPruebaAnterior = this;
                 MovePieceAndPutEmpty(x1, y1, x2, y2);
 
                 if (IsSquareCheck(XKing(piece1.Color), YKing(piece1.Color), piece1.Color))
                 {
+                    ScriptBoard.flag4 = true;
                     //vuelvo atras el movimiento
                     UndoMove(x1, y1, x2, y2, piece2);
-                    Board boardPrueba = this;
+
                     IsCantMoveCheckFlag = true;
+                    Console.WriteLine("Cant Move, is check");
 
                     //quedas en jaque entonces es invalido el movimiento
                     return false;
@@ -552,7 +546,12 @@
                 else
                 {   //igualmente vuelvo atras el movimiento
                     UndoMove(x1, y1, x2, y2, piece2);
-                    Board boardPrueba = this;
+
+                }
+
+                if (piece1.CanJump && piece1.IsValidMove(x1, y1, x2, y2))
+                {
+                    return true;
                 }
 
                 if (IsPawn(piece1))
@@ -719,55 +718,80 @@
 
         public void MovePieceAndPutEmpty(int x1, int y1, int x2, int y2)
         {
-            if (IsInRange(x1, y1, x2, y2))
+            if (IsInRange(x1, y1, x2, y2) && ChessBoard[x1, y1] != null)// en rango y piece1 no nula
             {
+                if (ChessBoard[x2, y2] != null && ChessBoard[x2, y2].Color != ChessBoard[x1, y1].Color)
+                {
+                    //capturo una blanca
+                    if (ChessBoard[x2, y2].Color) 
+                    {
+                        WhitePieces.Remove(ChessBoard[x2, y2]);
+                    }
+                    //capturo una negra
+                    else if (ChessBoard[x2, y2] != null)
+                    {
+                        BlackPieces.Remove(ChessBoard[x2, y2]);
+                    }
+                }                                
+                ChessBoard[x2, y2] = ChessBoard[x1, y1]; //pongo pieza de x1,y1 en x2, y2                
+                
                 if (ChessBoard[x2, y2] != null && ChessBoard[x2, y2].Color)
                 {
                     WhitePieces.Remove(ChessBoard[x2, y2]);
-                }
+                    ChessBoard[x2, y2].Position.PositionX = x2;
+                    ChessBoard[x2, y2].Position.PositionY = y2;
+                    WhitePieces.Add(ChessBoard[x2, y2]);
+
+                }                
                 else if (ChessBoard[x2, y2] != null)
                 {
                     BlackPieces.Remove(ChessBoard[x2, y2]);
-                }
-
-                ChessBoard[x2, y2] = ChessBoard[x1, y1]; //pongo pieza de x1,y1 en x2, y2
-                if (ChessBoard[x2, y2] != null)
-                {
+                    BlackPieces.Remove(ChessBoard[x1, y1]);
                     ChessBoard[x2, y2].Position.PositionX = x2;
                     ChessBoard[x2, y2].Position.PositionY = y2;
+                    BlackPieces.Add(ChessBoard[x2, y2]);
                 }
+                
                 ChessBoard[x1, y1] = null;
+                TurnChange();
             }
-            TurnChange();
         }
 
         public void UndoMove(int x1, int y1, int x2, int y2, PieceBase auxPiece)
         {
+            PieceBase borrarPiecePrueba = ChessBoard[x1, y1];
+            PieceBase borrarPiecePrueba2 = ChessBoard[x2, y2];
+
             var hashSetW = WhitePieces;
             var hashSetB = BlackPieces;
-            if (ChessBoard[x2, y2] != null)
+            if (IsInRange(x1, y1, x2, y2))
             {
-                Board Auxil = this;
-                ChessBoard[x1, y1] = ChessBoard[x2, y2];
-                ChessBoard[x1, y1].Position.PositionX = x1;
-                ChessBoard[x1, y1].Position.PositionY = y1;
-                ChessBoard[x2, y2] = auxPiece;
-
-                if (auxPiece != null)
+                if (ChessBoard[x2, y2] != null)
                 {
-                    ChessBoard[x2, y2].Position.PositionX = x2;
-                    ChessBoard[x2, y2].Position.PositionY = y2;
-                    var hashSet = auxPiece.Color ? WhitePieces : BlackPieces;
-                    PieceBase PruebaPiece = ChessBoard[x2, y2];
-                    hashSet.Add(ChessBoard[x2, y2]);
+                    Board Auxil = this;
+                    ChessBoard[x1, y1] = ChessBoard[x2, y2];
+                    ChessBoard[x1, y1].Position.PositionX = x1;
+                    ChessBoard[x1, y1].Position.PositionY = y1;
+                    ChessBoard[x2, y2] = auxPiece;
+
+                    if (auxPiece != null)
+                    {
+                        ChessBoard[x2, y2].Position.PositionX = x2;
+                        ChessBoard[x2, y2].Position.PositionY = y2;
+                        var hashSet = auxPiece.Color ? WhitePieces : BlackPieces;
+                        PieceBase PruebaPiece = ChessBoard[x2, y2];
+                        if (hashSet.Count < 16) //esto hay que corregirlo. lo hago porque me agrega piezas de mas indefinidamente y no encuentro cuando
+                        {
+                            hashSet.Add(auxPiece);
+                        }
+                    }
+                    TurnChange();
+                }
+                else
+                {
+                    Console.WriteLine("esatba nula x2,y2 en el undo, error" + " x1:" + x1 + " y1:" + y1 + " x2:" + x2 + " y2:" + y2);
                 }
             }
-            else
-            {
-                Console.WriteLine("esatba nula x2,y2 en el undo, error" + x1, y1, x2, y2);
-            }
-
-            TurnChange();
         }
 
         public void TurnChange()
@@ -969,17 +993,19 @@
                 {
                     int k = position.x1;
                     int l = position.y1;
-
-                    var auxPiece = GetPiece(k, l);
-                    MovePieceAndPutEmpty(x1, y1, k, l);
-
-                    if (!IsSquareCheck(Xking, Yking, KingColor))
+                    if (IsInRange(x1, y1, k, l))
                     {
-                        UndoMove(x1, y1, k, l, auxPiece);
-                        return true;
+                        var auxPiece = GetPiece(k, l);
+                        if (FinallyMove(x1, y1, k, l))
+                        {
+                            if (!IsSquareCheck(Xking, Yking, KingColor))
+                            {
+                                UndoMove(x1, y1, k, l, auxPiece);
+                                return true;
+                            }
+                            UndoMove(x1, y1, k, l, auxPiece);
+                        }
                     }
-                    UndoMove(x1, y1, k, l, auxPiece);
-
                 }
             }
             return false;
