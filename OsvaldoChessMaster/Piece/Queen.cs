@@ -36,7 +36,7 @@
             return false;
         }
 
-        public override HashSet<Position> ValidMoves(Board Board)
+        public override HashSet<Position> ValidMoves(BoardLogic Board)
         {
             HashSet<Position> queenMoves = new HashSet<Position>();
 

@@ -28,7 +28,7 @@ namespace OsvaldoChessMaster.Piece
 
         public abstract bool IsValidMove(int x1, int y1, int x2, int y2);
 
-        public abstract HashSet<Position> ValidMoves(Board board);        
+        public abstract HashSet<Position> ValidMoves(BoardLogic board);        
         
 
         public virtual int GetturnNumberCapturableByTheWay() => 0;

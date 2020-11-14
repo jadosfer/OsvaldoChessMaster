@@ -15,7 +15,7 @@
         public void IsInRange(int x1, int y1, int x2, int y2, bool expected)
         {
             // Arrange
-            var board = new Board(true);
+            var board = new BoardLogic(true);
 
             // Act
             var result = board.IsInRange(x1, y1, x2, y2);
@@ -28,14 +28,15 @@
         [TestCase(4, 6, 4, 4, true, false)]
         [TestCase(4, 1, 4, 3, true, true)]
         //[TestCase(1, 7, 2, 5, false, true)]
-        public void CanMovePieceTest(int x1, int y1, int x2, int y2, bool player1, bool expected)
+        public void CanMovePieceTest(int x1, int y1, int x2, int y2, bool testing, bool expected)
         {
             // Arrange
             var board = new Board(true);
+            var boardLogic = new BoardLogic(true);
 
             // Act
             //board.TurnChange();
-            var result = board.CanMovePiece(x1, y1, x2, y2, player1);
+            var result = boardLogic.CanMovePiece(x1, y1, x2, y2, testing, board);
 
             // Assert
             Assert.AreEqual(expected, result);
@@ -76,13 +77,14 @@
         public void FinallyMoveTest(int x1, int y1, int x2, int y2, bool expected)
         {
             // Arrange
-            var board = new Board(true);            
-            board.FinallyMove(4, 1, 4, 3);
+            var board = new Board(true);
+            var boardLogic = new BoardLogic(true);
+            boardLogic.FinallyMove(4, 1, 4, 3, board);
 
 
             // Act
             //board.TurnChange();
-            var result = board.FinallyMove(x1, y1, x2, y2);
+            var result = boardLogic.FinallyMove(x1, y1, x2, y2, board);
 
             // Assert
             Assert.AreEqual(expected, result);            
@@ -104,13 +106,14 @@
         {
             // Arrange
             var board = new Board(true);
+            var boardLogic = new BoardLogic(true);
             var expected = board.ChessBoard;
             PieceBase[,] BackupBoard = board.CloneChessBoard();
             // Act
-            board.TurnChange();
-            if (board.FinallyMove(x1, y1, x2, y2))
+            boardLogic.TurnChange();
+            if (boardLogic.FinallyMove(x1, y1, x2, y2, board))
             {
-                board.TurnChange();
+                boardLogic.TurnChange();
                 board.ChessBoard = BackupBoard; //vuelve al board clonado
             }
             var result = board.ChessBoard;
@@ -130,21 +133,22 @@
 
         public void UndoMoveTest(int x1, int y1, int x2, int y2)
         {
-            
+
             // Arrange
             var board = new Board(true);
-            
+            var boardLogic = new BoardLogic(true);
+
 
             // Act
-            board.FinallyMove(4, 1, 4, 3);
-            board.FinallyMove(4, 6, 4, 4);
+            boardLogic.FinallyMove(4, 1, 4, 3, board);
+            boardLogic.FinallyMove(4, 6, 4, 4, board);
             var expected = board.CloneChessBoard();
             var expected2 = board.CloneWhitePieces();
             var expected3 = board.CloneBlackPieces();
             PieceBase auxPiece = board.ChessBoard[x2, y2];
-            if (board.FinallyMove(x1, y1, x2, y2))
+            if (boardLogic.FinallyMove(x1, y1, x2, y2, board))
             {
-                board.UndoMove(x1, y1, x2, y2, auxPiece);
+                boardLogic.UndoMove(x1, y1, x2, y2, auxPiece, board);
             }            
             
 
@@ -167,10 +171,11 @@
         {
             // Arrange
             var board = new Board(true);
+            var boardLogic = new BoardLogic(true);
 
             // Act
-            board.TurnChange();
-            var result = board.IsLineEmpty(x1, y1, x2, y2);
+            boardLogic.TurnChange();
+            var result = boardLogic.IsLineEmpty(x1, y1, x2, y2, board);
 
             // Assert
             Assert.AreEqual(expected, result);
@@ -182,10 +187,11 @@
         {
             // Arrange
             var board = new Board(true);
+            var boardLogic = new BoardLogic(true);
             //board.FinallyMove(4, 1, 4, 3);
 
             // Act            
-            var result = board.IsDrawn(Xking, YKing, KingColor);
+            var result = boardLogic.IsDrawn(Xking, YKing, KingColor, board);
 
             // Assert
             Assert.AreEqual(expected, result);
@@ -196,10 +202,11 @@
         public void IsAllSquaresAroundCheckorBlockedTest(int Xking, int YKing, bool KingColor, bool expected)
         {
             // Arrange
-            var board = new Board(true);            
+            var board = new Board(true);
+            var boardLogic = new BoardLogic(true);
 
             // Act            
-            var result = board.IsAllSquaresAroundCheckorBlocked(Xking, YKing, KingColor);
+            var result = boardLogic.IsAllSquaresAroundCheckorBlocked(Xking, YKing, KingColor, board);
 
             // Assert
             Assert.AreEqual(expected, result);
@@ -211,10 +218,11 @@
         {
             // Arrange
             var board = new Board(true);
-            
+            var boardLogic = new BoardLogic(true);
+
 
             // Act            
-            var result = board.IsSquareCheck(x1, y1, targetColor);
+            var result = boardLogic.IsSquareCheck(x1, y1, targetColor, board);
 
             // Assert
             Assert.AreEqual(expected, result);
@@ -226,10 +234,11 @@
         {
             // Arrange
             var board = new Board(true);
+            var boardLogic = new BoardLogic(true);
 
 
             // Act            
-            var result = board.CanOtherPieceMove(KingColor);
+            var result = boardLogic.CanOtherPieceMove(KingColor, board);
 
             // Assert
             Assert.AreEqual(expected, result);
@@ -241,6 +250,7 @@
         {
             // Arrange
             var board = new Board(true);
+            var boardLogic = new BoardLogic(true);
             board.ChessBoard = GetExpectedChessBoard();
 
             // Act

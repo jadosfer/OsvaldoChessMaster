@@ -30,43 +30,43 @@ namespace OsvaldoChessMaster
         /// </summary>
         /// <param name="board"></param>
         /// <returns></returns>
-        public List<Move> AllPosiblePlays(Board board)
+        public List<Move> AllPosiblePlays(Board board, BoardLogic boardLogic)
         {
             double actualValue = EvaluateBoard(board);
             List<Move> AllMoves = new List<Move>();
 
             HashSet<PieceBase> BackupWhitePiecesAPP = board.CloneWhitePieces();
             HashSet<PieceBase> BackupBlackPiecesAPP = board.CloneBlackPieces();
-            var hashSet = board.Turn ? BackupWhitePiecesAPP : BackupBlackPiecesAPP;
+            var hashSet = boardLogic.Turn ? BackupWhitePiecesAPP : BackupBlackPiecesAPP;
             foreach (PieceBase piece in hashSet)
             {
-                bool TurnShow = board.Turn;
-                AllMoves = AllPosiblePiecePlays(board, piece, AllMoves, actualValue);
+                bool TurnShow = boardLogic.Turn;
+                AllMoves = AllPosiblePiecePlays(board, boardLogic, piece, AllMoves, actualValue);
             }
             if (AllMoves != null)
             {
                 return AllMoves;
             }
             Console.WriteLine("Algo raro, falla AllPosiblePlays");
-            AllMoves.Add(BestResponse(board));
+            AllMoves.Add(BestResponse(board, boardLogic));
 
             return AllMoves;
         }
 
-        public List<Move> AllPosiblePiecePlays(Board board, PieceBase piece, List<Move> AllMoves, double actualValue)
+        public List<Move> AllPosiblePiecePlays(Board board, BoardLogic boardLogic, PieceBase piece, List<Move> AllMoves, double actualValue)
         {
-            bool TurnShow = board.Turn;
+            bool TurnShow = boardLogic.Turn;
             int x = piece.Position.PositionX;
             int y = piece.Position.PositionY;
 
-            foreach (Position position in piece.ValidMoves(board))                
+            foreach (Position position in piece.ValidMoves(boardLogic))                
             {
                 //for (int l = Constants.ForStart; l < Constants.Size; l++)
                 //{
-                    TurnShow = board.Turn;
+                    TurnShow = boardLogic.Turn;
                     var pieceAux = board.ChessBoard[position.x1, position.y1];
 
-                    if (board.FinallyMove(x, y, position.x1, position.y1))
+                    if (boardLogic.FinallyMove(x, y, position.x1, position.y1, board))
                     {
                         // solo lo guardo si no empeora la situacion (cuanto ams negativo mejor para la pc
                         double Eval = EvaluateBoard(board);
@@ -76,8 +76,8 @@ namespace OsvaldoChessMaster
                             //actualValue = EvaluateBoard(board);
                             AllMoves.Add(new Move { x1 = x, y1 = y, x2 = position.x1 , y2 = position.y1 });
                         }
-                        // back to previous turn
-                        board.UndoMove(x, y, position.x1, position.y1, pieceAux);
+                    // back to previous turn
+                    boardLogic.UndoMove(x, y, position.x1, position.y1, pieceAux, board);
                     }
                 //}
             }
@@ -90,25 +90,24 @@ namespace OsvaldoChessMaster
         /// </summary>
         /// <param name="board"></param>
         /// <returns></returns>
-        public Move BestResponse(Board board)
+        public Move BestResponse(Board board, BoardLogic boardLogic)
         {
-
             double actualValue = EvaluateBoard(board);
             Move response = new Move();
             Move responseNotNull = new Move();
 
             HashSet<PieceBase> BackupWhitePieces = board.CloneWhitePieces();
             HashSet<PieceBase> BackupBlackPieces = board.CloneBlackPieces();
-            var hashSet = board.Turn ? BackupWhitePieces : BackupBlackPieces;
+            var hashSet = boardLogic.Turn ? BackupWhitePieces : BackupBlackPieces;
             foreach (PieceBase piece in hashSet)
             {
                 int i = piece.Position.PositionX;
                 int j = piece.Position.PositionY;
-                foreach (Position position in piece.ValidMoves(board))                
+                foreach (Position position in piece.ValidMoves(boardLogic))                
                 {
                 
                     var auxPieceRevertFinally = board.GetPiece(position.x1,position.y1);
-                    if (board.FinallyMove(i, j, position.x1, position.y1))
+                    if (boardLogic.FinallyMove(i, j, position.x1, position.y1, board))
                     {
                         responseNotNull.x1 = i;
                         responseNotNull.y1 = j;
@@ -116,7 +115,7 @@ namespace OsvaldoChessMaster
                         responseNotNull.y2 = j + position.y1;
 
                         // si movió el de abajo
-                        if (board.player1 != board.Turn) // va != porque el finally me lo acaba de cambiar a turn
+                        if (boardLogic.player1 != boardLogic.Turn) // va != porque el finally me lo acaba de cambiar a turn
                         {   // guardo la mejor movida
                             double Eval = EvaluateBoard(board);
                             if (Eval >= actualValue)
@@ -140,7 +139,7 @@ namespace OsvaldoChessMaster
                             }
                         }
                         // back to previous board
-                        board.UndoMove(i, j, position.x1, position.y1, auxPieceRevertFinally);
+                        boardLogic.UndoMove(i, j, position.x1, position.y1, auxPieceRevertFinally, board);
                     }
                     
                 }
@@ -160,38 +159,37 @@ namespace OsvaldoChessMaster
         /// </summary>
         /// <param name="board"></param>
         /// <returns></returns>
-        public Move BestComputerMoveDepth4(Board board)
+        public Move BestComputerMoveDepth4(Board board, BoardLogic boardLogic)
         {
-            Board boardPrueba = board;
+            BoardLogic boardPrueba = boardLogic;
             double value = EvaluateBoard(board);
             Console.WriteLine("calculó EvaluateBoard");
             Move bestMove = null;
-            List<Move> allMove1 = AllPosiblePlays(board);
+            List<Move> allMove1 = AllPosiblePlays(board, boardLogic);
             Console.WriteLine("calculó las AllPosiblePlays");
             foreach (Move move1 in allMove1)
             {
-                PieceBase[,] ChessBoardAux = board.CloneChessBoard();
+                PieceBase[,] ChessBoardAux = board.CloneChessBoardAndPiecesHashs();
                 HashSet<PieceBase> BackupWhitePieces = board.CloneWhitePieces();
                 HashSet<PieceBase> BackupBlackPieces = board.CloneBlackPieces();
 
-                board.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2);
-                Move SoloParaVerBorrar = BestResponse(board);
-                Move SoloParaVerBorrar2 = BestResponse(board);
-                board.FinallyMove(BestResponse(board).x1, BestResponse(board).y1, BestResponse(board).x2, BestResponse(board).y2);
+                boardLogic.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board);                
+                Move moveResponse = BestResponse(board, boardLogic);
+                boardLogic.FinallyMove(moveResponse.x1, moveResponse.y1, moveResponse.x2, moveResponse.y2, board);
                 Console.WriteLine("movio y calculo la Best Response");
-                List<Move> allMove3 = AllPosiblePlays(board);
+                List<Move> allMove3 = AllPosiblePlays(board, boardLogic);
                 Console.WriteLine("calculó las AllPosiblePlays luego de mover y repsonder");
 
                 foreach (Move move3 in allMove3)
                 {
-                    bool TurnShow2 = board.Turn;
-                    PieceBase[,] ChessBoardAux2 = board.CloneChessBoard();
+                    bool TurnShow2 = boardLogic.Turn;
+                    PieceBase[,] ChessBoardAux2 = board.CloneChessBoardAndPiecesHashs();
                     HashSet<PieceBase> BackupWhitePieces2 = board.CloneWhitePieces();
                     HashSet<PieceBase> BackupBlackPieces2 = board.CloneBlackPieces();
 
-                    board.FinallyMove(move3.x1, move3.y1, move3.x2, move3.y2);
-                    Move moveResponse = BestResponse(board); 
-                    board.FinallyMove(moveResponse.x1, moveResponse.y1, moveResponse.x2, moveResponse.y2);
+                    boardLogic.FinallyMove(move3.x1, move3.y1, move3.x2, move3.y2, board);
+                    moveResponse = BestResponse(board, boardLogic);
+                    boardLogic.FinallyMove(moveResponse.x1, moveResponse.y1, moveResponse.x2, moveResponse.y2, board);
                     double Eval = EvaluateBoard(board);
                     if (Eval <= value)
                     {
@@ -212,7 +210,7 @@ namespace OsvaldoChessMaster
                 return bestMove;
             }
             Console.WriteLine("Algo raro, falla BestComputerMoveDepth4");
-            return BestResponse(board);
+            return BestResponse(board, boardLogic);
         }
 
         /// <summary>

@@ -10,8 +10,8 @@ namespace OsvaldoChessMaster
         public const int Size = 8;
         public const int EmptyPieceStartLine = 2;
         public const int EmptyPieceEndLine = 6;
-        public const int UpperFile = 7;
-        public const int LowerFile = 0;
+        public const int UpperRow = 7;
+        public const int LowerRow = 0;
         public const int ColorPieces = 16;
     }
 }

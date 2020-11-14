@@ -42,11 +42,12 @@ namespace OsvaldoChessMaster.Test
         { 
             // Arrange
             var board = new Board(true);
+            var boardLogic = new BoardLogic(true);
             var AI = new ArtificialIntelligence(board);
 
             // Act        
-            board.TurnChange();
-            board.FinallyMove(x1, y1, x2, y2);
+            boardLogic.TurnChange();
+            boardLogic.FinallyMove(x1, y1, x2, y2, board);
             var result = AI.EvaluateBoard(board);
          
 
@@ -62,6 +63,7 @@ namespace OsvaldoChessMaster.Test
         {
             // Arrange
             var board = new Board(true);
+            var boardLogic = new BoardLogic(true);
             var AI = new ArtificialIntelligence(board);
             HashSet<PieceBase> clonedBlackPieces = board.CloneBlackPieces();
             HashSet<PieceBase> clonedWhitePieces = board.CloneWhitePieces();
@@ -75,7 +77,7 @@ namespace OsvaldoChessMaster.Test
             // Act       
 
             //board.FinallyMove(x1, y1, x2, y2);
-            Move result = AI.BestResponse(board);
+            Move result = AI.BestResponse(board, boardLogic);
 
 
             // Assert
@@ -85,7 +87,7 @@ namespace OsvaldoChessMaster.Test
             Assert.AreEqual(result.y2, expected.y2);
             Assert.AreEqual(clonedBlackPieces, board.BlackPieces);
             Assert.AreEqual(clonedWhitePieces, board.WhitePieces);
-            
+            Assert.AreEqual(clonedWhitePieces, board.BlackPieces);
         }
     }
 }
