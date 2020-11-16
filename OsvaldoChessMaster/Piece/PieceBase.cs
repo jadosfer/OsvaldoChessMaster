@@ -9,10 +9,12 @@ namespace OsvaldoChessMaster.Piece
     {
         
         public abstract bool CanJump { get; }
+        public virtual bool EnPassantAllowed { get; set; }
+        public virtual int EnPassantTurnNumber { get; set; }
         public abstract int Value{ get; }
         public virtual bool CanCastling { get; set; }
         public virtual bool CapturableByTheWay { get; set; }
-        public virtual int turnNumberCapturableByTheWay { get; set; }
+        public virtual int FullMoveNumberCapturableByTheWay { get; set; }
         public PieceStatus Position { get; set; }
 
 
@@ -26,9 +28,9 @@ namespace OsvaldoChessMaster.Piece
             this.Color = color;            
         }
 
-        public abstract bool IsValidMove(int x1, int y1, int x2, int y2);
+        public abstract bool IsValidMove(int x1, int y1, int x2, int y2, bool turn, Board board);
 
-        public abstract HashSet<Position> ValidMoves(BoardLogic board);        
+        public abstract HashSet<Position> ValidMoves(Board board);        
         
 
         public virtual int GetturnNumberCapturableByTheWay() => 0;

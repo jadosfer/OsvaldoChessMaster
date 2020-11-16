@@ -20,7 +20,7 @@ namespace OsvaldoChessMaster.Test
         //    var AI = new ArtificialIntelligence(board);
 
         //    // Act
-        //    List<Move> AllMovesExpected = new List<Move>();
+        //    List<Move> AllMovesE0xpected = new List<Move>();
         //    var result = AI.AllPosiblePlays(board);
 
         //    // Assert
@@ -39,15 +39,16 @@ namespace OsvaldoChessMaster.Test
         [TestCase(0, 0, 6, 0, 5)]
 
         public void EvaluateBoardTest(int EvaluateExpected, int x1, int y1, int x2, int y2) 
-        { 
+        {
             // Arrange
-            var board = new Board(true);
-            var boardLogic = new BoardLogic(true);
+            bool player1 = true;
+            var board = new Board(player1);
+            var boardLogic = new BoardLogic(player1);
             var AI = new ArtificialIntelligence(board);
 
             // Act        
-            boardLogic.TurnChange();
-            boardLogic.FinallyMove(x1, y1, x2, y2, board);
+            boardLogic.TurnChange(board);
+            boardLogic.LogicMove(x1, y1, x2, y2, board);
             var result = AI.EvaluateBoard(board);
          
 
@@ -62,8 +63,9 @@ namespace OsvaldoChessMaster.Test
         public void BestResponseTest(int x1, int y1, int x2, int y2)
         {
             // Arrange
-            var board = new Board(true);
-            var boardLogic = new BoardLogic(true);
+            bool player1 = true;
+            var board = new Board(player1);
+            var boardLogic = new BoardLogic(player1);
             var AI = new ArtificialIntelligence(board);
             HashSet<PieceBase> clonedBlackPieces = board.CloneBlackPieces();
             HashSet<PieceBase> clonedWhitePieces = board.CloneWhitePieces();

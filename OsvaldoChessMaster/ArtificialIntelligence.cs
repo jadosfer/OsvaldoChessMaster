@@ -13,6 +13,20 @@ namespace OsvaldoChessMaster
         public double[,] queenPositionValues = new double[Constants.Size, Constants.Size];
         public double[,] kingPositionValues = new double[Constants.Size, Constants.Size];
 
+        PieceBase[,] ChessBoardBU; //backups para restore
+        HashSet<PieceBase> WhitePiecesBU;
+        HashSet<PieceBase> BlackPiecesBU;
+        bool IsCheckFlagBU; 
+        bool IsCheckmateFlagBU;
+        bool IIsCantMoveCheckFlagBU;
+
+        PieceBase[,] ChessBoardBU2; //backups para restore2
+        HashSet<PieceBase> WhitePiecesBU2;
+        HashSet<PieceBase> BlackPiecesBU2;
+        bool IsCheckFlagBU2; 
+        bool IsCheckmateFlagBU2;
+        bool IIsCantMoveCheckFlagBU2;
+
         public ArtificialIntelligence(Board board)
         {
             pawnPositionValues = PawnPositionValues();
@@ -37,10 +51,10 @@ namespace OsvaldoChessMaster
 
             HashSet<PieceBase> BackupWhitePiecesAPP = board.CloneWhitePieces();
             HashSet<PieceBase> BackupBlackPiecesAPP = board.CloneBlackPieces();
-            var hashSet = boardLogic.Turn ? BackupWhitePiecesAPP : BackupBlackPiecesAPP;
+            var hashSet = board.Turn ? BackupWhitePiecesAPP : BackupBlackPiecesAPP;
             foreach (PieceBase piece in hashSet)
             {
-                bool TurnShow = boardLogic.Turn;
+                bool TurnShow = board.Turn;
                 AllMoves = AllPosiblePiecePlays(board, boardLogic, piece, AllMoves, actualValue);
             }
             if (AllMoves != null)
@@ -55,18 +69,18 @@ namespace OsvaldoChessMaster
 
         public List<Move> AllPosiblePiecePlays(Board board, BoardLogic boardLogic, PieceBase piece, List<Move> AllMoves, double actualValue)
         {
-            bool TurnShow = boardLogic.Turn;
+            bool TurnShow = board.Turn;
             int x = piece.Position.PositionX;
             int y = piece.Position.PositionY;
 
-            foreach (Position position in piece.ValidMoves(boardLogic))                
+            foreach (Position position in piece.ValidMoves(board))                
             {
                 //for (int l = Constants.ForStart; l < Constants.Size; l++)
                 //{
-                    TurnShow = boardLogic.Turn;
-                    var pieceAux = board.ChessBoard[position.x1, position.y1];
+                    TurnShow = board.Turn;
+                    var removedPiece = board.ChessBoard[position.x1, position.y1];
 
-                    if (boardLogic.FinallyMove(x, y, position.x1, position.y1, board))
+                    if (boardLogic.LogicMove(x, y, position.x1, position.y1, board))
                     {
                         // solo lo guardo si no empeora la situacion (cuanto ams negativo mejor para la pc
                         double Eval = EvaluateBoard(board);
@@ -77,7 +91,7 @@ namespace OsvaldoChessMaster
                             AllMoves.Add(new Move { x1 = x, y1 = y, x2 = position.x1 , y2 = position.y1 });
                         }
                     // back to previous turn
-                    boardLogic.UndoMove(x, y, position.x1, position.y1, pieceAux, board);
+                    boardLogic.UndoMove(x, y, position.x1, position.y1, removedPiece, board);
                     }
                 //}
             }
@@ -98,24 +112,25 @@ namespace OsvaldoChessMaster
 
             HashSet<PieceBase> BackupWhitePieces = board.CloneWhitePieces();
             HashSet<PieceBase> BackupBlackPieces = board.CloneBlackPieces();
-            var hashSet = boardLogic.Turn ? BackupWhitePieces : BackupBlackPieces;
+            var hashSet = board.Turn ? BackupWhitePieces : BackupBlackPieces;
             foreach (PieceBase piece in hashSet)
             {
                 int i = piece.Position.PositionX;
                 int j = piece.Position.PositionY;
-                foreach (Position position in piece.ValidMoves(boardLogic))                
+                foreach (Position position in piece.ValidMoves(board))                
                 {
                 
-                    var auxPieceRevertFinally = board.GetPiece(position.x1,position.y1);
-                    if (boardLogic.FinallyMove(i, j, position.x1, position.y1, board))
+                    var removedPiece = board.GetPiece(position.x1,position.y1);
+                    if (boardLogic.LogicMove(i, j, position.x1, position.y1, board))
                     {
+                        board.Turn = !board.Turn;
                         responseNotNull.x1 = i;
                         responseNotNull.y1 = j;
-                        responseNotNull.x2 = i + position.x1;
-                        responseNotNull.y2 = j + position.y1;
+                        responseNotNull.x2 = position.x1;
+                        responseNotNull.y2 = position.y1;
 
                         // si movió el de abajo
-                        if (boardLogic.player1 != boardLogic.Turn) // va != porque el finally me lo acaba de cambiar a turn
+                        if (board.player1 != board.Turn) // va != porque el finally me lo acaba de cambiar a turn
                         {   // guardo la mejor movida
                             double Eval = EvaluateBoard(board);
                             if (Eval >= actualValue)
@@ -139,9 +154,9 @@ namespace OsvaldoChessMaster
                             }
                         }
                         // back to previous board
-                        boardLogic.UndoMove(i, j, position.x1, position.y1, auxPieceRevertFinally, board);
+                        boardLogic.UndoMove(i, j, position.x1, position.y1, removedPiece, board);
+                        board.Turn = !board.Turn;
                     }
-                    
                 }
             }
 
@@ -151,9 +166,8 @@ namespace OsvaldoChessMaster
             }
             Console.WriteLine("Algo raro, falla bestResponse");
             return responseNotNull;
-
         }
-
+       
         /// <summary>
         /// devuelve la mejor jugada que debe hacer la compu tras probar 4 movidas hacia adelante. Metodo minimax de los rústicos
         /// </summary>
@@ -169,27 +183,42 @@ namespace OsvaldoChessMaster
             Console.WriteLine("calculó las AllPosiblePlays");
             foreach (Move move1 in allMove1)
             {
-                PieceBase[,] ChessBoardAux = board.CloneChessBoardAndPiecesHashs();
-                HashSet<PieceBase> BackupWhitePieces = board.CloneWhitePieces();
-                HashSet<PieceBase> BackupBlackPieces = board.CloneBlackPieces();
+                //BackupPosition(board, boardLogic);
+                PieceBase removedPiece1 = board.GetPiece(move1.x2, move1.y2);
+                if (boardLogic.LogicMove(move1.x1, move1.y1, move1.x2, move1.y2, board))
+                {
+                    board.Turn = !board.Turn;
+                }
 
-                boardLogic.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board);                
                 Move moveResponse = BestResponse(board, boardLogic);
-                boardLogic.FinallyMove(moveResponse.x1, moveResponse.y1, moveResponse.x2, moveResponse.y2, board);
+                PieceBase removedPiece2 = board.GetPiece(moveResponse.x2, moveResponse.y2);
+                if (boardLogic.LogicMove(moveResponse.x1, moveResponse.y1, moveResponse.x2, moveResponse.y2, board))
+                {
+                    board.Turn = !board.Turn;
+                }
+
                 Console.WriteLine("movio y calculo la Best Response");
                 List<Move> allMove3 = AllPosiblePlays(board, boardLogic);
                 Console.WriteLine("calculó las AllPosiblePlays luego de mover y repsonder");
 
                 foreach (Move move3 in allMove3)
                 {
-                    bool TurnShow2 = boardLogic.Turn;
-                    PieceBase[,] ChessBoardAux2 = board.CloneChessBoardAndPiecesHashs();
-                    HashSet<PieceBase> BackupWhitePieces2 = board.CloneWhitePieces();
-                    HashSet<PieceBase> BackupBlackPieces2 = board.CloneBlackPieces();
+                    bool TurnShow2 = board.Turn;
+                    //BackupPosition2(board, boardLogic);
 
-                    boardLogic.FinallyMove(move3.x1, move3.y1, move3.x2, move3.y2, board);
-                    moveResponse = BestResponse(board, boardLogic);
-                    boardLogic.FinallyMove(moveResponse.x1, moveResponse.y1, moveResponse.x2, moveResponse.y2, board);
+                    PieceBase removedPiece3 = board.GetPiece(move3.x2, move3.y2);
+                    if (boardLogic.LogicMove(move3.x1, move3.y1, move3.x2, move3.y2, board))
+                    {
+                        board.Turn = !board.Turn;
+                    }
+
+                    Move moveResponse2 = BestResponse(board, boardLogic);
+                    PieceBase removedPiece4 = board.GetPiece(moveResponse2.x2, moveResponse2.y2);
+                    if (boardLogic.LogicMove(moveResponse2.x1, moveResponse2.y1, moveResponse2.x2, moveResponse2.y2, board))
+                    {
+                        board.Turn = !board.Turn;
+                    }
+
                     double Eval = EvaluateBoard(board);
                     if (Eval <= value)
                     {
@@ -197,13 +226,13 @@ namespace OsvaldoChessMaster
                         bestMove = move1; //me quedo con la move1 que produce la menor bestresponse
                     }
                     // back to previous board
-                    board.ChessBoard = ChessBoardAux2;
-                    board.WhitePieces = BackupWhitePieces2;
-                    board.BlackPieces = BackupBlackPieces2;
+                    boardLogic.UndoMove(moveResponse2.x1, moveResponse2.y1, moveResponse2.x2, moveResponse2.y2, removedPiece4, board);
+                    boardLogic.UndoMove(move3.x1, move3.y1, move3.x2, move3.y2, removedPiece3, board);
+                    //RestorePosition2(board, boardLogic);
+
                 }
-                board.ChessBoard = ChessBoardAux;
-                board.WhitePieces = BackupWhitePieces;
-                board.BlackPieces = BackupBlackPieces;
+                boardLogic.UndoMove(moveResponse.x1, moveResponse.y1, moveResponse.x2, moveResponse.y2, removedPiece2, board);
+                boardLogic.UndoMove(move1.x1, move1.y1, move1.x2, move1.y2, removedPiece1, board);
             }
             if (bestMove != null)
             {

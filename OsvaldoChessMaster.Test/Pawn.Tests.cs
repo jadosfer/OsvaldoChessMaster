@@ -27,10 +27,11 @@
         public void IsValidMove(int x1, int y1, int x2, int y2, bool expected)
         {
             // Arrange
+            Board board = new Board(true);
             var pawn = new Pawn(true, x1, y1);
 
             // Act
-            var result = pawn.IsValidMove(x1, y1, x2, y2);
+            var result = pawn.IsValidMove(x1, y1, x2, y2, board.Turn, board);
 
             // Assert
             Assert.AreEqual(expected, result);

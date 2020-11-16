@@ -25,22 +25,7 @@
         }
 
 
-        [TestCase(4, 6, 4, 4, true, false)]
-        [TestCase(4, 1, 4, 3, true, true)]
-        //[TestCase(1, 7, 2, 5, false, true)]
-        public void CanMovePieceTest(int x1, int y1, int x2, int y2, bool testing, bool expected)
-        {
-            // Arrange
-            var board = new Board(true);
-            var boardLogic = new BoardLogic(true);
-
-            // Act
-            //board.TurnChange();
-            var result = boardLogic.CanMovePiece(x1, y1, x2, y2, testing, board);
-
-            // Assert
-            Assert.AreEqual(expected, result);
-        }
+        
 
         //[TestCase(4, 6, 4, 4, true, false)]
         //[TestCase(2, 6, 1, 5, true, false)]
@@ -79,12 +64,12 @@
             // Arrange
             var board = new Board(true);
             var boardLogic = new BoardLogic(true);
-            boardLogic.FinallyMove(4, 1, 4, 3, board);
+            boardLogic.LogicMove(4, 1, 4, 3, board);
 
 
             // Act
             //board.TurnChange();
-            var result = boardLogic.FinallyMove(x1, y1, x2, y2, board);
+            var result = boardLogic.LogicMove(x1, y1, x2, y2, board);
 
             // Assert
             Assert.AreEqual(expected, result);            
@@ -110,10 +95,10 @@
             var expected = board.ChessBoard;
             PieceBase[,] BackupBoard = board.CloneChessBoard();
             // Act
-            boardLogic.TurnChange();
-            if (boardLogic.FinallyMove(x1, y1, x2, y2, board))
+            boardLogic.TurnChange(board);
+            if (boardLogic.LogicMove(x1, y1, x2, y2, board))
             {
-                boardLogic.TurnChange();
+                boardLogic.TurnChange(board);
                 board.ChessBoard = BackupBoard; //vuelve al board clonado
             }
             var result = board.ChessBoard;
@@ -140,13 +125,13 @@
 
 
             // Act
-            boardLogic.FinallyMove(4, 1, 4, 3, board);
-            boardLogic.FinallyMove(4, 6, 4, 4, board);
+            boardLogic.LogicMove(4, 1, 4, 3, board);
+            boardLogic.LogicMove(4, 6, 4, 4, board);
             var expected = board.CloneChessBoard();
             var expected2 = board.CloneWhitePieces();
             var expected3 = board.CloneBlackPieces();
             PieceBase auxPiece = board.ChessBoard[x2, y2];
-            if (boardLogic.FinallyMove(x1, y1, x2, y2, board))
+            if (boardLogic.LogicMove(x1, y1, x2, y2, board))
             {
                 boardLogic.UndoMove(x1, y1, x2, y2, auxPiece, board);
             }            
@@ -174,7 +159,7 @@
             var boardLogic = new BoardLogic(true);
 
             // Act
-            boardLogic.TurnChange();
+            boardLogic.TurnChange(board);
             var result = boardLogic.IsLineEmpty(x1, y1, x2, y2, board);
 
             // Assert

@@ -24,10 +24,12 @@
         public void IsValidMoveTest(int x1, int y1, int x2, int y2, bool expected)
         {
             // Arrange
+            Board board = new Board(true);
+
             var bishop = new Bishop(true, 0, 0);
 
             // Act
-            var result = bishop.IsValidMove(0, 0, x2, y2);
+            var result = bishop.IsValidMove(0, 0, x2, y2, board.Turn, board);
 
             // Assert
             Assert.AreEqual(expected, result);

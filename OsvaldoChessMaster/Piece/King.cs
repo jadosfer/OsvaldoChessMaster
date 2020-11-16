@@ -5,7 +5,7 @@
 
     public class King : PieceBase
     {
-        public override bool CanJump => false;
+        public override bool CanJump => false;        
         public override int Value => 900;
         public override bool CanCastling { get; set; }
 
@@ -23,11 +23,30 @@
         /// <param name="x2"></param>
         /// <param name="y2"></param>
         /// <returns></returns>
-        public override bool IsValidMove(int x1, int y1, int x2, int y2)
+        public override bool IsValidMove(int x1, int y1, int x2, int y2, bool turn, Board board)
         {
+            //no es tu turno
+            if (this.Color != turn)
+                return false;
+
             // movimiento en el mismo lugar
             if (x1 == x2 && y1 == y2)
                 return false;
+            
+            // 4 castling cases
+            //blancas abajo
+            if (this.Color == true && this.Color == board.player1 && this.CanCastling && (x1 == 4) && (y1 == 0) && (x2 == 6 || x2 == 2) && y2 == 0)
+                return true;
+            //blancas arriba
+            if (this.Color == true && this.Color != board.player1 && CanCastling && (x1 == 3) && (y1 == 7) && (x2 == 5 || x2 == 1) && y2 == 7)
+                return true;
+            //negras abajo
+            if (this.Color == false && this.Color == board.player1 && CanCastling && (x1 == 3) && (y1 == 0) && (x2 == 5 || x2 == 1) && y2 == 0)
+                return true;
+            //negras arriba
+            if (this.Color == false && this.Color == board.player1 && CanCastling && (x1 == 4) && (y1 == 7) && (x2 == 6 || x2 == 2) && y2 == 7)
+                return true;
+
 
             if (Math.Sqrt((y2 - y1) * (y2 - y1) + 
                 (x2 - x1) * (x2 - x1)) < 2)
@@ -38,7 +57,7 @@
             return false;
         }
 
-        public override HashSet<Position> ValidMoves(BoardLogic Board)
+        public override HashSet<Position> ValidMoves(Board board)
         {
             HashSet<Position> kingMoves = new HashSet<Position>();
 

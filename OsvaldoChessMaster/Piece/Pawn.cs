@@ -6,14 +6,18 @@
     public class Pawn : PieceBase
     {
         public override bool CanJump => false;
+        public override bool EnPassantAllowed { get; set; }
+        public override int EnPassantTurnNumber { get; set; }
+        
         public override int Value => 10;
         public override bool CapturableByTheWay { get; set; }
-        public override int turnNumberCapturableByTheWay { get; set; }
+        public override int FullMoveNumberCapturableByTheWay { get; set; }
 
         public Pawn() { }
         public Pawn(bool color, int PositionX, int PositionY) 
             : base(color, PositionX, PositionY)
-        {            
+        {
+            EnPassantAllowed = false;
         }
 
         /// <summary>
@@ -22,8 +26,12 @@
         /// <param name="x2"></param>
         /// <param name="y2"></param>
         /// <returns></returns>
-        public override bool IsValidMove(int x1, int y1, int x2, int y2)
+        public override bool IsValidMove(int x1, int y1, int x2, int y2, bool turn, Board board)
         {
+            //no es tu turno
+            if (this.Color != turn)
+                return false;
+
             // movimiento en el mismo lugar
             if (x1 == x2 && y1 == y2)
                 return false;
@@ -31,25 +39,34 @@
             // si quiere moverse en la misma columna
             if (x1 == x2)
             {
-                if ((Math.Abs(y2 - y1) == 1) || (Math.Abs(y2 - y1) == 2 && (y1 == 1 || y1 == 6)))
+                if (this.Color == board.player1 && ((y2 - y1) == 1 || (y2 - y1 == 2 && y1 == 1) ))
                 {
                     return true;
                 }
+                if (this.Color != board.player1 && ((y1 - y2) == 1 || (y1 - y2 == 2 && y1 == 6) ))
+                {
+                    return true;
+                }                 
             }
 
             // si quiere moverse a las columnas de al lado            
-            if ((Math.Abs(x2 - x1) == 1) && Math.Abs(y2 - y1) == 1)
+            if (this.Color == board.player1 && (Math.Abs(x2 - x1) == 1 && y2 - y1 == 1) )
             {
                 return true;
             }
+            if (this.Color != board.player1 && (Math.Abs(x2 - x1) == 1 && y1 - y2 == 1))
+            {
+                return true;
+            }
+
             return false;
         }
 
-        public override HashSet<Position> ValidMoves(BoardLogic Board)
+        public override HashSet<Position> ValidMoves(Board board)
         {
             HashSet<Position> pawnMoves = new HashSet<Position>();
 
-            if (Board.Turn == Board.player1)
+            if (board.Turn == board.player1)
             {
                 if (this.Position.PositionY == 1)
                 {

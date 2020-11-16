@@ -6,17 +6,40 @@ using OsvaldoChessMaster.Piece;
 namespace OsvaldoChessMaster
 {
     public class Board
-    {
+    {        
+        public bool Turn { get; set; } //turn=true es el turno del player1        
+        public int TurnNumber { get; set; } // incrementa con cada movida      
+        public int FullMoveNumber { get; set; } //incrementa cuando ambos movieron
+        public bool player1 { get; set; }
+
+        public bool IsCheckmateFlag { get; set; }
+        public bool IsCheckFlag { get; set; }
+        public bool IsCantMoveCheckFlag { get; set; }
+
+        public static bool P1LRookCanCastling { get; set; }
+        public static bool P1RRookCanCastling { get; set; }
+        public static bool P2LRookCanCastling { get; set; }
+        public static bool P2RRookCanCastling { get; set; }
+        public bool PromotionFlag { get; private set; }
         public PieceBase[,] ChessBoard { get; set; }
         public HashSet<PieceBase> WhitePieces { get; set; }
         public HashSet<PieceBase> BlackPieces { get; set; }
 
         public Board(bool player1)
         {
-            
+            Turn = true;
+            TurnNumber = 0;
+            FullMoveNumber = 0;
+            this.player1 = player1;
+
             ChessBoard = new PieceBase[Constants.Size, Constants.Size];
             WhitePieces = new HashSet<PieceBase>();
             BlackPieces = new HashSet<PieceBase>();
+
+            P1RRookCanCastling = true;
+            P1LRookCanCastling = true;
+            P2RRookCanCastling = true;
+            P2LRookCanCastling = true;
 
             ChessBoard[0, 1] = new Pawn(player1, 0, 1);
             ChessBoard[1, 1] = new Pawn(player1, 1, 1);
@@ -82,22 +105,35 @@ namespace OsvaldoChessMaster
         /// <summary>
         /// Remueve ficha en x1, y1 tanto del chessboard como del hashSet correspondiente
         /// </summary>   
-        private void Remove(int x1, int y1)
+        public void Remove(int x1, int y1)
         {
             var hashSet = GetPiece(x1, y1).Color ? WhitePieces : BlackPieces;
             hashSet.Remove(GetPiece(x1, y1));
             ChessBoard[x1, y1] = null;
         }
 
+        public void RemoveCapturePassant(int x1, int y1, int x2, int y2)
+        {
+            if (y2 == 2)
+            {
+                Remove(x2, 3);
+            }
+            if (y2 == 6)
+            {
+                Remove(x2, 4);
+            }
+
+        }
+
         /// <summary>
         /// Solo mueve la pieza y pone un null en donde estaba
         /// </summary>      
-        private void Move(int x1, int y1, int x2, int y2)
-        {
-            ChessBoard[x2, y2] = GetPiece(x1, y1);
-            ChessBoard[x2, y2].Position.PositionX = x2;
-            ChessBoard[x2, y2].Position.PositionY = y2;
-            ChessBoard[x1, y1] = null;
+        public void Move(int x1, int y1, int x2, int y2)
+        {            
+                ChessBoard[x2, y2] = GetPiece(x1, y1);
+                ChessBoard[x2, y2].Position.PositionX = x2;
+                ChessBoard[x2, y2].Position.PositionY = y2;
+                ChessBoard[x1, y1] = null;  
         }
 
         public void PutEmpty(int x1, int y1)
@@ -105,9 +141,26 @@ namespace OsvaldoChessMaster
             ChessBoard[x1, y1] = null;
         }
 
+        public void PutPiece(PieceBase removedPiece, int x2, int y2)
+        {
+            if (removedPiece != null)
+            {
+                ChessBoard[x2, y2] = removedPiece;
+                ChessBoard[x2, y2].Position.PositionX = x2;
+                ChessBoard[x2, y2].Position.PositionY = y2;
+                var hashSet = removedPiece.Color ? WhitePieces : BlackPieces;
+                hashSet.Add(removedPiece);
+            }            
+        }
+
         public PieceBase GetPiece(int x, int y)
         {            
            return ChessBoard[x, y] ?? null;           
+        }
+
+        public bool IsPawn(int x, int y)
+        {
+            return ChessBoard[x, y].GetType() == typeof(Pawn);
         }
 
         public bool IsEmpty(int x2, int y2)
@@ -126,15 +179,10 @@ namespace OsvaldoChessMaster
             }
         }
 
-        /// <summary>
-        /// resume el metodo move de peones donde se promueve y convierte en dama
-        /// </summary>                
-        public void MovePromotion(int x2, int y2, bool Turn)
+        public void Promotion(int x, int y, bool color)
         {
-            if (y2 == Constants.LowerRow || y2 == Constants.UpperRow)
-            {
-                ChessBoard[x2, y2] = new Queen(!Turn, x2, y2); // va "!Turn" porque el ya finally lo cambió
-            }
+            Remove(x, y);
+            ChessBoard[x, y] = new Queen(color, x, y);
         }
 
         /// <summary>

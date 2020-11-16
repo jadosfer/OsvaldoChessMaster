@@ -17,8 +17,12 @@
         /// <param name="x2"></param>
         /// <param name="y2"></param>
         /// <returns></returns>
-        public override bool IsValidMove(int x1, int y1, int x2, int y2)
+        public override bool IsValidMove(int x1, int y1, int x2, int y2, bool turn, Board board)
         {
+            //no es tu turno
+            if (this.Color != turn)
+                return false;
+
             // movimiento en el mismo lugar
             if (x1 == x2 && y1 == y2)
                 return false;
@@ -36,7 +40,7 @@
             return false;
         }
 
-        public override HashSet<Position> ValidMoves(BoardLogic Board)
+        public override HashSet<Position> ValidMoves(Board board)
         {
             HashSet<Position> queenMoves = new HashSet<Position>();
 

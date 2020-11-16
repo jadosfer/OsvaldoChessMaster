@@ -24,10 +24,12 @@
         public void IsValidMoveTest(int x1, int y1, int x2, int y2, bool expected)
         {
             // Arrange
+            var boardLogic = new BoardLogic(true);
+            var board = new Board(true);
             var queen = new Queen(true, x1, y1);
 
             // Act
-            var result = queen.IsValidMove(x1, y1, x2, y2);
+            var result = queen.IsValidMove(x1, y1, x2, y2, true, board);
 
             // Assert
             Assert.AreEqual(expected, result);
