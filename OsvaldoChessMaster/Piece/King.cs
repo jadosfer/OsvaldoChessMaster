@@ -73,49 +73,49 @@
             kingPos2.y1 = this.Position.PositionY;
             if (kingPos2.x1 >= Constants.ForStart && kingPos2.x1 < Constants.Size && kingPos2.y1 >= Constants.ForStart && kingPos2.y1 < Constants.Size)
             {
-                kingMoves.Add(kingPos1);
+                kingMoves.Add(kingPos2);
             }
             Position kingPos3 = new Position();
             kingPos3.x1 = this.Position.PositionX + 1;
             kingPos3.y1 = this.Position.PositionY + 1;
             if (kingPos3.x1 >= Constants.ForStart && kingPos3.x1 < Constants.Size && kingPos3.y1 >= Constants.ForStart && kingPos3.y1 < Constants.Size)
             {
-                kingMoves.Add(kingPos1);
+                kingMoves.Add(kingPos3);
             }
             Position kingPos4 = new Position();
             kingPos4.x1 = this.Position.PositionX - 1;
             kingPos4.y1 = this.Position.PositionY + 1;
             if (kingPos4.x1 >= Constants.ForStart && kingPos4.x1 < Constants.Size && kingPos4.y1 >= Constants.ForStart && kingPos4.y1 < Constants.Size)
             {
-                kingMoves.Add(kingPos1);
+                kingMoves.Add(kingPos4);
             }
             Position kingPos5 = new Position();
             kingPos5.x1 = this.Position.PositionX + 1;
             kingPos5.y1 = this.Position.PositionY - 1;
             if (kingPos5.x1 >= Constants.ForStart && kingPos5.x1 < Constants.Size && kingPos5.y1 >= Constants.ForStart && kingPos5.y1 < Constants.Size)
             {
-                kingMoves.Add(kingPos1);
+                kingMoves.Add(kingPos5);
             }
             Position kingPos6 = new Position();
             kingPos6.x1 = this.Position.PositionX - 1;
             kingPos6.y1 = this.Position.PositionY - 1;
             if (kingPos6.x1 >= Constants.ForStart && kingPos6.x1 < Constants.Size && kingPos6.y1 >= Constants.ForStart && kingPos6.y1 < Constants.Size)
             {
-                kingMoves.Add(kingPos1);
+                kingMoves.Add(kingPos6);
             }
             Position kingPos7 = new Position();
             kingPos7.x1 = this.Position.PositionX;
             kingPos7.y1 = this.Position.PositionY + 1;
             if (kingPos7.x1 >= Constants.ForStart && kingPos7.x1 < Constants.Size && kingPos7.y1 >= Constants.ForStart && kingPos7.y1 < Constants.Size)
             {
-                kingMoves.Add(kingPos1);
+                kingMoves.Add(kingPos7);
             }
             Position kingPos8 = new Position();
             kingPos8.x1 = this.Position.PositionX;
             kingPos8.y1 = this.Position.PositionY - 1;
             if (kingPos8.x1 >= Constants.ForStart && kingPos8.x1 < Constants.Size && kingPos8.y1 >= Constants.ForStart && kingPos8.y1 < Constants.Size)
             {
-                kingMoves.Add(kingPos1);
+                kingMoves.Add(kingPos8);
             }
 
             return kingMoves;

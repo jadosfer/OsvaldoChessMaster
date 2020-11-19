@@ -22,37 +22,56 @@ namespace ocm
 
             boardLogic.FinallyMove(4, 1, 4, 3, board); //blancas            
 
-            //Move move1 = artificInt.BestComputerMoveDepth4(board, boardLogic);
-            //boardLogic.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board);
-            
-            //boardLogic.FinallyMove(5, 0, 3, 2, board); //blancas            
+            Move move1 = artificInt.BestComputerMoveDepth4(board, boardLogic);
+            boardLogic.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board);
 
-            //move1 = artificInt.BestComputerMoveDepth4(board, boardLogic);
-            //boardLogic.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board);            
+            boardLogic.FinallyMove(5, 0, 3, 2, board); //blancas            
 
-            //boardLogic.FinallyMove(6, 0, 5, 2, board); //blancas           
+            move1 = artificInt.BestComputerMoveDepth4(board, boardLogic);
+            boardLogic.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board);            
 
-            //move1 = artificInt.BestComputerMoveDepth4(board, boardLogic);
-            //boardLogic.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board);
+            boardLogic.FinallyMove(6, 0, 5, 2, board); //blancas           
 
-            //boardLogic.FinallyMove(4, 0, 6, 0, board); //blancas enroque
+            move1 = artificInt.BestComputerMoveDepth4(board, boardLogic);
+            boardLogic.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board);
+
+            boardLogic.FinallyMove(4, 0, 6, 0, board); //blancas enroque
+
+            move1 = artificInt.BestComputerMoveDepth4(board, boardLogic);
+            boardLogic.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board);
+
+            boardLogic.FinallyMove(4, 3, 4, 4, board); //blancas enroque
+
+            move1 = artificInt.BestComputerMoveDepth4(board, boardLogic);
+            boardLogic.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board);
+
+            boardLogic.FinallyMove(2, 1, 2, 3, board); //blancas enroque
+
+            move1 = artificInt.BestComputerMoveDepth4(board, boardLogic);
+            boardLogic.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board);
+
+            boardLogic.FinallyMove(5, 2, 4, 4, board); //blancas enroque
+
+            move1 = artificInt.BestComputerMoveDepth4(board, boardLogic);
+            boardLogic.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board);
 
 
-            boardLogic.FinallyMove(3, 6, 3, 4, board);
 
-            boardLogic.FinallyMove(4, 3, 3, 4, board); //blancas
+            //boardLogic.FinallyMove(3, 6, 3, 4, board);
 
-            boardLogic.FinallyMove(2, 6, 2, 5, board);
+            //boardLogic.FinallyMove(4, 3, 3, 4, board); //blancas
 
-            boardLogic.FinallyMove(3, 4, 2, 5, board); //blancas
+            //boardLogic.FinallyMove(2, 6, 2, 5, board);
 
-            boardLogic.FinallyMove(1, 6, 1, 5, board);            
+            //boardLogic.FinallyMove(3, 4, 2, 5, board); //blancas
 
-            boardLogic.FinallyMove(2, 5, 2, 6, board); //blancas
+            //boardLogic.FinallyMove(1, 6, 1, 5, board);
 
-            boardLogic.FinallyMove(0, 6, 0, 5, board);
+            //boardLogic.FinallyMove(2, 5, 2, 6, board); //blancas
 
-            boardLogic.GoTo(board.TurnNumber - 1, board);
+            //boardLogic.FinallyMove(0, 6, 0, 5, board);
+
+            //boardLogic.GoTo(board.TurnNumber - 1, board);
 
 
             //boardLogic.FinallyMove(2, 6, 1, 7, board); //blancas (promocion)

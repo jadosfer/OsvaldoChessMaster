@@ -8,11 +8,11 @@
     {
         private int pointer;
         private Stack<string> stackFullPlay;
-        private Stack<Move> pastMoves = new Stack<Move>();
-        private Stack<Move> futureMoves = new Stack<Move>();
         private string movement = string.Empty; // se llena con las dos movidas y luego se reinicia
-        
-        
+
+        public Stack<Move> pastMoves = new Stack<Move>();
+        public Stack<Move> futureMoves = new Stack<Move>();
+
         bool IsCheckFlagBU;
         bool IsCheckmateFlagBU;
         bool IsCantMoveCheckFlagBU;
@@ -41,7 +41,7 @@
 
         }
 
-        public void FinallyMove(int x1, int y1, int x2, int y2, Board board)
+        public bool FinallyMove(int x1, int y1, int x2, int y2, Board board, bool print = true)
         {
             if (LogicMove(x1, y1, x2, y2, board))
             {
@@ -52,11 +52,13 @@
                 move.x2 = x2;
                 move.y2 = y2;
                 pastMoves.Push(move);
+                if (print) GameDisplay.PrintBoard(board, this, x1, y1, x2, y2);
+                return true;
             }
-            GameDisplay.PrintBoard(board, this, x1, y1, x2, y2);
+            return false;
         }
 
-        public void GoTo(int targetTurn, Board board)
+        public Board GoTo(int targetTurn, Board board)
         {
             int head = board.TurnNumber;
             while (head != 0)
@@ -67,97 +69,101 @@
             board = new Board(board.player1);
             while (head != targetTurn)
             {
-                Move move = futureMoves.Pop();
-                pastMoves.Push(move);
-                FinallyMove(move.x1, move.y1, move.x2, move.y2, board);
+                Move move = futureMoves.Pop();                
+                FinallyMove(move.x1, move.y1, move.x2, move.y2, board, false);//aca se hace un push en pastMoves
                 head += 1;
             }
-            
+            return board;
         }
+       
 
         public bool LogicMove(int x1, int y1, int x2, int y2, Board board)
-        {            
-            PieceBase piece = board.GetPiece(x1, y1);
-            if (IsInRange(x1, y1, x2, y2) && !board.IsEmpty(x1, y1) && piece.IsValidMove(x1, y1, x2, y2, board.Turn, board))
+        {
+            if (IsInRange(x1, y1, x2, y2))
             {
-                //es Knight
-                if (piece.GetType() == typeof(Knight))
+                PieceBase piece = board.GetPiece(x1, y1);
+                if (!board.IsEmpty(x1, y1) && piece.IsValidMove(x1, y1, x2, y2, board.Turn, board))
                 {
-                    if (board.IsEmpty(x2, y2) && !CantMoveIsCheck(x1, y1, x2, y2, board))
+                    //es Knight
+                    if (piece.GetType() == typeof(Knight))
                     {
-                        board.Move(x1, y1, x2, y2);                        
-                        return true;
-                    }
-                    if (!board.IsEmpty(x2, y2) && !CantMoveIsCheck(x1, y1, x2, y2, board))
-                    {
-                        board.Remove(x2, y2);
-                        board.Move(x1, y1, x2, y2);                        
-                        return true;
-                    }
-                }
-                else
-                //no es Knight
-                {
-                    if (board.IsEmpty(x2, y2) && !IsCastling(x1, y1, x2, board) && !CantMoveIsCheck(x1, y1, x2, y2, board) && !board.IsPawn(x1, y1))
-                    {
-                        if ((Math.Abs(x2 - x1) == Math.Abs(y2 - y1) && IsDiagonalEmpty(x1, y1, x2, y2, board)) || IsLineEmpty(x1, y1, x2, y2, board))
+                        if (board.IsEmpty(x2, y2) && !CantMoveIsCheck(x1, y1, x2, y2, board))
                         {
                             board.Move(x1, y1, x2, y2);
-                            CastlingChanges(x1, y1, x2, y2, piece);
-                            UpDateEnPassant(y1, y2, piece, board);
                             return true;
                         }
-                    }
-
-                    if (!board.IsEmpty(x2, y2) && !IsAlly(x1, y1, x2, y2, board) && !IsCastling(x1, y1, x2, board) && !CantMoveIsCheck(x1, y1, x2, y2, board) && !board.IsPawn(x1, y1))
-                    {
-                        if ((Math.Abs(x2 - x1) == Math.Abs(y2 - y1) && IsDiagonalEmpty(x1, y1, x2, y2, board)) || IsLineEmpty(x1, y1, x2, y2, board))
+                        if (!board.IsEmpty(x2, y2) && !CantMoveIsCheck(x1, y1, x2, y2, board))
                         {
                             board.Remove(x2, y2);
                             board.Move(x1, y1, x2, y2);
-                            CastlingChanges(x1, y1, x2, y2, piece);                            
-                            UpDateEnPassant(y1, y2, piece, board);                            
                             return true;
                         }
                     }
-
-                    if (board.IsEmpty(x2, y2) && IsCastling(x1, y1, x2, board) && CanCastling(x1, y1, x2, board))
+                    else
+                    //no es Knight
                     {
-                        board.Move(x1, y1, x2, y2);
-                        piece.CanCastling = false;                        
-                        MoveRookCastling(x1, y1, x2, board);                                               
-                        return true;
-                    }
-
-                    if (IsPawn(piece) && IsPawnCapturing(x1, x2) && !board.IsEmpty(x2, y2) && !CantMoveIsCheck(x1, y1, x2, y2, board))
-                    {
-                        board.Remove(x2, y2);
-                        board.Move(x1, y1, x2, y2);
-                        if (Promoting(y2))
+                        if (board.IsEmpty(x2, y2) && !IsCastling(x1, y1, x2, board) && !CantMoveIsCheck(x1, y1, x2, y2, board) && !board.IsPawn(x1, y1))
                         {
-                            board.Promotion(x2, y2, board.Turn);
-                        }                                              
-                        return true;
-                    }
+                            if ((Math.Abs(x2 - x1) == Math.Abs(y2 - y1) && IsDiagonalEmpty(x1, y1, x2, y2, board)) || IsLineEmpty(x1, y1, x2, y2, board))
+                            {
+                                board.Move(x1, y1, x2, y2);
+                                CastlingChanges(x1, y1, x2, y2, piece);
+                                UpDateEnPassant(y1, y2, piece, board);
+                                return true;
+                            }
+                        }
 
-                    if (IsPawn(piece) && IsPawnCapturing(x1, x2) && EnPassant(x1, y1, x2, y2, board) && !CantMoveIsCheck(x1, y1, x2, y2, board))
-                    {
-                        board.RemoveCapturePassant(x1, y1, x2, y2);
-                        board.Move(x1, y1, x2, y2);                                               
-                        return true;
-                    }
-
-                    if (IsPawn(piece) && !IsPawnCapturing(x1, x2) && board.IsEmpty(x2, y2) && IsLineEmpty(x1, y1, x2, y2, board) && !CantMoveIsCheck(x1, y1, x2, y2, board))
-                    {
-                        board.Move(x1, y1, x2, y2);
-                        if (Promoting(y2))
+                        if (!board.IsEmpty(x2, y2) && !IsAlly(x1, y1, x2, y2, board) && !IsCastling(x1, y1, x2, board) && !CantMoveIsCheck(x1, y1, x2, y2, board) && !board.IsPawn(x1, y1))
                         {
-                            board.Promotion(x2, y2, board.Turn);
-                        }                                              
-                        return true;
-                    }                    
+                            if ((Math.Abs(x2 - x1) == Math.Abs(y2 - y1) && IsDiagonalEmpty(x1, y1, x2, y2, board)) || IsLineEmpty(x1, y1, x2, y2, board))
+                            {
+                                board.Remove(x2, y2);
+                                board.Move(x1, y1, x2, y2);
+                                CastlingChanges(x1, y1, x2, y2, piece);
+                                UpDateEnPassant(y1, y2, piece, board);
+                                return true;
+                            }
+                        }
+
+                        if (board.IsEmpty(x2, y2) && IsCastling(x1, y1, x2, board) && CanCastling(x1, y1, x2, board))
+                        {
+                            board.Move(x1, y1, x2, y2);
+                            piece.CanCastling = false;
+                            MoveRookCastling(x1, y1, x2, board);
+                            return true;
+                        }
+
+                        if (IsPawn(piece) && IsPawnCapturing(x1, x2) && !board.IsEmpty(x2, y2) && !CantMoveIsCheck(x1, y1, x2, y2, board))
+                        {
+                            board.Remove(x2, y2);
+                            board.Move(x1, y1, x2, y2);
+                            if (Promoting(y2))
+                            {
+                                board.Promotion(x2, y2, board.Turn);
+                            }
+                            return true;
+                        }
+
+                        if (IsPawn(piece) && IsPawnCapturing(x1, x2) && EnPassant(x1, y1, x2, y2, board) && !CantMoveIsCheck(x1, y1, x2, y2, board))
+                        {
+                            board.RemoveCapturePassant(x1, y1, x2, y2);
+                            board.Move(x1, y1, x2, y2);
+                            return true;
+                        }
+
+                        if (IsPawn(piece) && !IsPawnCapturing(x1, x2) && board.IsEmpty(x2, y2) && IsLineEmpty(x1, y1, x2, y2, board) && !CantMoveIsCheck(x1, y1, x2, y2, board))
+                        {
+                            board.Move(x1, y1, x2, y2);
+                            if (Promoting(y2))
+                            {
+                                board.Promotion(x2, y2, board.Turn);
+                            }
+                            return true;
+                        }
+                    }
                 }
-            }            
+            }           
+                    
             return false;
         }
 

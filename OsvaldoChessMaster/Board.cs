@@ -9,7 +9,7 @@ namespace OsvaldoChessMaster
     {        
         public bool Turn { get; set; } //turn=true es el turno del player1        
         public int TurnNumber { get; set; } // incrementa con cada movida      
-        public int FullMoveNumber { get; set; } //incrementa cuando ambos movieron
+        public int FullMoveNumber { get; set; } //incrementa cuando ambos movieron        
         public bool player1 { get; set; }
 
         public bool IsCheckmateFlag { get; set; }
@@ -29,7 +29,8 @@ namespace OsvaldoChessMaster
         {
             Turn = true;
             TurnNumber = 0;
-            FullMoveNumber = 0;
+            FullMoveNumber = 0;            
+           
             this.player1 = player1;
 
             ChessBoard = new PieceBase[Constants.Size, Constants.Size];
