@@ -5,7 +5,7 @@
 
     public class Bishop : PieceBase
     {
-        public override bool CanJump => false;        
+        public override bool CanJump => false;
         public override int Value => 30;
         public Bishop() { }
 
@@ -30,6 +30,37 @@
             return false;
         }
 
+        public override bool LogicMove(int x1, int y1, int x2, int y2, Board board, BoardLogic boardLogic)
+        {
+            if (boardLogic.IsInRange(x1, y1, x2, y2))
+            {
+                PieceBase piece = board.GetPiece(x1, y1);
+                if (!board.IsEmpty(x1, y1) && piece.IsValidMove(x1, y1, x2, y2, board.Turn, board))
+                {
+                    if (board.IsEmpty(x2, y2) && !boardLogic.CantMoveIsCheck(x1, y1, x2, y2, board))
+                    {
+                        if ((Math.Abs(x2 - x1) == Math.Abs(y2 - y1) && boardLogic.IsDiagonalEmpty(x1, y1, x2, y2, board)))
+                        {
+                            board.Move(x1, y1, x2, y2);
+                            return true;
+                        }
+                    }
+
+                    if (!board.IsEmpty(x2, y2) && !boardLogic.IsAlly(x1, y1, x2, y2, board) && !boardLogic.CantMoveIsCheck(x1, y1, x2, y2, board))
+                    {
+                        if ((Math.Abs(x2 - x1) == Math.Abs(y2 - y1) && boardLogic.IsDiagonalEmpty(x1, y1, x2, y2, board)))
+                        {
+                            board.Remove(x2, y2);
+                            board.Move(x1, y1, x2, y2);
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public override HashSet<Position> ValidMoves(Board board)
         {
             HashSet<Position> bishopMoves = new HashSet<Position>();
@@ -37,11 +68,11 @@
             Position bishopPos1 = new Position();
             bishopPos1.x1 = this.Position.PositionX + 1;
             bishopPos1.y1 = this.Position.PositionY + 1;
-            if (bishopPos1.x1 >= Constants.ForStart && bishopPos1.x1 < Constants.Size && bishopPos1.y1 >= Constants.ForStart && bishopPos1.y1 < Constants.Size)
+            if (board.IsSquareInRange(bishopPos1.x1, bishopPos1.y1))                
             {
                 bishopMoves.Add(bishopPos1);
             }
-            
+
             Position bishopPos2 = new Position();
             bishopPos2.x1 = this.Position.PositionX + 2;
             bishopPos2.y1 = this.Position.PositionY + 2;
@@ -241,7 +272,7 @@
             {
                 bishopMoves.Add(bishopPos26);
             }
-            
+
             Position bishopPos27 = new Position();
             bishopPos27.x1 = this.Position.PositionX - 6;
             bishopPos27.y1 = this.Position.PositionY + 6;
@@ -252,7 +283,7 @@
 
             Position bishopPos28 = new Position();
             bishopPos28.x1 = this.Position.PositionX - 7;
-            bishopPos28.y1 = this.Position.PositionY + 7;           
+            bishopPos28.y1 = this.Position.PositionY + 7;
             if (bishopPos28.x1 >= Constants.ForStart && bishopPos28.x1 < Constants.Size && bishopPos28.y1 >= Constants.ForStart && bishopPos28.y1 < Constants.Size)
             {
                 bishopMoves.Add(bishopPos28);

@@ -13,5 +13,6 @@ namespace OsvaldoChessMaster
         public const int UpperRow = 7;
         public const int LowerRow = 0;
         public const int ColorPieces = 16;
+        public const int depthLimit = 3;
     }
 }

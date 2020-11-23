@@ -5,7 +5,7 @@
 
     public class King : PieceBase
     {
-        public override bool CanJump => false;        
+        public override bool CanJump => false;
         public override int Value => 900;
         public override bool CanCastling { get; set; }
 
@@ -32,10 +32,10 @@
             // movimiento en el mismo lugar
             if (x1 == x2 && y1 == y2)
                 return false;
-            
+
             // 4 castling cases
             //blancas abajo
-            if (this.Color == true && this.Color == board.player1 && this.CanCastling && (x1 == 4) && (y1 == 0) && (x2 == 6 || x2 == 2) && y2 == 0)
+            if (this.Color == true && this.Color == board.player1 && CanCastling && (x1 == 4) && (y1 == 0) && (x2 == 6 || x2 == 2) && y2 == 0)
                 return true;
             //blancas arriba
             if (this.Color == true && this.Color != board.player1 && CanCastling && (x1 == 3) && (y1 == 7) && (x2 == 5 || x2 == 1) && y2 == 7)
@@ -44,14 +44,50 @@
             if (this.Color == false && this.Color == board.player1 && CanCastling && (x1 == 3) && (y1 == 0) && (x2 == 5 || x2 == 1) && y2 == 0)
                 return true;
             //negras arriba
-            if (this.Color == false && this.Color == board.player1 && CanCastling && (x1 == 4) && (y1 == 7) && (x2 == 6 || x2 == 2) && y2 == 7)
+            if (this.Color == false && this.Color != board.player1 && CanCastling && (x1 == 4) && (y1 == 7) && (x2 == 6 || x2 == 2) && y2 == 7)
                 return true;
 
 
-            if (Math.Sqrt((y2 - y1) * (y2 - y1) + 
+            if (Math.Sqrt((y2 - y1) * (y2 - y1) +
                 (x2 - x1) * (x2 - x1)) < 2)
             {
                 return true;
+            }
+
+            return false;
+        }
+
+        public override bool LogicMove(int x1, int y1, int x2, int y2, Board board, BoardLogic boardLogic)
+        {
+            if (boardLogic.IsInRange(x1, y1, x2, y2))
+            {
+                if (!board.IsEmpty(x1, y1) && IsValidMove(x1, y1, x2, y2, board.Turn, board))
+                {
+
+                    if (board.IsEmpty(x2, y2) && !boardLogic.IsCastling(x1, y1, x2, board) && !boardLogic.CantMoveIsCheck(x1, y1, x2, y2, board))
+                    {                        
+                            board.Move(x1, y1, x2, y2);
+                            boardLogic.CastlingChanges(x1, y1, x2, y2, this);
+                            return true;
+                        
+                    }
+
+                    if (!board.IsEmpty(x2, y2) && !boardLogic.IsAlly(x1, y1, x2, y2, board) && !boardLogic.IsCastling(x1, y1, x2, board) && !boardLogic.CantMoveIsCheck(x1, y1, x2, y2, board))
+                    {                        
+                            board.Remove(x2, y2);
+                            board.Move(x1, y1, x2, y2);
+                            boardLogic.CastlingChanges(x1, y1, x2, y2, this);
+                            return true;                        
+                    }
+
+                    if (board.IsEmpty(x2, y2) && boardLogic.IsCastling(x1, y1, x2, board) && boardLogic.CanCastling(x1, y1, x2, board))
+                    {
+                        board.Move(x1, y1, x2, y2);
+                        boardLogic.MoveRookCastling(x1, y1, x2, board);
+                        CanCastling = false;
+                        return true;
+                    }
+                }
             }
 
             return false;
@@ -120,9 +156,6 @@
 
             return kingMoves;
         }
-
-
-
 
         public override string ToString()
         {

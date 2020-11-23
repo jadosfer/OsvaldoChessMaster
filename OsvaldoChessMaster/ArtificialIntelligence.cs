@@ -36,8 +36,88 @@ namespace OsvaldoChessMaster
             queenPositionValues = QueenPositionValues();
             kingPositionValues = KingPositionValues();
         }
+        // devuelve una movida que maximiza el score y el score
+        public double[] Maximize(Board board, BoardLogic boardLogic, int depth) 
+        {            
+            double maxScore = -10000;
+            double[] result = new double[] { 0, 0, 0, 0, EvaluateBoard(board) };
+            if (Math.Abs(EvaluateBoard(board)) > 500 || depth > Constants.depthLimit)
+            {
+                return result;
+            }
+            HashSet<PieceBase> BackupWhitePiecesAPP = board.CloneWhitePieces();
+            HashSet<PieceBase> BackupBlackPiecesAPP = board.CloneBlackPieces();
+            var hashSet = board.Turn ? BackupWhitePiecesAPP : BackupBlackPiecesAPP;
+            foreach (PieceBase piece in hashSet)
+            {
+                board = boardLogic.GoTo(board.TurnNumber, board);
+                int x = piece.Position.PositionX;
+                int y = piece.Position.PositionY;
+                foreach (Position position in piece.ValidMoves(board))
+                {
+                    if (boardLogic.FinallyMove(x, y, position.x1, position.y1, board, boardLogic, false))
+                    {
+                        double[] minimized = Minimize(board, boardLogic, depth + 1);
+                        double Eval = minimized[4];                        
+                        if (Eval >= maxScore)
+                        {
+                            maxScore = Eval;
+                            result[0] = x;
+                            result[1] = y;
+                            result[2] = position.x1;
+                            result[3] = position.y1;
+                            result[4] = maxScore;
+                        }
+                        // back to previous board
+                        board = boardLogic.GoTo(board.TurnNumber - 1, board);
+                        boardLogic.futureMoves.Clear();
+                    }                    
+                }
+            }
+            return result;
+        }
 
-
+        // devuelve una movida que minimiza el score y el score
+        public double[] Minimize(Board board, BoardLogic boardLogic, int depth)
+        {            
+            double minScore = 10000;
+            double[] result = new double[] { 0, 0, 0, 0, EvaluateBoard(board) };
+            if (Math.Abs(EvaluateBoard(board)) > 500 || depth > Constants.depthLimit)
+            {
+                result = new double[] { 0, 0, 0, 0, EvaluateBoard(board) };
+                return result;
+            }
+            HashSet<PieceBase> BackupWhitePiecesAPP = board.CloneWhitePieces();
+            HashSet<PieceBase> BackupBlackPiecesAPP = board.CloneBlackPieces();
+            var hashSet = board.Turn ? BackupWhitePiecesAPP : BackupBlackPiecesAPP;
+            foreach (PieceBase piece in hashSet)
+            {
+                board = boardLogic.GoTo(board.TurnNumber, board);
+                int x = piece.Position.PositionX;
+                int y = piece.Position.PositionY;
+                foreach (Position position in piece.ValidMoves(board))
+                {
+                    if (boardLogic.FinallyMove(x, y, position.x1, position.y1, board, boardLogic, false))
+                    {
+                        double[] maximized = Maximize(board, boardLogic, depth + 1);
+                        double Eval = maximized[4];
+                        if (Eval <= minScore)
+                        {
+                            minScore = Eval;
+                            result[0] = x;
+                            result[1] = y;
+                            result[2] = position.x1;
+                            result[3] = position.y1;
+                            result[4] = minScore;
+                        }
+                        // back to previous board
+                        board = boardLogic.GoTo(board.TurnNumber - 1, board);
+                        boardLogic.futureMoves.Clear();
+                    }
+                }
+            }
+            return result;
+        }
 
         /// <summary>
         /// devuelve un array con todas las movidas posibles que mejoran el puntaje de un estado del tablero
@@ -75,7 +155,7 @@ namespace OsvaldoChessMaster
 
             foreach (Position position in piece.ValidMoves(board))
             {
-                if (boardLogic.FinallyMove(x, y, position.x1, position.y1, board, false))
+                if (boardLogic.FinallyMove(x, y, position.x1, position.y1, board, boardLogic, false))
                 {
                     // solo lo guardo si no empeora la situacion (cuanto ams negativo mejor para la pc
                     double Eval = EvaluateBoard(board);
@@ -118,8 +198,8 @@ namespace OsvaldoChessMaster
                 foreach (Position position in piece.ValidMoves(board))
                 {
 
-                    var removedPiece = board.GetPiece(position.x1, position.y1);
-                    if (boardLogic.FinallyMove(i, j, position.x1, position.y1, board, false))                        
+                    var removedPiece = board.GetPiece(position.x1, position.y1);                    
+                    if (boardLogic.FinallyMove(i, j, position.x1, position.y1, board, boardLogic, false))                        
                     {                        
                         responseNotNull.x1 = i;
                         responseNotNull.y1 = j;
@@ -181,10 +261,10 @@ namespace OsvaldoChessMaster
             Console.WriteLine("calculó las AllPosiblePlays");
             foreach (Move move1 in allMove1)
             {                
-                if (boardLogic.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board, false))
+                if (boardLogic.FinallyMove(move1.x1, move1.y1, move1.x2, move1.y2, board, boardLogic, false))
                 {
                     Move moveResponse = BestResponse(board, boardLogic);
-                    boardLogic.FinallyMove(moveResponse.x1, moveResponse.y1, moveResponse.x2, moveResponse.y2, board, false);
+                    boardLogic.FinallyMove(moveResponse.x1, moveResponse.y1, moveResponse.x2, moveResponse.y2, board, boardLogic, false);
 
                     Console.WriteLine("movio y calculo la Best Response");
                     List<Move> allMove3 = AllPosiblePlays(board, boardLogic);
@@ -192,10 +272,10 @@ namespace OsvaldoChessMaster
 
                     foreach (Move move3 in allMove3)
                     {
-                        if (boardLogic.FinallyMove(move3.x1, move3.y1, move3.x2, move3.y2, board, false))
+                        if (boardLogic.FinallyMove(move3.x1, move3.y1, move3.x2, move3.y2, board, boardLogic, false))
                         {
                             Move moveResponse2 = BestResponse(board, boardLogic);
-                            boardLogic.FinallyMove(moveResponse2.x1, moveResponse2.y1, moveResponse2.x2, moveResponse2.y2, board, false);
+                            boardLogic.FinallyMove(moveResponse2.x1, moveResponse2.y1, moveResponse2.x2, moveResponse2.y2, board, boardLogic, false);
 
                             double Eval = EvaluateBoard(board);
                             if (Eval <= value)

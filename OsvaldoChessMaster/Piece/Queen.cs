@@ -40,6 +40,47 @@
             return false;
         }
 
+        public override bool LogicMove(int x1, int y1, int x2, int y2, Board board, BoardLogic boardLogic)
+        {
+            if (boardLogic.IsInRange(x1, y1, x2, y2))
+            {
+                PieceBase piece = board.GetPiece(x1, y1);
+                if (!board.IsEmpty(x1, y1) && piece.IsValidMove(x1, y1, x2, y2, board.Turn, board))
+                {
+                    if (board.IsEmpty(x2, y2) && !boardLogic.CantMoveIsCheck(x1, y1, x2, y2, board))
+                    {
+                        if ((Math.Abs(x2 - x1) == Math.Abs(y2 - y1) && boardLogic.IsDiagonalEmpty(x1, y1, x2, y2, board)))
+                        {
+                            board.Move(x1, y1, x2, y2);
+                            return true;
+                        }
+                        if ((x2 == x1 || y2 == y1) && boardLogic.IsLineEmpty(x1, y1, x2, y2, board))
+                        {
+                            board.Move(x1, y1, x2, y2);
+                            return true;
+                        }
+                    }
+
+                    if (!board.IsEmpty(x2, y2) && !boardLogic.IsAlly(x1, y1, x2, y2, board) && !boardLogic.CantMoveIsCheck(x1, y1, x2, y2, board))
+                    {
+                        if ((Math.Abs(x2 - x1) == Math.Abs(y2 - y1) && boardLogic.IsDiagonalEmpty(x1, y1, x2, y2, board)))
+                        {
+                            board.Remove(x2, y2);
+                            board.Move(x1, y1, x2, y2);
+                            return true;
+                        }
+                        if ((x2 == x1 || y2 == y1) && boardLogic.IsLineEmpty(x1, y1, x2, y2, board))
+                        {
+                            board.Remove(x2, y2);
+                            board.Move(x1, y1, x2, y2);
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
         public override HashSet<Position> ValidMoves(Board board)
         {
             HashSet<Position> queenMoves = new HashSet<Position>();
@@ -495,7 +536,7 @@
             return queenMoves;
         }
 
-        
+
         public override string ToString()
         {
             var color = this.Color ? "w" : "b";

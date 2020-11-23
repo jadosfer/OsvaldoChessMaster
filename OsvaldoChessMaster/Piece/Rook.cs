@@ -1,6 +1,7 @@
 ﻿namespace OsvaldoChessMaster.Piece
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     public class Rook : PieceBase
     {
@@ -35,6 +36,48 @@
             if (x1 == x2 || y1 == y2)
             {
                 return true;
+            }
+
+            return false;
+        }
+
+        public override bool LogicMove(int x1, int y1, int x2, int y2, Board board, BoardLogic boardLogic)
+        {
+            if (boardLogic.IsInRange(x1, y1, x2, y2))
+            {
+                PieceBase piece = board.GetPiece(x1, y1);
+                if (!board.IsEmpty(x1, y1) && piece.IsValidMove(x1, y1, x2, y2, board.Turn, board))
+                {
+                    
+                    
+                        if (board.IsEmpty(x2, y2) && !boardLogic.CantMoveIsCheck(x1, y1, x2, y2, board))
+                        {
+                            if (Math.Abs(x2 - x1) == Math.Abs(y2 - y1) && boardLogic.IsLineEmpty(x1, y1, x2, y2, board))
+                            {
+                                board.Move(x1, y1, x2, y2);
+                                boardLogic.CastlingChanges(x1, y1, x2, y2, piece);                            
+                                return true;
+                            }
+                        }
+
+                        if (!board.IsEmpty(x2, y2) && !boardLogic.IsAlly(x1, y1, x2, y2, board) && !boardLogic.CantMoveIsCheck(x1, y1, x2, y2, board))
+                        {
+                            if (Math.Abs(x2 - x1) == Math.Abs(y2 - y1) && boardLogic.IsLineEmpty(x1, y1, x2, y2, board))
+                            {
+                                board.Remove(x2, y2);
+                                board.Move(x1, y1, x2, y2);
+                                boardLogic.CastlingChanges(x1, y1, x2, y2, piece);                                
+                                return true;
+                            }
+                        }
+
+                        if (board.IsEmpty(x2, y2) && boardLogic.CanCastling(x1, y1, x2, board))
+                        {
+                            board.Move(x1, y1, x2, y2);
+                            piece.CanCastling = false;                            
+                            return true;
+                        }
+                }
             }
 
             return false;

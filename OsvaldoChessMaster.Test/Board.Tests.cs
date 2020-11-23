@@ -64,12 +64,12 @@
             // Arrange
             var board = new Board(true);
             var boardLogic = new BoardLogic(true);
-            boardLogic.FinallyMove(4, 1, 4, 3, board);
+            boardLogic.FinallyMove(4, 1, 4, 3, board, boardLogic);
 
 
             // Act
             //board.TurnChange();
-            var result = boardLogic.FinallyMove(x1, y1, x2, y2, board);
+            var result = boardLogic.FinallyMove(x1, y1, x2, y2, board, boardLogic);
 
             // Assert
             Assert.AreEqual(expected, result);            

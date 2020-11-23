@@ -41,9 +41,10 @@
 
         }
 
-        public bool FinallyMove(int x1, int y1, int x2, int y2, Board board, bool print = true)
+        public bool FinallyMove(int x1, int y1, int x2, int y2, Board board, BoardLogic boardLogic, bool print = true)
         {
-            if (LogicMove(x1, y1, x2, y2, board))
+            PieceBase piece = board.GetPiece(x1, y1);
+            if (piece.LogicMove(x1, y1, x2, y2, board, boardLogic))
             {
                 TurnChange(board);
                 Move move = new Move();
@@ -70,7 +71,7 @@
             while (head != targetTurn)
             {
                 Move move = futureMoves.Pop();                
-                FinallyMove(move.x1, move.y1, move.x2, move.y2, board, false);//aca se hace un push en pastMoves
+                FinallyMove(move.x1, move.y1, move.x2, move.y2, board, this, false);//aca se hace un push en pastMoves
                 head += 1;
             }
             return board;
@@ -107,8 +108,7 @@
                             if ((Math.Abs(x2 - x1) == Math.Abs(y2 - y1) && IsDiagonalEmpty(x1, y1, x2, y2, board)) || IsLineEmpty(x1, y1, x2, y2, board))
                             {
                                 board.Move(x1, y1, x2, y2);
-                                CastlingChanges(x1, y1, x2, y2, piece);
-                                UpDateEnPassant(y1, y2, piece, board);
+                                CastlingChanges(x1, y1, x2, y2, piece);                                
                                 return true;
                             }
                         }
@@ -119,8 +119,7 @@
                             {
                                 board.Remove(x2, y2);
                                 board.Move(x1, y1, x2, y2);
-                                CastlingChanges(x1, y1, x2, y2, piece);
-                                UpDateEnPassant(y1, y2, piece, board);
+                                CastlingChanges(x1, y1, x2, y2, piece);                                
                                 return true;
                             }
                         }
@@ -154,6 +153,7 @@
                         if (IsPawn(piece) && !IsPawnCapturing(x1, x2) && board.IsEmpty(x2, y2) && IsLineEmpty(x1, y1, x2, y2, board) && !CantMoveIsCheck(x1, y1, x2, y2, board))
                         {
                             board.Move(x1, y1, x2, y2);
+                            UpDateEnPassant(y1, y2, piece, board);
                             if (Promoting(y2))
                             {
                                 board.Promotion(x2, y2, board.Turn);
@@ -179,28 +179,28 @@
         //parto de la base de que es king porque pasó Iscastling primero
         public bool CanCastling(int x1, int y1, int x2, Board board)
         {
-            if (x2 > x1 && y1 == 0 && Board.P1RRookCanCastling && board.GetPiece(x1, y1).CanCastling)
+            if (x2 > x1 && y1 == 0 && Board.P1RRookCanCastling && board.GetPiece(x1, y1).CanCastling && board.IsEmpty(5,0) && board.IsEmpty(6, 0))
             {
                 if (!IsSquareCheck(x1, y1, x1 + 1, y1, board.Turn, board) && !IsSquareCheck(x1 + 2, y1, board.Turn, board))
                 {
                     return true;
                 }                
             }
-            if (x2 < x1 && y1 == 0 && Board.P1LRookCanCastling && board.GetPiece(x1, y1).CanCastling)
+            if (x2 < x1 && y1 == 0 && Board.P1LRookCanCastling && board.GetPiece(x1, y1).CanCastling && board.IsEmpty(1, 0) && board.IsEmpty(2, 0))
             {
                 if (!IsSquareCheck(x1, y1, x1 - 1, y1, board.Turn, board) && !IsSquareCheck(x1 - 2, y1, board.Turn, board))
                 {
                     return true;
                 }
             }
-            if (x2 > x1 && y1 == 7 && Board.P2RRookCanCastling && board.GetPiece(x1, y1).CanCastling)
+            if (x2 > x1 && y1 == 7 && Board.P2RRookCanCastling && board.GetPiece(x1, y1).CanCastling && board.IsEmpty(5, 7) && board.IsEmpty(6, 7))
             {
                 if (!IsSquareCheck(x1, y1, x1 + 1, y1, board.Turn, board) && !IsSquareCheck(x1 + 2, y1, board.Turn, board))
                 {
                     return true;
                 }
             }
-            if (x2 < x1 && y1 == 7 && Board.P2LRookCanCastling && board.GetPiece(x1, y1).CanCastling)
+            if (x2 < x1 && y1 == 7 && Board.P2LRookCanCastling && board.GetPiece(x1, y1).CanCastling && board.IsEmpty(1, 7) && board.IsEmpty(2, 7))
             {
                 if (!IsSquareCheck(x1, y1, x1 - 1, y1, board.Turn, board) && !IsSquareCheck(x1 - 2, y1, board.Turn, board))
                 {
@@ -211,7 +211,7 @@
         }
 
         //imposibilita enrocar, una vez que se mueve el rey o las torres
-        private void CastlingChanges(int x1, int y1, int x2, int y2, PieceBase piece)
+        public void CastlingChanges(int x1, int y1, int x2, int y2, PieceBase piece)
         {
             if (piece.GetType() == typeof(King) && piece.CanCastling)
             {
@@ -257,7 +257,7 @@
         }
                 
 
-        private void MoveRookCastling(int x1, int y1, int x2, Board board)
+        public void MoveRookCastling(int x1, int y1, int x2, Board board)
         {
             if (x2 > x1)
             {
@@ -292,7 +292,7 @@
         }
 
         // pone un flag en el peon para avisar que puede ser comido y anota el turno
-        private void UpDateEnPassant(int y1, int y2, PieceBase piece, Board board)
+        public void UpDateEnPassant(int y1, int y2, PieceBase piece, Board board)
         {
             if (piece.GetType() == typeof(Pawn) && Math.Abs(y2 - y1) == 2) 
             {
@@ -320,8 +320,8 @@
 
         // true si se mueve en diagonal
         public bool IsPawnCapturing(int x1, int x2) => x1 != x2;
-   
-        private bool Promoting(int y2)
+
+        public bool Promoting(int y2)
         {
             return y2 == 0 || y2 == 7;
         }
@@ -485,21 +485,21 @@
         {
             board.Move(x2, y2, x1, y1);
             board.PutPiece(removedPiece, x2, y2);
-            UndoRookCastling(x1, x2, y2, board);
+            UndoRookCastling(x1, y1, x2, board);
         }
 
-        public void UndoRookCastling(int x1, int x2, int y2, Board board)
+        public void UndoRookCastling(int x1, int y1, int x2, Board board)
         {
-            PieceBase piece = board.GetPiece(x2, y2);
+            PieceBase piece = board.GetPiece(x1, y1);
             if (piece != null && piece.GetType() == typeof(King) && Math.Abs(x2 - x1) == 2)
             {
                 if (x1 > x2)
                 {
-                    board.Move(x2 + 1, y2, 0, y2);
+                    board.Move(x2 + 1, y1, 0, y1);
                 }
                 if (x1 < x2)
                 {
-                    board.Move(x2 - 1, y2, 7, y2);
+                    board.Move(x2 - 1, y1, 7, y1);
                 }
             }
         }

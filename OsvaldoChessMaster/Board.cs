@@ -164,6 +164,11 @@ namespace OsvaldoChessMaster
             return ChessBoard[x, y].GetType() == typeof(Pawn);
         }
 
+        public bool IsSquareInRange(int x1, int y1)
+        {
+            return (x1 >= Constants.ForStart && x1 < Constants.Size && y1 >= Constants.ForStart && y1 < Constants.Size);
+        }
+
         public bool IsEmpty(int x2, int y2)
         {
             try
