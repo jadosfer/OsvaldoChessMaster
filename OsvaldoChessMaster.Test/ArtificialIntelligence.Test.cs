@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace OsvaldoChessMaster.Test
+﻿namespace OsvaldoChessMaster.Test
 {
-    using System.Collections;
     using NUnit.Framework;
-    using OsvaldoChessMaster.Piece;
 
     class ArtificialIntelligenceTests
     {
         private const int Size = 9;
 
-        [Test]
+        //[Test]
         //public void AllPosiblePlaysTest()
         //{
         //    // Arrange
@@ -26,6 +20,7 @@ namespace OsvaldoChessMaster.Test
         //    // Assert
         //    Assert.AreEqual(AllMovesExpected, result);
         //}
+
         [TestCase(0, 9, 9, 10, 10)]
         [TestCase(0, 0, 0, 0, 0)]
         [TestCase(0, 4, 2, 4, 4)]
@@ -37,8 +32,7 @@ namespace OsvaldoChessMaster.Test
         [TestCase(-4, 3, 6, 3, 4)]
         [TestCase(-4, 4, 6, 4, 4)]
         [TestCase(0, 0, 6, 0, 5)]
-
-        public void EvaluateBoardTest(int EvaluateExpected, int x1, int y1, int x2, int y2) 
+        public void EvaluateBoardTest(int EvaluateExpected, int x1, int y1, int x2, int y2)
         {
             // Arrange
             bool player1 = true;
@@ -50,16 +44,13 @@ namespace OsvaldoChessMaster.Test
             boardLogic.TurnChange(board);
             boardLogic.LogicMove(x1, y1, x2, y2, board);
             var result = AI.EvaluateBoard(board);
-         
 
-        // Assert
-        Assert.AreEqual(EvaluateExpected, result);
+            // Assert
+            Assert.AreEqual(EvaluateExpected, result);
         }
 
         [TestCase(6, 0, 5, 2)]
         //[TestCase(1, 0, 7, 1)]
-
-
         public void BestResponseTest(int x1, int y1, int x2, int y2)
         {
             // Arrange
@@ -69,7 +60,7 @@ namespace OsvaldoChessMaster.Test
             var AI = new ArtificialIntelligence(board);
 
             Move expected = new Move();
-            expected.x1 = x1;            
+            expected.x1 = x1;
             expected.x2 = x2;
             expected.y1 = y1;
             expected.y2 = y2;
